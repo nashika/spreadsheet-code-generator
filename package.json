@@ -1,7 +1,7 @@
 {
   "name": "spreadsheet-code-generator",
   "version": "0.0.1",
-  "description": "",
+  "description": "now construction",
   "main": "index.js",
   "scripts": {
     "electron": "electron",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "electron-packager": "^7.0.3",
     "electron-prebuilt": "^1.2.1",
+    "jade": "^1.11.0",
     "typescript": "^1.8.10",
     "typings": "^1.0.4"
   }
