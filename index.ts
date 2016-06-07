@@ -3,7 +3,7 @@ import electron = require("electron");
 let win:Electron.BrowserWindow;
 
 function createWindow() {
-  win = new electron.BrowserWindow({width: 600, height: 400});
+  win = new electron.BrowserWindow({width: 1200, height: 800});
   win.loadURL(`file://${__dirname}/view/index.html`);
   win.webContents.openDevTools();
   win.on('closed', () => {

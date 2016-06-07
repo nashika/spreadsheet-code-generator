@@ -3,8 +3,11 @@ html
   head
     meta(charset="utf-8")
     title Hello World!
+    link(rel="stylesheet", href="../node_modules/bootstrap/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="../node_modules/handsontable/dist/handsontable.full.min.css")
   body
     h1 My First Electron
+    div.well test
     p
       | We are using node
       script.
@@ -16,3 +19,18 @@ html
       script.
         document.write(process.versions.electron)
       |.
+    div#example
+    script.
+      window.jQuery = window.$ = require("../node_modules/jquery/dist/jquery.min");
+      require("../node_modules/bootstrap/dist/js/bootstrap.min");
+      require("../node_modules/handsontable/dist/handsontable.full.min");
+      var Handsontable = require("handsontable");
+      require("../lib/app");
+      var data = [
+        ["", "Kia", "Nissan", "Toyota", "Honda"],
+        ["2008", 10, 11, 12, 13],
+        ["2009", 20, 11, 14, 13],
+        ["2010", 30, 15, 12, 13]
+      ];
+      var container = document.getElementById('example');
+      var hot = new Handsontable(container, {data: data});
