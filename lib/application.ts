@@ -5,12 +5,12 @@ import {SheetsComponent} from "./component/sheets-component";
 import {SpreadsheetComponent} from "./component/spreadsheet-component";
 import {DataIoService} from "./service/data-io-service";
 
-export interface IDefinition {
-  columns:Array<IDefinitionColumn>;
+export interface ISheetDefinition {
+  columns:Array<IColumnDefinition>;
   colHeaders:Array<string>;
 }
 
-export interface IDefinitionColumn {
+export interface IColumnDefinition {
   data:string;
   type:string;
   width:number;
@@ -22,8 +22,8 @@ export class Application {
   public definitionDir:string;
   public dataDir:string;
   public definitionNames:string[];
-  public currentDefinitionName:string;
-  public currentDefinition:IDefinition;
+  public currentSheetName:string;
+  public currentSheetDefinition:ISheetDefinition;
 
   // services
   public dataIoService:DataIoService;
@@ -35,7 +35,7 @@ export class Application {
 
   constructor() {
     this.storeDir = path.join(__dirname, "../sample");
-    this.definitionDir = path.join(this.storeDir, "definition");
+    this.definitionDir = path.join(this.storeDir, "sheet");
     this.dataDir = path.join(this.storeDir, "data");
     let definitionFiles:string[] = fs.readdirSync(this.definitionDir);
     this.definitionNames = [];

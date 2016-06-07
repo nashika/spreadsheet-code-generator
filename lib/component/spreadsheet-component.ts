@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import {Application, IDefinitionColumn} from "../application";
+import {Application, IColumnDefinition} from "../application";
 
 export class SpreadsheetComponent {
 
@@ -20,8 +20,8 @@ export class SpreadsheetComponent {
     let results:any[] = [];
     for (let record of records) {
       let result:any = {};
-      for (let i = 0; i < this.app.currentDefinition.columns.length; i++) {
-        let currentColumn:IDefinitionColumn = this.app.currentDefinition.columns[i];
+      for (let i = 0; i < this.app.currentSheetDefinition.columns.length; i++) {
+        let currentColumn:IColumnDefinition = this.app.currentSheetDefinition.columns[i];
         let currentCellData:any = record[i];
         if (currentCellData !== null && currentCellData !== "") {
           result[currentColumn.data] = currentCellData;
@@ -38,15 +38,15 @@ export class SpreadsheetComponent {
       this.hot.destroy();
     }
 
-    this.app.currentDefinitionName = definitionName;
-    this.app.currentDefinition = require(path.join(this.app.definitionDir, `${this.app.currentDefinitionName}.json`));
+    this.app.currentSheetName = definitionName;
+    this.app.currentSheetDefinition = require(path.join(this.app.definitionDir, `${this.app.currentSheetName}.json`));
 
     let data:any[] = this.app.dataIoService.load();
     this.hot = new Handsontable(this.container, {
       data: data,
-      columns: this.app.currentDefinition.columns,
+      columns: this.app.currentSheetDefinition.columns,
       rowHeaders: true,
-      colHeaders: this.app.currentDefinition.colHeaders,
+      colHeaders: this.app.currentSheetDefinition.colHeaders,
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
