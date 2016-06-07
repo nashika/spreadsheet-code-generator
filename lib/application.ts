@@ -48,13 +48,6 @@ export class Application {
     this.currentDefinitionName = event.target.getAttribute("definition");
     this.currentDefinition = require(path.join(this.definitionDir, `${this.currentDefinitionName}.json`));
 
-    let adata = [
-      ["", "Kia", "Nissan", "Toyota", "Honda"],
-      ["2008", 10, 11, 12, 13],
-      ["2009", 20, 11, 14, 13],
-      ["2010", 30, 15, 12, 13]
-    ];
-
     let data = this.loadData();
 
     this.hot = new Handsontable(this.container, {
@@ -65,7 +58,19 @@ export class Application {
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
+      afterSelection: this.afterSelection,
     });
+  };
+
+  private afterSelection = (r:number, c:number, r2:number, c2:number):void => {
+    if (r == 0 && r2 == this.hot.countRows() - 1) {
+      let columnDefinition:IDefinitionColumn = this.currentDefinition.columns[c];
+      let colHeader:string = this.currentDefinition.colHeaders[c];
+      $("#column-header").val(colHeader);
+      $("#column-data").val(columnDefinition.data);
+      $("#column-type").val(columnDefinition.type);
+      $("#column-width").val(columnDefinition.width);
+    }
   };
 
   public loadData = ():any[] => {
