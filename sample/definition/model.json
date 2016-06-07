@@ -1,0 +1,16 @@
+{
+  "columns": [
+    {
+      "data": "model",
+      "type": "text"
+    },
+    {
+      "data": "extends",
+      "type": "text"
+    }
+  ],
+  "colHeaders": [
+    "model",
+    "extends"
+  ]
+}

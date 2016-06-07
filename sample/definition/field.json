@@ -1,0 +1,24 @@
+{
+  "columns": [
+    {
+      "data": "model",
+      "type": "text",
+      "width": 60
+    },
+    {
+      "data": "field",
+      "type": "text",
+      "width": 80
+    },
+    {
+      "data": "extends",
+      "type": "text",
+      "width": 80
+    }
+  ],
+  "colHeaders": [
+    "model",
+    "field",
+    "extends"
+  ]
+}

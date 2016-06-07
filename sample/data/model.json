@@ -1,0 +1,17 @@
+[
+  {},
+  {
+    "model": "aaa",
+    "extends": "a"
+  },
+  {},
+  {},
+  {
+    "model": "a"
+  },
+  {},
+  {
+    "model": "aa",
+    "extends": "b"
+  }
+]
