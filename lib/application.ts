@@ -1,5 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
+import {ColumnEditor} from "./component/column-editor";
+import {DefinitionSelector} from "./component/definition-selector";
+import {Spreadsheet} from "./component/spreadsheet";
 
 export interface IDefinition {
   columns:Array<IDefinitionColumn>;
@@ -20,9 +23,12 @@ export class Application {
   public dataDir:string;
   public definitionNames:string[];
 
+  public definitionSelector:DefinitionSelector;
+  public columnEditor:ColumnEditor;
+  public spreadsheet:Spreadsheet;
+
   public currentDefinitionName:string;
   public currentDefinition:IDefinition;
-  public hot:ht.Methods;
 
   constructor() {
     this.container = document.getElementById('spreadsheet');
@@ -32,48 +38,13 @@ export class Application {
     let definitionFiles:string[] = fs.readdirSync(this.definitionDir);
     this.definitionNames = [];
     for (let definitionFile of definitionFiles) this.definitionNames.push(definitionFile.replace(/\.json$/, ""));
-    for (let definitionName of this.definitionNames) {
-      let dom:JQuery = $(`<li class="list-group-item" definition="${definitionName}">${definitionName}</li>`);
-      dom.on("click", this.changeDefinition);
-      $("ul#explorer-list-group").append(dom);
-    }
+
+    this.definitionSelector = new DefinitionSelector(this);
+    this.columnEditor = new ColumnEditor(this);
+    this.spreadsheet = new Spreadsheet(this);
   }
 
-  public changeDefinition = (event:JQueryEventObject) => {
-    if (this.hot) {
-      this.saveData();
-      this.hot.destroy();
-    }
-
-    this.currentDefinitionName = event.target.getAttribute("definition");
-    this.currentDefinition = require(path.join(this.definitionDir, `${this.currentDefinitionName}.json`));
-
-    let data = this.loadData();
-
-    this.hot = new Handsontable(this.container, {
-      data: data,
-      columns: this.currentDefinition.columns,
-      rowHeaders: true,
-      colHeaders: this.currentDefinition.colHeaders,
-      contextMenu: true,
-      currentRowClassName: 'currentRow',
-      currentColClassName: 'currentCol',
-      afterSelection: this.afterSelection,
-    });
-  };
-
-  private afterSelection = (r:number, c:number, r2:number, c2:number):void => {
-    if (r == 0 && r2 == this.hot.countRows() - 1) {
-      let columnDefinition:IDefinitionColumn = this.currentDefinition.columns[c];
-      let colHeader:string = this.currentDefinition.colHeaders[c];
-      $("#column-header").val(colHeader);
-      $("#column-data").val(columnDefinition.data);
-      $("#column-type").val(columnDefinition.type);
-      $("#column-width").val(columnDefinition.width);
-    }
-  };
-
-  public loadData = ():any[] => {
+  public loadData():any[] {
     let filePath:string = path.join(this.dataDir, `${this.currentDefinitionName}.json`);
     if (fs.existsSync(filePath)) {
       return JSON.parse(fs.readFileSync(filePath).toString());
@@ -82,21 +53,20 @@ export class Application {
     }
   };
 
-  public saveData = () => {
-    let records = this.hot.getData();
-    let results:Array<Object> = [];
-    for (let record of records) {
-      let result:any = {};
-      for (let i = 0; i < this.currentDefinition.columns.length; i++) {
-        let currentColumn:IDefinitionColumn = this.currentDefinition.columns[i];
-        let currentCellData:any = record[i];
-        if (currentCellData !== null && currentCellData !== "") {
-          result[currentColumn.data] = currentCellData;
-        }
-      }
-      results.push(result);
-    }
-    fs.writeFileSync(path.join(this.dataDir, `${this.currentDefinitionName}.json`), JSON.stringify(results, null, "  "));
+  public saveData():void {
+    fs.writeFileSync(path.join(this.dataDir, `${this.currentDefinitionName}.json`), JSON.stringify(this.spreadsheet.jsonData, null, "  "));
   };
 
+  public changeDefinition(definitionName:string):void {
+    if (this.spreadsheet.isLoaded) {
+      this.saveData();
+    }
+
+    this.currentDefinitionName = definitionName;
+    this.currentDefinition = require(path.join(this.definitionDir, `${this.currentDefinitionName}.json`));
+
+    let data:any[] = this.loadData();
+    this.spreadsheet.changeDefinition(data);
+  }
+  
 }
