@@ -32,16 +32,17 @@ export class SpreadsheetComponent {
     return results;
   }
 
-  public changeSheet(definitionName:string):void {
+  public changeSheet(afterSheetName:string):void {
+    let beforeSheetName = this.app.currentSheetName;
     if (this.hot) {
-      this.app.dataIoService.save(this.jsonData);
+      this.app.dataIoService.save(beforeSheetName, this.jsonData);
       this.hot.destroy();
     }
 
-    this.app.currentSheetName = definitionName;
-    this.app.currentSheetDefinition = require(path.join(this.app.definitionDir, `${this.app.currentSheetName}.json`));
+    this.app.currentSheetName = afterSheetName;
+    this.app.currentSheetDefinition = this.app.sheetIoService.load(afterSheetName);
 
-    let data:any[] = this.app.dataIoService.load();
+    let data:any[] = this.app.dataIoService.load(afterSheetName);
     this.hot = new Handsontable(this.container, {
       data: data,
       columns: this.app.currentSheetDefinition.columns,

@@ -4,6 +4,7 @@ import {ColumnComponent} from "./component/column-component";
 import {SheetsComponent} from "./component/sheets-component";
 import {SpreadsheetComponent} from "./component/spreadsheet-component";
 import {DataIoService} from "./service/data-io-service";
+import {SheetIoService} from "./service/sheet-io-service";
 
 export interface ISheetDefinition {
   columns:Array<IColumnDefinition>;
@@ -18,14 +19,13 @@ export interface IColumnDefinition {
 
 export class Application {
 
-  public storeDir:string;
-  public definitionDir:string;
-  public dataDir:string;
-  public definitionNames:string[];
+  // common data
+  public saveBaseDir:string;
   public currentSheetName:string;
   public currentSheetDefinition:ISheetDefinition;
 
   // services
+  public sheetIoService:SheetIoService;
   public dataIoService:DataIoService;
 
   // components
@@ -34,13 +34,9 @@ export class Application {
   public spreadsheetComponent:SpreadsheetComponent;
 
   constructor() {
-    this.storeDir = path.join(__dirname, "../sample");
-    this.definitionDir = path.join(this.storeDir, "sheet");
-    this.dataDir = path.join(this.storeDir, "data");
-    let definitionFiles:string[] = fs.readdirSync(this.definitionDir);
-    this.definitionNames = [];
-    for (let definitionFile of definitionFiles) this.definitionNames.push(definitionFile.replace(/\.json$/, ""));
+    this.saveBaseDir = path.join(__dirname, "../sample");
 
+    this.sheetIoService = new SheetIoService(this);
     this.dataIoService = new DataIoService(this);
 
     this.sheetsComponent = new SheetsComponent(this);

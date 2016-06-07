@@ -1,23 +1,18 @@
-import * as fs from "fs";
-import * as path from "path";
-
 import {Application} from "../application";
+import {BaseIoService} from "./base-io-service";
 
-export class DataIoService {
+export class DataIoService extends BaseIoService {
   
-  constructor(private app:Application) {}
+  constructor(app:Application) {
+    super(app, "data");
+  }
 
-  public load():any[] {
-    let filePath:string = path.join(this.app.dataDir, `${this.app.currentSheetName}.json`);
-    if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath).toString());
-    } else {
-      return [];
-    }
-  };
-
-  public save(data:any[]):void {
-    fs.writeFileSync(path.join(this.app.dataDir, `${this.app.currentSheetName}.json`), JSON.stringify(data, null, "  "));
-  };
-
+  public load(sheetName:string):any[] {
+    return super.load(sheetName);
+  }
+  
+  public save(sheetName:string, data:any[]) {
+    super.save(sheetName, data);
+  }
+  
 }
