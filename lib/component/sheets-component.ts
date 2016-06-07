@@ -27,10 +27,11 @@ export class SheetsComponent {
   }
 
   private onChange = (event:JQueryEventObject) => {
-    let sheetName:string = event.target.getAttribute("sheet");
+    let sheetName:string = event ? event.target.getAttribute("sheet") : "";
     this.app.spreadsheetComponent.changeSheet(sheetName);
     this.$sheets.find(`li.list-group-item`).removeClass("list-group-item-info");
-    this.$sheets.find(`li[sheet=${sheetName}]`).addClass("list-group-item-info");
+    if (sheetName)
+      this.$sheets.find(`li[sheet=${sheetName}]`).addClass("list-group-item-info");
   };
 
   private onAdd = (event:JQueryEventObject) => {
@@ -43,6 +44,7 @@ export class SheetsComponent {
 
   private onDelete = (event:JQueryEventObject) => {
     let sheetName:string = this.app.currentSheetName;
+    this.onChange(null);
     this.app.sheetIoService.remove(sheetName);
     this.reloadSheetList();
     event.stopPropagation();
