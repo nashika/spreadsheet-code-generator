@@ -1,6 +1,8 @@
 {
   "name": "spreadsheet-code-generator",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
+  },
   "globalDependencies": {
     "github-electron": "registry:dt/github-electron#1.2.1+20160602155650",
     "handsontable": "registry:dt/handsontable#0.24.3+20160514172927",
