@@ -1,6 +1,6 @@
 import {IDefinitionColumn, Application} from "../application";
 
-export class ColumnEditor {
+export class ColumnComponent {
   
   constructor(private app:Application) {}
 

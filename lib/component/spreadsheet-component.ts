@@ -2,18 +2,20 @@ import * as path from "path";
 
 import {Application, IDefinitionColumn} from "../application";
 
-export class Spreadsheet {
+export class SpreadsheetComponent {
 
+  private container:Element;
   private hot:ht.Methods;
 
   constructor(private app:Application) {
+    this.container = document.getElementById('spreadsheet');
   }
 
   get isLoaded():boolean {
     return this.hot != null;
   }
 
-  get jsonData():any[] {
+  private get jsonData():any[] {
     let records = this.hot.getData();
     let results:any[] = [];
     for (let record of records) {
@@ -30,9 +32,17 @@ export class Spreadsheet {
     return results;
   }
 
-  public changeDefinition(data:any[]) {
-    if (this.hot) this.hot.destroy();
-    this.hot = new Handsontable(this.app.container, {
+  public changeSheet(definitionName:string):void {
+    if (this.hot) {
+      this.app.dataIoService.save(this.jsonData);
+      this.hot.destroy();
+    }
+
+    this.app.currentDefinitionName = definitionName;
+    this.app.currentDefinition = require(path.join(this.app.definitionDir, `${this.app.currentDefinitionName}.json`));
+
+    let data:any[] = this.app.dataIoService.load();
+    this.hot = new Handsontable(this.container, {
       data: data,
       columns: this.app.currentDefinition.columns,
       rowHeaders: true,
@@ -46,7 +56,7 @@ export class Spreadsheet {
 
   private onAfterSelection = (r:number, c:number, r2:number, c2:number):void => {
     if (r == 0 && r2 == this.hot.countRows() - 1) {
-      this.app.columnEditor.selectColumn(c);
+      this.app.columnComponent.selectColumn(c);
     }
   };
 
