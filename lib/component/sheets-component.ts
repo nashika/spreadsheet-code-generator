@@ -1,14 +1,14 @@
 import Component from "vue-class-component";
 
+import {BaseComponent} from "./base-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("sheets"),
   props: ["sheetNames", "currentSheetName"],
 })
-export class SheetsComponent {
+export class SheetsComponent extends BaseComponent {
 
-  $root:any;
   currentSheetName:string;
   newName:string;
 

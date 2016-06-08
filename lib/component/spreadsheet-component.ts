@@ -1,5 +1,6 @@
 import Component from "vue-class-component";
 
+import {BaseComponent} from "./base-component";
 import {IColumnDefinition, ISheetDefinition} from "./app-component";
 import {templateLoader} from "./template-loader";
 
@@ -13,22 +14,17 @@ import {templateLoader} from "./template-loader";
     "currentSheetDefinition": "watchCurrentSheetDefinition",
   }
 })
-export class SpreadsheetComponent {
+export class SpreadsheetComponent extends BaseComponent {
 
-  hot:ht.Methods;
   currentSheetName:string;
   currentSheetDefinition:ISheetDefinition;
-  $root:any;
-  $el:any;
+
+  hot:ht.Methods;
 
   data() {
     return {
       hot: false,
     }
-  }
-
-  isLoaded():boolean {
-    return this.hot != null;
   }
 
   getJsonData():any[] {
@@ -57,7 +53,7 @@ export class SpreadsheetComponent {
   onBeforeChangeSheet(sheetName:string):void {
     let beforeSheetName = this.currentSheetName;
     if (this.hot) {
-      this.$root.services.dataIo.save(beforeSheetName, this.getJsonData());
+      this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
       this.hot.destroy();
       this.hot = null;
     }
@@ -66,7 +62,7 @@ export class SpreadsheetComponent {
 
   watchCurrentSheetDefinition():void {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
-    let data:any[] = this.$root.services.dataIo.load(this.currentSheetName);
+    let data:any[] = this.$root.$data.services.dataIo.load(this.currentSheetName);
     this.hot = new Handsontable(container, {
       data: data,
       columns: this.currentSheetDefinition.columns,

@@ -2,6 +2,7 @@ import * as path from "path";
 
 import Component from "vue-class-component";
 
+import {BaseComponent, IRootVue} from "./base-component";
 import {ColumnComponent} from "./column-component";
 import {SheetsComponent} from "./sheets-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
@@ -9,7 +10,7 @@ import {DataIoService} from "../service/data-io-service";
 import {SheetIoService} from "../service/sheet-io-service";
 import {templateLoader} from "./template-loader";
 
-export interface ISheetDefinition {
+export interface ISheetDefinition{
   columns:Array<IColumnDefinition>;
   colHeaders:Array<string>;
 }
@@ -31,11 +32,16 @@ export interface IColumnDefinition {
     "change-sheet": "onChangeSheet",
   },
 })
-export class App {
+export class App extends BaseComponent {
 
+  saveBaseDir:string;
   currentSheetName:string;
-  currentSheetDefinition:any;
-  services:any;
+  currentSheetDefinition:ISheetDefinition;
+  sheetNames:string[];
+  services:{
+    sheetIo: SheetIoService,
+    dataIo: DataIoService,
+  };
 
   data():any {
     return {
@@ -58,7 +64,7 @@ export class App {
 
 }
 
-let app = new (<any>App)({el: "#app"});
+let app:IRootVue = new (<any>App)({el: "#app"});
 
-app.$data.services.sheetIo = new SheetIoService(app);
-app.$data.services.dataIo = new DataIoService(app);
+app.services.sheetIo = new SheetIoService(app);
+app.services.dataIo = new DataIoService(app);
