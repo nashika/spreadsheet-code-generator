@@ -4,7 +4,7 @@ let win:Electron.BrowserWindow;
 
 function createWindow() {
   win = new electron.BrowserWindow({width: 1200, height: 800});
-  win.loadURL(`file://${__dirname}/view/index.html`);
+  win.loadURL(`file://${__dirname}/index.html`);
   win.webContents.openDevTools();
   win.on('closed', () => {
     win = null;
