@@ -35,6 +35,13 @@ let app = new Vue({
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
   },
+  events: {
+    "change-sheet": function (sheetName:string):void {
+      this.currentSheetName = sheetName;
+      if (!sheetName) return;
+      this.currentSheetDefinition = this.services.sheetIo.load(sheetName);
+    },
+  },
 });
 
 app.$data.services.sheetIo = new SheetIoService(app);

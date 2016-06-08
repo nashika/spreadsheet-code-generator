@@ -8,7 +8,7 @@ export var SheetsComponent = Vue.extend({
   }},
   methods: {
     onSelect: function (sheetName:string):void {
-      this.$root.$broadcast("change-sheet", sheetName);
+      this.$root.$broadcast("before-change-sheet", sheetName);
     },
     onAdd: function () {
       let parentSheetName:string = this.currentSheetName;

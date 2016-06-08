@@ -34,19 +34,20 @@ export var SpreadsheetComponent = Vue.extend({
     },
   },
   events: {
-    "change-sheet": function (sheetName:string):void {
-      let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
+    "before-change-sheet": function (sheetName:string):void {
       let beforeSheetName = this.currentSheetName;
       if (this.hot) {
         this.$root.services.dataIo.save(beforeSheetName, this.getJsonData());
         this.hot.destroy();
         this.hot = null;
       }
-      this.currentSheetName = sheetName;
-      if (!sheetName) return;
-      this.currentSheetDefinition = this.$root.services.sheetIo.load(sheetName);
-
-      let data:any[] = this.$root.services.dataIo.load(sheetName);
+      this.$root.$emit("change-sheet", sheetName);
+    },
+  },
+  watch: {
+    "currentSheetDefinition": function ():void {
+      let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
+      let data:any[] = this.$root.services.dataIo.load(this.currentSheetName);
       this.hot = new Handsontable(container, {
         data: data,
         columns: this.currentSheetDefinition.columns,
