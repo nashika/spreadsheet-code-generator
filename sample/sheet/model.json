@@ -3,15 +3,29 @@
   "columns": [
     {
       "data": "model",
-      "type": "text"
+      "type": "text",
+      "width": "120"
     },
     {
       "data": "extends",
-      "type": "text"
+      "type": "text",
+      "width": "120"
+    },
+    {
+      "data": "label",
+      "type": "text",
+      "width": "80"
+    },
+    {
+      "data": "format",
+      "type": "text",
+      "width": "120"
     }
   ],
   "colHeaders": [
-    "model",
-    "extends"
+    "Model",
+    "Extends",
+    "Label",
+    "Format"
   ]
 }
