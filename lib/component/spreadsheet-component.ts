@@ -49,10 +49,12 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
-  onBeforeChangeSheet(sheetName:string):void {
+  onBeforeChangeSheet(sheetName:string, saveFlag:boolean = true):void {
     if (this.hot) {
-      let beforeSheetName = this.currentSheetDefinition.name;
-      this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
+      if (saveFlag) {
+        let beforeSheetName = this.currentSheetDefinition.name;
+        this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
+      }
       this.hot.destroy();
       this.hot = null;
     }
@@ -61,7 +63,9 @@ export class SpreadsheetComponent extends BaseComponent {
 
   watchCurrentSheetDefinition():void {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
-    let data:any[] = this.$root.$data.services.dataIo.load(this.currentSheetDefinition.name);
+    let sheetName:string = this.currentSheetDefinition && this.currentSheetDefinition.name;
+    if (!sheetName) return;
+    let data:any[] = this.$root.$data.services.dataIo.load(sheetName);
     this.hot = new Handsontable(container, {
       data: data,
       columns: this.currentSheetDefinition.columns,

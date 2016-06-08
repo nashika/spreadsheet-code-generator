@@ -1,10 +1,11 @@
 import Vue = vuejs.Vue;
 
 import {BaseIoService} from "./base-io-service";
+import {AppComponent} from "../component/app-component";
 
 export class DataIoService extends BaseIoService {
 
-  constructor(app:Vue) {
+  constructor(app:AppComponent) {
     super(app, "data");
   }
 

@@ -33,7 +33,7 @@ export interface IColumnDefinition {
     "change-sheet": "onChangeSheet",
   },
 })
-export class App extends BaseComponent {
+export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
   currentSheetDefinition:ISheetDefinition;
@@ -63,7 +63,7 @@ export class App extends BaseComponent {
 
 }
 
-let app:IRootVue = new (<any>App)({el: "#app"});
+let app:AppComponent = new (<any>AppComponent)({el: "#app"});
 
 app.services.sheetIo = new SheetIoService(app);
 app.services.dataIo = new DataIoService(app);

@@ -20,11 +20,29 @@
       "data": "width",
       "type": "numeric",
       "width": 40
+    },
+    {
+      "data": "data3",
+      "type": "text",
+      "width": 80
+    },
+    {
+      "data": "data4",
+      "type": "text",
+      "width": 80
+    },
+    {
+      "data": "data5",
+      "type": "text",
+      "width": 80
     }
   ],
   "colHeaders": [
     "model",
     "field",
-    "extends"
+    "extends",
+    "Col3",
+    "Col4",
+    "Col5"
   ]
 }

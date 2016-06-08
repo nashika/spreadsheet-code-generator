@@ -4,8 +4,10 @@ mixin form-group(title)
     div(class="col-xs-8")
       block
 
-div.panel.panel-default
-  div.panel-heading Column
+div.panel.panel-default("v-if"="currentSheetDefinition")
+  div.panel-heading Manage Column
+  div.panel-body
+    button.btn.btn-primary.btn-block("v-on:click"="add") Add
   div.panel-body("v-if"="columnDefinition")
     div.form-horizontal
       +form-group("Header")

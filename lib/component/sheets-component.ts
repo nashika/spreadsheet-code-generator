@@ -24,14 +24,11 @@ export class SheetsComponent extends BaseComponent {
   }
 
   onAdd():void {
-    let parentSheetName:string = this.currentSheetDefinition.name;
-    let newSheetName:string = this.newName;
-    this.$root.services.sheetIo.add(newSheetName, parentSheetName);
+    this.$root.services.sheetIo.add(this.newName);
   }
 
   onDelete():void {
-    let sheetName:string = this.currentSheetDefinition.name;
-    this.$root.services.sheetIo.remove(sheetName);
+    this.$root.services.sheetIo.remove();
   }
 
 }

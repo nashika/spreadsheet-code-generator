@@ -10,6 +10,9 @@ import {templateLoader} from "./template-loader";
   events: {
     "select-column-header": "onSelectColumnHeader",
   },
+  watch: {
+    "currentSheetDefinition": "watchCurrentSheetDefinition",
+  }
 })
 export class ColumnComponent extends BaseComponent {
 
@@ -22,6 +25,15 @@ export class ColumnComponent extends BaseComponent {
       columnDefinition: null,
       colHeader: null,
     }
+  }
+
+  add():void {
+    this.$root.services.sheetIo.addColumn();
+  }
+
+  watchCurrentSheetDefinition():void {
+    this.columnDefinition = null;
+    this.colHeader = null;
   }
 
   onSelectColumnHeader(index:number):void {
