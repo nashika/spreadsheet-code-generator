@@ -1,14 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import {app} from "../component/app-component";
+import Vue = vuejs.Vue;
 
 export class BaseIoService {
 
   protected saveDir:string;
 
-  constructor(dirName:string) {
-    this.saveDir = path.join(app.$data.saveBaseDir, dirName);
+  constructor(protected app:Vue, dirName:string) {
+    this.saveDir = path.join(this.app.$data.saveBaseDir, dirName);
   }
 
   protected filePath(sheetName:string):string {

@@ -17,7 +17,7 @@ export interface IColumnDefinition {
   width:number;
 }
 
-export var app = new Vue({
+let app = new Vue({
   el: "#app",
   template: templateLoader("app"),
   data: {
@@ -37,5 +37,5 @@ export var app = new Vue({
   },
 });
 
-app.$data.services.sheetIo = new SheetIoService();
-app.$data.services.dataIo = new DataIoService();
+app.$data.services.sheetIo = new SheetIoService(app);
+app.$data.services.dataIo = new DataIoService(app);

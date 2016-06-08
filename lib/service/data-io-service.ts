@@ -1,9 +1,11 @@
+import Vue = vuejs.Vue;
+
 import {BaseIoService} from "./base-io-service";
 
 export class DataIoService extends BaseIoService {
 
-  constructor() {
-    super("data");
+  constructor(app:Vue) {
+    super(app, "data");
   }
 
   public load(sheetName:string):any[] {
