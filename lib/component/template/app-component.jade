@@ -1,6 +1,6 @@
 div.row
   div#menu-area.col-xs-3
-    sheets-component("v-ref:sheets", "v-bind:sheet-names"="sheetNames")
-    column-component("v-ref:column")
+    sheets-component("v-bind:sheet-names"="sheetNames", "v-bind:current-sheet-name"="currentSheetName")
+    column-component("v-bind:current-sheet-definition"="currentSheetDefinition")
   div#main-area.col-xs-9
-    spreadsheet-component("v-ref:spreadsheet")
+    spreadsheet-component("v-bind:current-sheet-name"="currentSheetName", "v-bind:current-sheet-definition.sync"="currentSheetDefinition")
