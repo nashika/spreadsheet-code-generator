@@ -1,16 +1,17 @@
-import {IColumnDefinition, Application} from "../application";
+import {IColumnDefinition} from "../application";
+import {templateLoader} from "./template-loader";
 
-export class ColumnComponent {
-  
-  constructor(private app:Application) {}
+export var ColumnComponent = Vue.extend({
+  template: templateLoader("column"),
+  methods: {
+    selectColumn: function (index:number):void {
+      let columnDefinition:IColumnDefinition = this.$root.currentSheetDefinition.columns[index];
+      let colHeader:string = this.$root.currentSheetDefinition.colHeaders[index];
+      $("#column-header").val(colHeader);
+      $("#column-data").val(columnDefinition.data);
+      $("#column-type").val(columnDefinition.type);
+      $("#column-width").val(columnDefinition.width);
+    },
+  },
 
-  public selectColumn = (index:number):void => {
-    let columnDefinition:IColumnDefinition = this.app.currentSheetDefinition.columns[index];
-    let colHeader:string = this.app.currentSheetDefinition.colHeaders[index];
-    $("#column-header").val(colHeader);
-    $("#column-data").val(columnDefinition.data);
-    $("#column-type").val(columnDefinition.type);
-    $("#column-width").val(columnDefinition.width);
-  };
-
-}
+});

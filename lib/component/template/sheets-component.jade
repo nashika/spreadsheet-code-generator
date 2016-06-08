@@ -1,0 +1,12 @@
+div.panel.panel-default
+  div.panel-heading Sheets {{console.log(sheetNames)}}
+  ul.list-group
+    li.list-group-item("v-for"="sheetName in sheetNames", "v-on:click"="onSelect(sheetName)") {{sheetName}}
+  div.panel-footer
+    div.row
+      div.col-md-6
+        input.form-control(type="text", "v-model"="newName")
+      div.col-md-3
+        button.btn.btn-primary.btn-block("v-on:click"="onAdd") Add
+      div.col-md-3
+        button.btn.btn-danger.btn-block("v-on:click"="onDelete") Delete

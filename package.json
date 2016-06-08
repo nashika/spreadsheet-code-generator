@@ -29,6 +29,7 @@
     "bootstrap": "^3.3.6",
     "handsontable": "^0.25.1",
     "jquery": "^2.2.4",
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "vue": "^1.0.24"
   }
 }

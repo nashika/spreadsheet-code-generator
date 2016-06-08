@@ -2,15 +2,13 @@ import * as fs from "fs";
 
 import _ = require("lodash");
 
-import {Application, ISheetDefinition} from "../application";
+import {ISheetDefinition, app} from "../application";
 import {BaseIoService} from "./base-io-service";
 
 export class SheetIoService extends BaseIoService {
 
-  public sheetNames:string[];
-
-  constructor(app:Application) {
-    super(app, "sheet");
+  constructor() {
+    super("sheet");
     this.reload();
   }
 
@@ -27,7 +25,7 @@ export class SheetIoService extends BaseIoService {
       alert(`Sheet name is empty.`);
       return;
     }
-    if (_.includes(this.sheetNames, sheetName)) {
+    if (_.includes(app.$data.sheetNames, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return;
     }
@@ -48,14 +46,14 @@ export class SheetIoService extends BaseIoService {
       return;
     }
     super.remove(sheetName);
-    this.app.dataIoService.remove(sheetName);
+    app.$data.services.dataIo.remove(sheetName);
     this.reload();
   }
 
   private reload():void {
     let sheetFiles:string[] = fs.readdirSync(this.saveDir);
-    this.sheetNames = [];
-    for (let sheetFile of sheetFiles) this.sheetNames.push(sheetFile.replace(/\.json$/, ""));
+    while (app.$data.sheetNames.length > 0) app.$data.sheetNames.pop();
+    for (let sheetFile of sheetFiles) app.$data.sheetNames.push(sheetFile.replace(/\.json$/, ""));
   }
 
 }

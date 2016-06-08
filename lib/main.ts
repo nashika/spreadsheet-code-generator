@@ -1,3 +1,1 @@
-import {Application} from "./application";
-
-let app = new Application();
+import "./application";

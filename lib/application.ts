@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as path from "path";
 import {ColumnComponent} from "./component/column-component";
 import {SheetsComponent} from "./component/sheets-component";
@@ -17,31 +16,24 @@ export interface IColumnDefinition {
   width:number;
 }
 
-export class Application {
+export var app = new Vue({
+  el: "#app",
+  data: {
+    saveBaseDir: path.join(__dirname, "../sample"),
+    currentSheetName: "",
+    currentSheetDefinition: null,
+    sheetNames: [],
+    services: {
+      sheetIo: null,
+      dataIo: null,
+    },
+  },
+  components: {
+    "sheets-component": SheetsComponent,
+    "column-component": ColumnComponent,
+    "spreadsheet-component": SpreadsheetComponent,
+  },
+});
 
-  // common data
-  public saveBaseDir:string;
-  public currentSheetName:string;
-  public currentSheetDefinition:ISheetDefinition;
-
-  // services
-  public sheetIoService:SheetIoService;
-  public dataIoService:DataIoService;
-
-  // components
-  public sheetsComponent:SheetsComponent;
-  public columnComponent:ColumnComponent;
-  public spreadsheetComponent:SpreadsheetComponent;
-
-  constructor() {
-    this.saveBaseDir = path.join(__dirname, "../sample");
-
-    this.sheetIoService = new SheetIoService(this);
-    this.dataIoService = new DataIoService(this);
-
-    this.sheetsComponent = new SheetsComponent(this);
-    this.columnComponent = new ColumnComponent(this);
-    this.spreadsheetComponent = new SpreadsheetComponent(this);
-  }
-
-}
+app.$data.services.sheetIo = new SheetIoService();
+app.$data.services.dataIo = new DataIoService();

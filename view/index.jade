@@ -1,11 +1,5 @@
 doctype html
 
-mixin form-group(title)
-  div.form-group
-    label.control-label(class="col-xs-4")= title
-    div(class="col-xs-8")
-      block
-
 html
   head
     meta(charset="utf-8")
@@ -20,37 +14,15 @@ html
         background-color: #E7E8EF !important;
       }
   body
-    div.row
+    div#app.row
       div#menu-area.col-xs-3
-        div.panel.panel-default
-          div.panel-heading Sheets
-          ul#sheets.list-group
-          div.panel-footer
-            div.row
-              div.col-md-6
-                input.form-control#sheet-add-name(type="text")
-              div.col-md-3
-                button#sheet-add.btn.btn-primary.btn-block Add
-              div.col-md-3
-                button#sheet-delete.btn.btn-danger.btn-block Delete
-        div.panel.panel-default
-          div.panel-heading Column
-          div.panel-body
-            div.form-horizontal
-              +form-group("Header")
-                input#column-header.form-control(type="text")
-              +form-group("Data")
-                input#column-data.form-control(type="text")
-              +form-group("Type")
-                select#column-type.form-control
-                  option(value="text") Text
-                  option(value="numeric") Numeric
-              +form-group("Width")
-                input#column-width.form-control(type="number")
+        sheets-component("v-ref:sheets", "v-bind:sheet-names"="sheetNames")
+        column-component("v-ref:column")
       div#main-area.col-xs-9
-            div#spreadsheet
+        spreadsheet-component("v-ref:spreadsheet")
     script.
       window.jQuery = window.$ = require("../node_modules/jquery/dist/jquery.min");
       require("../node_modules/bootstrap/dist/js/bootstrap.min");
+      var Vue = require("../node_modules/vue/dist/vue.min");
       var Handsontable = require("handsontable");
       require("../lib/main");

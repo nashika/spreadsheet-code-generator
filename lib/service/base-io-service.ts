@@ -1,14 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import {Application} from "../application";
+import {app} from "../application";
 
 export class BaseIoService {
 
   protected saveDir:string;
 
-  constructor(protected app:Application, dirName:string) {
-    this.saveDir = path.join(this.app.saveBaseDir, dirName);
+  constructor(dirName:string) {
+    this.saveDir = path.join(app.$data.saveBaseDir, dirName);
   }
 
   protected filePath(sheetName:string):string {
@@ -22,14 +22,14 @@ export class BaseIoService {
     } else {
       return null;
     }
-  };
+  }
 
   public save(sheetName:string, data:any):void {
     fs.writeFileSync(this.filePath(sheetName), JSON.stringify(data, null, "  "));
-  };
+  }
 
   public remove(sheetName:string):void {
     fs.unlinkSync(this.filePath(sheetName));
-}
+  }
 
 }
