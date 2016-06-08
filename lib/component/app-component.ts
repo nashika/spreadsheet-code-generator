@@ -1,9 +1,10 @@
 import * as path from "path";
-import {ColumnComponent} from "./component/column-component";
-import {SheetsComponent} from "./component/sheets-component";
-import {SpreadsheetComponent} from "./component/spreadsheet-component";
-import {DataIoService} from "./service/data-io-service";
-import {SheetIoService} from "./service/sheet-io-service";
+import {ColumnComponent} from "./column-component";
+import {SheetsComponent} from "./sheets-component";
+import {SpreadsheetComponent} from "./spreadsheet-component";
+import {DataIoService} from "../service/data-io-service";
+import {SheetIoService} from "../service/sheet-io-service";
+import {templateLoader} from "./template-loader";
 
 export interface ISheetDefinition {
   columns:Array<IColumnDefinition>;
@@ -18,8 +19,9 @@ export interface IColumnDefinition {
 
 export var app = new Vue({
   el: "#app",
+  template: templateLoader("app"),
   data: {
-    saveBaseDir: path.join(__dirname, "../sample"),
+    saveBaseDir: path.join(__dirname, "../../sample"),
     currentSheetName: "",
     currentSheetDefinition: null,
     sheetNames: [],

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import {app} from "../application";
+import {app} from "../component/app-component";
 
 export class BaseIoService {
 

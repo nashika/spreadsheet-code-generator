@@ -1,4 +1,4 @@
-import {IColumnDefinition} from "../application";
+import {IColumnDefinition} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 export var ColumnComponent = Vue.extend({

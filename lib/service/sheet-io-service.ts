@@ -2,7 +2,7 @@ import * as fs from "fs";
 
 import _ = require("lodash");
 
-import {ISheetDefinition, app} from "../application";
+import {ISheetDefinition, app} from "../component/app-component";
 import {BaseIoService} from "./base-io-service";
 
 export class SheetIoService extends BaseIoService {
