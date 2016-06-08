@@ -9,12 +9,12 @@ div.panel.panel-default
   div.panel-body
     div.form-horizontal
       +form-group("Header")
-        input#column-header.form-control(type="text")
+        input#column-header.form-control(type="text", "v-model"="colHeader")
       +form-group("Data")
-        input#column-data.form-control(type="text")
+        input#column-data.form-control(type="text", "v-model"="columnDefinition.data")
       +form-group("Type")
-        select#column-type.form-control
+        select#column-type.form-control("v-model"="columnDefinition.type")
           option(value="text") Text
           option(value="numeric") Numeric
       +form-group("Width")
-        input#column-width.form-control(type="number")
+        input#column-width.form-control(type="number", "v-model"="columnDefinition.width")

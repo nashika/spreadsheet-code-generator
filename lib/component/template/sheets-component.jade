@@ -1,5 +1,5 @@
 div.panel.panel-default
-  div.panel-heading Sheets {{console.log(sheetNames)}}
+  div.panel-heading Sheets
   ul.list-group
     li.list-group-item("v-for"="sheetName in sheetNames", "v-on:click"="onSelect(sheetName)") {{sheetName}}
   div.panel-footer

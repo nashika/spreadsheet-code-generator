@@ -1,4 +1,7 @@
 import * as path from "path";
+
+import Component from "vue-class-component";
+
 import {ColumnComponent} from "./column-component";
 import {SheetsComponent} from "./sheets-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
@@ -17,32 +20,45 @@ export interface IColumnDefinition {
   width:number;
 }
 
-let app = new Vue({
-  el: "#app",
+@Component({
   template: templateLoader("app"),
-  data: {
-    saveBaseDir: path.join(__dirname, "../../sample"),
-    currentSheetName: "",
-    currentSheetDefinition: null,
-    sheetNames: [],
-    services: {
-      sheetIo: null,
-      dataIo: null,
-    },
-  },
   components: {
     "sheets-component": SheetsComponent,
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
   },
   events: {
-    "change-sheet": function (sheetName:string):void {
-      this.currentSheetName = sheetName;
-      if (!sheetName) return;
-      this.currentSheetDefinition = this.services.sheetIo.load(sheetName);
-    },
+    "change-sheet": "onChangeSheet",
   },
-});
+})
+export class App {
+
+  currentSheetName:string;
+  currentSheetDefinition:any;
+  services:any;
+
+  data():any {
+    return {
+      saveBaseDir: path.join(__dirname, "../../sample"),
+      currentSheetName: "",
+      currentSheetDefinition: null,
+      sheetNames: [],
+      services: {
+        sheetIo: null,
+        dataIo: null,
+      },
+    };
+  }
+
+  onChangeSheet(sheetName:string):void {
+    this.currentSheetName = sheetName;
+    if (!sheetName) return;
+    this.currentSheetDefinition = this.services.sheetIo.load(sheetName);
+  }
+
+}
+
+let app = new (<any>App)({el: "#app"});
 
 app.$data.services.sheetIo = new SheetIoService(app);
 app.$data.services.dataIo = new DataIoService(app);
