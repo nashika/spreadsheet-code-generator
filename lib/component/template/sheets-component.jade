@@ -1,7 +1,8 @@
 div.panel.panel-default
   div.panel-heading Sheets
   ul.list-group
-    li.list-group-item("v-for"="sheetName in sheetNames", "v-on:click"="onSelect(sheetName)") {{sheetName}}
+    li.list-group-item("v-for"="sheetName in sheetNames", "v-on:click"="onSelect(sheetName)",
+    "v-bind:class"="{'list-group-item-info': sheetName == (currentSheetDefinition && currentSheetDefinition.name)}") {{sheetName}}
   div.panel-footer
     div.row
       div.col-md-6
