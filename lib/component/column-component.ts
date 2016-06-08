@@ -12,7 +12,7 @@ import {templateLoader} from "./template-loader";
   },
 })
 export class ColumnComponent extends BaseComponent {
-  
+
   currentSheetDefinition:ISheetDefinition;
   columnDefinition:IColumnDefinition;
   colHeader:string;

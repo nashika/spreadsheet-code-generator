@@ -1,15 +1,16 @@
 import Component from "vue-class-component";
 
 import {BaseComponent} from "./base-component";
+import {ISheetDefinition} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("sheets"),
-  props: ["sheetNames", "currentSheetName"],
+  props: ["sheetNames", "currentSheetDefinition"],
 })
 export class SheetsComponent extends BaseComponent {
 
-  currentSheetName:string;
+  currentSheetDefinition:ISheetDefinition;
   newName:string;
 
   data() {
@@ -23,15 +24,13 @@ export class SheetsComponent extends BaseComponent {
   }
 
   onAdd():void {
-    let parentSheetName:string = this.currentSheetName;
+    let parentSheetName:string = this.currentSheetDefinition.name;
     let newSheetName:string = this.newName;
     this.$root.services.sheetIo.add(newSheetName, parentSheetName);
-    //this.reloadSheetList();
   }
 
   onDelete():void {
-    let sheetName:string = this.currentSheetName;
-    //this.onChange(null);
+    let sheetName:string = this.currentSheetDefinition.name;
     this.$root.services.sheetIo.remove(sheetName);
   }
 

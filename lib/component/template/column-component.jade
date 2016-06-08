@@ -6,7 +6,7 @@ mixin form-group(title)
 
 div.panel.panel-default
   div.panel-heading Column
-  div.panel-body
+  div.panel-body("v-if"="columnDefinition")
     div.form-horizontal
       +form-group("Header")
         input#column-header.form-control(type="text", "v-model"="colHeader")

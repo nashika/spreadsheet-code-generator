@@ -6,7 +6,7 @@ import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("spreadsheet"),
-  props: ["currentSheetName", "currentSheetDefinition"],
+  props: ["currentSheetDefinition"],
   events: {
     "before-change-sheet": "onBeforeChangeSheet",
   },
@@ -16,7 +16,6 @@ import {templateLoader} from "./template-loader";
 })
 export class SpreadsheetComponent extends BaseComponent {
 
-  currentSheetName:string;
   currentSheetDefinition:ISheetDefinition;
 
   hot:ht.Methods;
@@ -51,8 +50,8 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   onBeforeChangeSheet(sheetName:string):void {
-    let beforeSheetName = this.currentSheetName;
     if (this.hot) {
+      let beforeSheetName = this.currentSheetDefinition.name;
       this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
       this.hot.destroy();
       this.hot = null;
@@ -62,7 +61,7 @@ export class SpreadsheetComponent extends BaseComponent {
 
   watchCurrentSheetDefinition():void {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
-    let data:any[] = this.$root.$data.services.dataIo.load(this.currentSheetName);
+    let data:any[] = this.$root.$data.services.dataIo.load(this.currentSheetDefinition.name);
     this.hot = new Handsontable(container, {
       data: data,
       columns: this.currentSheetDefinition.columns,

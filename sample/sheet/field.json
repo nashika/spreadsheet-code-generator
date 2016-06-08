@@ -1,4 +1,5 @@
 {
+  "name": "field",
   "columns": [
     {
       "data": "model",

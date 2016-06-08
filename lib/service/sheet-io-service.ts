@@ -31,6 +31,7 @@ export class SheetIoService extends BaseIoService {
       return;
     }
     let emptyData:ISheetDefinition = {
+      name: sheetName,
       columns: [],
       colHeaders: [],
     };

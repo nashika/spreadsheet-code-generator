@@ -10,7 +10,8 @@ import {DataIoService} from "../service/data-io-service";
 import {SheetIoService} from "../service/sheet-io-service";
 import {templateLoader} from "./template-loader";
 
-export interface ISheetDefinition{
+export interface ISheetDefinition {
+  name:string;
   columns:Array<IColumnDefinition>;
   colHeaders:Array<string>;
 }
@@ -35,7 +36,6 @@ export interface IColumnDefinition {
 export class App extends BaseComponent {
 
   saveBaseDir:string;
-  currentSheetName:string;
   currentSheetDefinition:ISheetDefinition;
   sheetNames:string[];
   services:{
@@ -57,7 +57,6 @@ export class App extends BaseComponent {
   }
 
   onChangeSheet(sheetName:string):void {
-    this.currentSheetName = sheetName;
     if (!sheetName) return;
     this.currentSheetDefinition = this.services.sheetIo.load(sheetName);
   }
