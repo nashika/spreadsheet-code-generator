@@ -17,6 +17,8 @@ import {templateLoader} from "./template-loader";
 export class ColumnComponent extends BaseComponent {
 
   currentSheetDefinition:ISheetDefinition;
+  
+  columnIndex:number;
   columnDefinition:IColumnDefinition;
   colHeader:string;
 
@@ -30,6 +32,10 @@ export class ColumnComponent extends BaseComponent {
   add():void {
     this.$root.services.sheetIo.addColumn();
   }
+  
+  save():void {
+    this.$root.services.sheetIo.saveColumn(this.columnIndex, this.columnDefinition, this.colHeader);
+  }
 
   watchCurrentSheetDefinition():void {
     this.columnDefinition = null;
@@ -37,6 +43,7 @@ export class ColumnComponent extends BaseComponent {
   }
 
   onSelectColumnHeader(index:number):void {
+    this.columnIndex = index;
     this.columnDefinition = this.currentSheetDefinition.columns[index];
     this.colHeader = this.currentSheetDefinition.colHeaders[index];
   }

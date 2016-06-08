@@ -7,7 +7,7 @@ mixin form-group(title)
 div.panel.panel-default("v-if"="currentSheetDefinition")
   div.panel-heading Manage Column
   div.panel-body
-    button.btn.btn-primary.btn-block("v-on:click"="add") Add
+    button.btn.btn-success.btn-block("v-on:click"="add") Add
   div.panel-body("v-if"="columnDefinition")
     div.form-horizontal
       +form-group("Header")
@@ -20,3 +20,4 @@ div.panel.panel-default("v-if"="currentSheetDefinition")
           option(value="numeric") Numeric
       +form-group("Width")
         input#column-width.form-control(type="number", "v-model"="columnDefinition.width")
+      button.btn.btn-primary.btn-block("v-on:click"="save") Save

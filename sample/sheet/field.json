@@ -9,7 +9,7 @@
     {
       "data": "field",
       "type": "text",
-      "width": 80
+      "width": "80"
     },
     {
       "data": "extends",
@@ -35,6 +35,16 @@
       "data": "data5",
       "type": "text",
       "width": 80
+    },
+    {
+      "data": "data6",
+      "type": "text",
+      "width": 80
+    },
+    {
+      "data": "data8",
+      "type": "text",
+      "width": 80
     }
   ],
   "colHeaders": [
@@ -43,6 +53,9 @@
     "extends",
     "Col3",
     "Col4",
-    "Col5"
+    "Col5",
+    "Col6",
+    "AAA",
+    "Col8"
   ]
 }

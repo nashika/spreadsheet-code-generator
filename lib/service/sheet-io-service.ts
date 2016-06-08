@@ -3,7 +3,7 @@ import * as fs from "fs";
 import _ = require("lodash");
 import Vue = vuejs.Vue;
 
-import {ISheetDefinition, AppComponent} from "../component/app-component";
+import {ISheetDefinition, AppComponent, IColumnDefinition} from "../component/app-component";
 import {BaseIoService} from "./base-io-service";
 
 export class SheetIoService extends BaseIoService {
@@ -56,7 +56,7 @@ export class SheetIoService extends BaseIoService {
     super.remove(sheetName);
     this.app.services.dataIo.remove(sheetName);
     this.app.currentSheetDefinition = null;
-    this.reload();
+    this.reload(false);
   }
 
   public addColumn():void {
@@ -71,11 +71,18 @@ export class SheetIoService extends BaseIoService {
     this.reload();
   }
 
-  private reload():void {
+  public saveColumn(index:number, column:IColumnDefinition, colHeader:string):void {
+    this.app.currentSheetDefinition.colHeaders[index] = colHeader;
+    this.app.currentSheetDefinition.columns[index] = column;
+    this.save(this.app.currentSheetDefinition.name, this.app.currentSheetDefinition);
+    this.reload();
+  }
+
+  private reload(saveFlag:boolean = true):void {
     let sheetFiles:string[] = fs.readdirSync(this.saveDir);
     while (this.app.sheetNames.length > 0) this.app.sheetNames.pop();
     for (let sheetFile of sheetFiles) this.app.sheetNames.push(sheetFile.replace(/\.json$/, ""));
-    this.$root.$broadcast("before-change-sheet", this.app.currentSheetDefinition && this.app.currentSheetDefinition.name, false);
+    this.$root.$broadcast("before-change-sheet", this.app.currentSheetDefinition && this.app.currentSheetDefinition.name, saveFlag);
   }
 
 }
