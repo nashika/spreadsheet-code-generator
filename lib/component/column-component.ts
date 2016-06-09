@@ -1,4 +1,5 @@
 import Component from "vue-class-component";
+import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
 import {IColumnDefinition, ISheetDefinition} from "./app-component";
