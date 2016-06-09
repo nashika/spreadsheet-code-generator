@@ -5,7 +5,7 @@ let UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 let webpackConfig:webpack.Configuration = {
   target: "atom",
   entry: {
-    app: "./lib/main",
+    app: "./lib/app",
   },
   output: {
     path: "./dist",
