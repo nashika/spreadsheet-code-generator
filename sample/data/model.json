@@ -1,17 +1,12 @@
 [
-  {},
   {
-    "model": "aaa",
-    "extends": "a"
+    "model": "Product",
+    "extends": "Product"
   },
   {},
   {},
-  {
-    "model": "a"
-  },
   {},
-  {
-    "model": "aa",
-    "extends": "b"
-  }
+  {},
+  {},
+  {}
 ]

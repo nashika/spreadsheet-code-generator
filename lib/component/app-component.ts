@@ -13,10 +13,10 @@ import {templateLoader} from "./template-loader";
 export interface ISheetDefinition {
   name:string;
   columns:Array<IColumnDefinition>;
-  colHeaders:Array<string>;
 }
 
 export interface IColumnDefinition {
+  header:string;
   data:string;
   type:string;
   width:number;

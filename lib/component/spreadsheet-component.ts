@@ -66,11 +66,21 @@ export class SpreadsheetComponent extends BaseComponent {
     let sheetName:string = this.currentSheetDefinition && this.currentSheetDefinition.name;
     if (!sheetName) return;
     let data:any[] = this.$root.$data.services.dataIo.load(sheetName);
+    let colHeaders:string[] = [];
+    let columns:any[] = [];
+    for (let c of this.currentSheetDefinition.columns) {
+      colHeaders.push(c.header);
+      columns.push({
+        data: c.data,
+        type: c.type,
+        width: c.width,
+      });
+    }
     this.hot = new Handsontable(container, {
       data: data,
-      columns: this.currentSheetDefinition.columns,
+      columns: columns,
       rowHeaders: true,
-      colHeaders: this.currentSheetDefinition.colHeaders,
+      colHeaders: colHeaders,
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',

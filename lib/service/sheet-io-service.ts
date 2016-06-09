@@ -38,7 +38,6 @@ export class SheetIoService extends BaseIoService {
     let emptyData:ISheetDefinition = {
       name: sheetName,
       columns: [],
-      colHeaders: [],
     };
     this.save(sheetName, emptyData);
     this.reload();
@@ -60,9 +59,9 @@ export class SheetIoService extends BaseIoService {
   }
 
   public addColumn():void {
-    let no:number = this.app.currentSheetDefinition.colHeaders.length;
-    this.app.currentSheetDefinition.colHeaders.push(`Col${no}`);
+    let no:number = this.app.currentSheetDefinition.columns.length;
     this.app.currentSheetDefinition.columns.push({
+      header: `Col${no}`,
       data: `data${no}`,
       type: "text",
       width: 80,
@@ -71,11 +70,19 @@ export class SheetIoService extends BaseIoService {
     this.reload();
   }
 
-  public saveColumn(index:number, column:IColumnDefinition, colHeader:string):void {
-    this.app.currentSheetDefinition.colHeaders[index] = colHeader;
+  public saveColumn(index:number, column:IColumnDefinition):void {
+    if (this.app.currentSheetDefinition.columns[index].data != column.data
+      && _.find(this.app.currentSheetDefinition.columns, {"data": column.data})) {
+      alert(`data="${column.data}" is already exists.`);
+      return;
+    }
     this.app.currentSheetDefinition.columns[index] = column;
     this.save(this.app.currentSheetDefinition.name, this.app.currentSheetDefinition);
     this.reload();
+  }
+
+  public moveColumn(index:number, right:boolean):void {
+    //this.app.currentSheetDefinition.
   }
 
   private reload(saveFlag:boolean = true):void {

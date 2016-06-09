@@ -11,7 +11,7 @@ div.panel.panel-default("v-if"="currentSheetDefinition")
   div.panel-body("v-if"="columnDefinition")
     form.form-horizontal("v-on:submit.prevent"="save")
       +form-group("Header")
-        input#column-header.form-control(type="text", "v-model"="colHeader")
+        input#column-header.form-control(type="text", "v-model"="columnDefinition.header")
       +form-group("Data")
         input#column-data.form-control(type="text", "v-model"="columnDefinition.data")
       +form-group("Type")
@@ -20,4 +20,9 @@ div.panel.panel-default("v-if"="currentSheetDefinition")
           option(value="numeric") Numeric
       +form-group("Width")
         input#column-width.form-control(type="number", "v-model"="columnDefinition.width")
-      button.btn.btn-primary.btn-block("type"="submit") Save
+      button.btn.btn-primary.btn-block(type="submit") Save
+      div.row
+        div.col-xs-6
+          button.btn.btn-block.btn-warning("v-on:click"="move(true)")
+        div.col-xs-6
+          button.btn.btn-block.btn-warning("v-on:click"="move(false)")

@@ -17,35 +17,35 @@ import {templateLoader} from "./template-loader";
 export class ColumnComponent extends BaseComponent {
 
   currentSheetDefinition:ISheetDefinition;
-  
+
   columnIndex:number;
   columnDefinition:IColumnDefinition;
-  colHeader:string;
 
   data():any {
     return {
       columnDefinition: null,
-      colHeader: null,
     }
   }
 
   add():void {
     this.$root.services.sheetIo.addColumn();
   }
-  
+
   save():void {
-    this.$root.services.sheetIo.saveColumn(this.columnIndex, this.columnDefinition, this.colHeader);
+    this.$root.services.sheetIo.saveColumn(this.columnIndex, this.columnDefinition);
+  }
+
+  move(right:boolean):void {
+    this.$root.services.sheetIo.moveColumn(this.columnIndex, right);
   }
 
   watchCurrentSheetDefinition():void {
     this.columnDefinition = null;
-    this.colHeader = null;
   }
 
   onSelectColumnHeader(index:number):void {
     this.columnIndex = index;
-    this.columnDefinition = this.currentSheetDefinition.columns[index];
-    this.colHeader = this.currentSheetDefinition.colHeaders[index];
+    this.columnDefinition = _.clone(this.currentSheetDefinition.columns[index]);
   }
 
 }

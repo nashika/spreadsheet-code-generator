@@ -4,17 +4,20 @@
     {
       "data": "model",
       "type": "text",
-      "width": "120"
+      "width": "120",
+      "header": "Model"
     },
     {
       "data": "extends",
       "type": "text",
-      "width": "120"
+      "width": "120",
+      "header": "Extends"
     },
     {
       "data": "label",
       "type": "text",
-      "width": "80"
+      "width": "80",
+      "header": "Label"
     },
     {
       "data": "format",
