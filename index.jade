@@ -17,6 +17,6 @@ html
     div#app
     script.
       window.jQuery = window.$ = require("./node_modules/jquery/dist/jquery.min.js");
-      require("./node_modules/bootstrap/dist/js/bootstrap.min.js");
-      var Handsontable = require("handsontable");
-      require("./lib/main");
+    script(src="./node_modules/bootstrap/dist/js/bootstrap.min.js")
+    script(src="./node_modules/handsontable/dist/handsontable.full.min.js")
+    script(src="./dist/app.bundle.js")
