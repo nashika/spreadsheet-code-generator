@@ -35,11 +35,13 @@ export class SheetIoService extends BaseIoService {
       alert(`Sheet "${sheetName}" already exists.`);
       return;
     }
-    let emptyData:ISheetDefinition = {
+    let emptySheet:ISheetDefinition = {
       name: sheetName,
-      columns: [],
+      columns: _.times(5, this.generateInitialColumn),
     };
-    this.save(sheetName, emptyData);
+    let emptyData:any[] = _.times(10, () => {return {}});
+    this.save(sheetName, emptySheet);
+    this.app.services.dataIo.save(sheetName, emptyData);
     this.reload();
   }
 
@@ -59,13 +61,7 @@ export class SheetIoService extends BaseIoService {
   }
 
   public addColumn():void {
-    let no:number = this.app.currentSheetDefinition.columns.length;
-    this.app.currentSheetDefinition.columns.push({
-      header: `Col${no}`,
-      data: `data${no}`,
-      type: "text",
-      width: 80,
-    });
+    this.app.currentSheetDefinition.columns.push(this.generateInitialColumn());
     this.save(this.app.currentSheetDefinition.name, this.app.currentSheetDefinition);
     this.reload();
   }
@@ -90,6 +86,16 @@ export class SheetIoService extends BaseIoService {
     while (this.app.sheetNames.length > 0) this.app.sheetNames.pop();
     for (let sheetFile of sheetFiles) this.app.sheetNames.push(sheetFile.replace(/\.json$/, ""));
     this.$root.$broadcast("before-change-sheet", this.app.currentSheetDefinition && this.app.currentSheetDefinition.name, saveFlag);
+  }
+
+  private generateInitialColumn(no:number):IColumnDefinition {
+    no = _.isUndefined(no) ? this.app.currentSheetDefinition.columns.length : no;
+    return {
+      header: `Col${no}`,
+      data: `data${no}`,
+      type: "text",
+      width: 80,
+    };
   }
 
 }
