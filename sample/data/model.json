@@ -1,17 +1,26 @@
 [
   {
-    "model": "Product",
-    "label": "Product"
+    "model": "Article",
+    "label": "Article"
   },
   {
-    "model": "Person"
+    "model": "Author",
+    "label": "Author"
   },
   {
-    "model": "Address"
+    "model": "Category",
+    "label": "Category"
   },
   {
-    "model": "Area"
+    "model": "Tag",
+    "label": "Tag"
   },
+  {
+    "model": "Comment",
+    "label": "Comment"
+  },
+  {},
+  {},
   {},
   {},
   {}

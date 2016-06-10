@@ -1,20 +1,28 @@
 [
   {
-    "model": "Product",
+    "model": "Article",
     "field": "id"
   },
   {
-    "model": "Product",
-    "field": "name"
+    "model": "Article",
+    "field": "title"
   },
   {
-    "model": "Product",
-    "field": "price"
+    "model": "Article",
+    "field": "content"
   },
   {
-    "model": "Product"
+    "model": "Article",
+    "field": "category_id"
   },
-  {},
+  {
+    "model": "Article",
+    "field": "created"
+  },
+  {
+    "field": "updated",
+    "model": "Article"
+  },
   {},
   {},
   {}

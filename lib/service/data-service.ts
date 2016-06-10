@@ -16,6 +16,9 @@ export class DataService extends IoService {
   }
 
   protected save(sheetName:string, data:any[]) {
+    data = <any>_.omitBy(data, _.isNull);
+    data = <any>_.omitBy(data, _.isUndefined);
+    data = <any>_.omitBy(data, (value) => value === "");
     super.save(sheetName, data);
   }
 

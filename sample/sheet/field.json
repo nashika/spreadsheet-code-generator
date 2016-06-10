@@ -26,6 +26,12 @@
       "header": "Label"
     },
     {
+      "header": "Type",
+      "data": "type",
+      "type": "text",
+      "width": "80"
+    },
+    {
       "data": "format",
       "type": "text",
       "width": "120",
@@ -40,17 +46,20 @@
     {
       "data": "data5",
       "type": "text",
-      "width": 80
+      "width": 80,
+      "header": "width"
     },
     {
       "data": "data6",
       "type": "text",
-      "width": 80
+      "width": 80,
+      "header": "layout"
     },
     {
       "data": "data8",
       "type": "text",
-      "width": 80
+      "width": 80,
+      "header": "aaa"
     }
   ],
   "colHeaders": [

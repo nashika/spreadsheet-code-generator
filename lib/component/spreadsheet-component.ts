@@ -28,27 +28,8 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
-  getJsonData():any[] {
-    let records = this.hot.getData();
-    let results:any[] = [];
-    for (let record of records) {
-      let result:any = {};
-      for (let i = 0; i < this.currentSheet.columns.length; i++) {
-        let column:IColumn = this.currentSheet.columns[i];
-        let cellData:any = record[i];
-        if (cellData !== null && cellData !== "") {
-          result[column.data] = cellData;
-        }
-      }
-      results.push(result);
-    }
-    return results;
-  }
-
   onAfterSelection(r:number, c:number, r2:number, c2:number):void {
-    if (r == 0 && r2 == this.hot.countRows() - 1) {
-      this.$root.$broadcast("select-column-header", c);
-    }
+    this.$root.$broadcast("select-column-header", c);
   }
 
   watchCurrentSheet(now:ISheet, prev:ISheet):void {
