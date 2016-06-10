@@ -12,7 +12,7 @@ export class SheetsComponent extends BaseComponent {
 
   sheets:ISheet[];
   currentSheet:ISheet;
-  
+
   newName:string;
 
   data() {
@@ -21,8 +21,8 @@ export class SheetsComponent extends BaseComponent {
     }
   }
 
-  select(sheetName:string):void {
-    this.$root.$broadcast("before-change-sheet", sheetName);
+  select(sheet:ISheet):void {
+    this.$root.services.sheet.select(sheet);
   }
 
   add():void {

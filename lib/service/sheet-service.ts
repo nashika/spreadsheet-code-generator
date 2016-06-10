@@ -13,12 +13,30 @@ export class SheetService extends IoService {
     this.reload();
   }
 
-  public load(sheetName:string):ISheet {
+  protected load(sheetName:string):ISheet {
     return super.load(sheetName);
   }
 
-  public save(sheetName:string, data:ISheet) {
+  protected save(sheetName:string, data:ISheet) {
     super.save(sheetName, data);
+  }
+
+  public saveAll():void {
+    //super.remove(sheetName);
+  }
+
+  public loadAll():void {
+    this.app.sheets = {};
+    let names:string[] = this.list();
+    for (let name of names)
+      this.app.sheets[name] = this.load(name);
+    this.app.services.data.loadAll();
+    this.reload();
+  }
+
+  public select(sheet:ISheet) {
+    this.app.currentSheet = sheet;
+    this.app.currentData = this.app.datas[sheet.name];
   }
 
   public add(sheetName:string) {
@@ -39,33 +57,26 @@ export class SheetService extends IoService {
       name: sheetName,
       columns: _.times(5, this.app.services.column.generateInitialColumn),
     };
-    let emptyData:any[] = _.times(10, () => {return {}});
-    this.save(sheetName, emptySheet);
-    this.app.services.data.save(sheetName, emptyData);
+    this.app.sheets[sheetName] = emptySheet;
+    this.app.datas[sheetName] = (_.times(10, () => {return {}}));
     this.reload();
   }
 
   public remove():void {
-    let sheetName:string = this.app.currentSheet && this.app.currentSheet.name;
-    if (!sheetName) {
+    if (!this.app.currentSheet) {
       alert(`No selected sheet.`);
       return;
     }
-    if (!confirm(`Are you sure to delete sheet:"${sheetName}"?`)) {
+    if (!confirm(`Are you sure to delete sheet:"${this.app.currentSheet.name}"?`)) {
       return;
     }
-    super.remove(sheetName);
-    this.app.services.data.remove(sheetName);
+    _.unset(this.app.sheets, this.app.currentSheet.name);
     this.app.currentSheet = null;
-    this.reload(false);
+    this.reload();
   }
 
-  public reload(saveFlag:boolean = true):void {
-    let sheetFiles:string[] = fs.readdirSync(this.saveDir);
-    while (this.app.sheets.length > 0) this.app.sheets.pop();
-    for (let sheetFile of sheetFiles)
-      this.app.sheets.push(this.load(sheetFile.replace(/\.json$/, "")));
-    this.$root.$broadcast("before-change-sheet", this.app.currentSheet && this.app.currentSheet.name, saveFlag);
+  public reload():void {
+    this.$root.$broadcast("before-change-sheet", this.app.currentSheet && this.app.currentSheet.name);
   }
 
 }

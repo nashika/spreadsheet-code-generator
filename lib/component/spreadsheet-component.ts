@@ -1,4 +1,5 @@
 import Component from "vue-class-component";
+import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
 import {IColumn, ISheet} from "./app-component";
@@ -6,17 +7,18 @@ import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("spreadsheet"),
-  props: ["currentSheet"],
-  events: {
-    "before-change-sheet": "onBeforeChangeSheet",
-  },
+  props: ["currentSheet", "currentData"],
   watch: {
-    "currentSheet": "watchCurrentSheet",
-  }
+    "currentSheet": {
+      handler: SpreadsheetComponent.prototype.watchCurrentSheet,
+      deep: true,
+    }
+  },
 })
 export class SpreadsheetComponent extends BaseComponent {
 
   currentSheet:ISheet;
+  currentData:any[];
 
   hot:ht.Methods;
 
@@ -49,26 +51,19 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
-  onBeforeChangeSheet(sheetName:string, saveFlag:boolean = true):void {
+  watchCurrentSheet(now:ISheet, prev:ISheet):void {
     if (this.hot) {
-      if (saveFlag) {
-        let beforeSheetName = this.currentSheet.name;
-        this.$root.$data.services.data.save(beforeSheetName, this.getJsonData());
-      }
+      //prev.data = this.getJsonData();
       this.hot.destroy();
       this.hot = null;
     }
-    this.$root.$emit("change-sheet", sheetName);
-  }
-
-  watchCurrentSheet():void {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
-    let sheetName:string = this.currentSheet && this.currentSheet.name;
+    let sheetName:string = now && now.name;
     if (!sheetName) return;
-    let data:any[] = this.$root.$data.services.data.load(sheetName);
+    let data:any[] = this.currentData;
     let colHeaders:string[] = [];
     let columns:any[] = [];
-    for (let c of this.currentSheet.columns) {
+    for (let c of now.columns) {
       colHeaders.push(c.header);
       columns.push({
         data: c.data,

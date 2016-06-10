@@ -39,6 +39,7 @@ export class ColumnComponent extends BaseComponent {
 
   move(right:boolean):void {
     this.$root.services.column.move(this.columnIndex, right);
+    this.columnIndex += right ? 1 : -1;
   }
 
   remove():void {

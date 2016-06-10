@@ -1,8 +1,8 @@
 div.panel.panel-default
   div.panel-heading #[i.fa.fa-table] Sheets
   ul.list-group
-    li.list-group-item("v-for"="sheet in sheets", "@click"="select(sheet.name)",
-    ":class"="{'list-group-item-info': sheet.name == (currentSheet && currentSheet.name)}") {{sheet.name}}
+    li.list-group-item("v-for"="sheet in sheets", "@click"="select(sheet)",
+    ":class"="{'list-group-item-info': sheet == currentSheet}") {{sheet.name}}
     li.list-group-item
       div.row
         div.col-md-8

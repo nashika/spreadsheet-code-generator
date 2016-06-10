@@ -35,9 +35,6 @@ export interface IColumn {
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
   },
-  events: {
-    "change-sheet": "onChangeSheet",
-  },
   created: function () {
     this.services.sheet = new SheetService(this);
     this.services.column = new ColumnService(this);
@@ -47,8 +44,10 @@ export interface IColumn {
 export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
-  sheets:ISheet[];
+  sheets:{[name:string]:ISheet};
   currentSheet:ISheet;
+  datas:{[name:string]:any[]};
+  currentData:any[];
   services:{
     sheet: SheetService,
     column: ColumnService,
@@ -58,19 +57,16 @@ export class AppComponent extends BaseComponent {
   data():any {
     return {
       saveBaseDir: path.join(remote.app.getAppPath(), "./sample"),
-      sheets: [],
+      sheets: {},
       currentSheet: null,
+      datas: {},
+      currentData: null,
       services: {
         sheet: null,
         column: null,
         data: null,
       },
     };
-  }
-
-  onChangeSheet(sheetName:string):void {
-    if (!sheetName) return;
-    this.currentSheet = this.services.sheet.load(sheetName);
   }
 
 }

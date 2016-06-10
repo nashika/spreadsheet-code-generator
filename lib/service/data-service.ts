@@ -9,13 +9,20 @@ export class DataService extends IoService {
     super(app, "data");
   }
 
-  public load(sheetName:string):any[] {
+  protected load(sheetName:string):any[] {
     let data:any[] = super.load(sheetName);
     return data ? data : [];
   }
 
-  public save(sheetName:string, data:any[]) {
+  protected save(sheetName:string, data:any[]) {
     super.save(sheetName, data);
+  }
+
+  public loadAll():void {
+    this.app.datas = {};
+    let names:string[] = this.list();
+    for (let name of names)
+      this.app.datas[name] = this.load(name);
   }
 
 }

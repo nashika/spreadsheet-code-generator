@@ -1,13 +1,12 @@
 import _ = require("lodash");
 
 import {BaseService} from "./base-service";
-import {IColumn} from "../component/app-component";
+import {IColumn, ISheet} from "../component/app-component";
 
 export class ColumnService extends BaseService {
 
   public add():void {
     this.app.currentSheet.columns.push(this.generateInitialColumn());
-    this.app.services.sheet.save(this.app.currentSheet.name, this.app.currentSheet);
     this.app.services.sheet.reload();
   }
 
@@ -17,8 +16,7 @@ export class ColumnService extends BaseService {
       alert(`data="${column.data}" is already exists.`);
       return;
     }
-    this.app.currentSheet.columns[index] = column;
-    this.app.services.sheet.save(this.app.currentSheet.name, this.app.currentSheet);
+    this.app.currentSheet.columns.$set(index, column);
     this.app.services.sheet.reload();
   }
 
@@ -31,13 +29,10 @@ export class ColumnService extends BaseService {
       this.app.currentSheet.columns = _.concat(
         _.take(columns, index - 1), [columns[index], columns[index - 1]], _.takeRight(columns, columns.length - index - 1));
     }
-    this.app.services.sheet.save(this.app.currentSheet.name, this.app.currentSheet);
-    this.app.services.sheet.reload();
   }
 
   public remove(index:number):void {
     _.pullAt(this.app.currentSheet.columns, index);
-    this.app.services.sheet.save(this.app.currentSheet.name, this.app.currentSheet);
     this.app.services.sheet.reload();
   }
 
