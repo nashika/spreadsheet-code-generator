@@ -36,6 +36,11 @@ export interface IColumn {
   events: {
     "change-sheet": "onChangeSheet",
   },
+  ready: function () {
+    this.services.sheet = new SheetService(this);
+    this.services.column = new ColumnService(this);
+    this.services.data = new DataService(this);
+  },
 })
 export class AppComponent extends BaseComponent {
 
@@ -67,9 +72,3 @@ export class AppComponent extends BaseComponent {
   }
 
 }
-
-let app:AppComponent = new (<any>AppComponent)({el: "#app"});
-
-app.services.sheet = new SheetService(app);
-app.services.column = new ColumnService(app);
-app.services.data = new DataService(app);
