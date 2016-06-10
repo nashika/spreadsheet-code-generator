@@ -37,7 +37,7 @@ export class SpreadsheetComponent extends BaseComponent {
       this.hot.destroy();
       this.hot = null;
     }
-    let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
+    let container:Element = this.$el.querySelector("#spreadsheet");
     let sheetName:string = now && now.name;
     if (!sheetName) return;
     let data:any[] = this.currentData;
