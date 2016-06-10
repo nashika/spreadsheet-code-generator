@@ -6,8 +6,9 @@ const remote = electron.remote;
 const BrowserWindow = remote.BrowserWindow;
 
 import {BaseComponent} from "./base-component";
-import {ColumnComponent} from "./column-component";
+import {FileComponent} from "./file-component";
 import {SheetsComponent} from "./sheets-component";
+import {ColumnComponent} from "./column-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
 import {SheetService} from "../service/sheet-service";
 import {ColumnService} from "../service/column-service";
@@ -29,6 +30,7 @@ export interface IColumn {
 @Component({
   template: templateLoader("app"),
   components: {
+    "file-component": FileComponent,
     "sheets-component": SheetsComponent,
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
