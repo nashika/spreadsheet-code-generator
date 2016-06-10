@@ -27,6 +27,7 @@ export class SheetsComponent extends BaseComponent {
 
   add():void {
     this.$root.services.sheet.add(this.newName);
+    this.newName = "";
   }
 
   remove():void {

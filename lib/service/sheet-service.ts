@@ -49,7 +49,7 @@ export class SheetService extends IoService {
       alert(`Sheet name is empty.`);
       return;
     }
-    if (_.find(this.app.sheets, {"name": sheetName})) {
+    if (_.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return;
     }
@@ -57,7 +57,7 @@ export class SheetService extends IoService {
       name: sheetName,
       columns: _.times(5, this.app.services.column.generateInitialColumn),
     };
-    this.app.sheets[sheetName] = emptySheet;
+    this.app.sheets = <any>_.assign({}, this.app.sheets, _.fromPairs([[sheetName, emptySheet]]));
     this.app.datas[sheetName] = (_.times(10, () => {return {}}));
     this.reload();
   }
@@ -71,6 +71,7 @@ export class SheetService extends IoService {
       return;
     }
     _.unset(this.app.sheets, this.app.currentSheet.name);
+    this.app.sheets = <any>_.assign({}, this.app.sheets);
     this.app.currentSheet = null;
     this.reload();
   }

@@ -32,7 +32,7 @@ export class ColumnService extends BaseService {
   }
 
   public remove(index:number):void {
-    _.pullAt(this.app.currentSheet.columns, index);
+    this.app.currentSheet.columns.$remove(this.app.currentSheet.columns[index]);
     this.app.services.sheet.reload();
   }
 

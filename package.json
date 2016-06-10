@@ -7,6 +7,7 @@
     "electron": "electron",
     "electron-packager": "electron-packager",
     "electron-packager-dist": "electron-packager . spreadsheet-code-generator --platform=darwin,win32 --arch=x64 --version=1.1.3 --overwrite",
+    "postinstall": "typings install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typings": "typings",
     "webpack": "webpack --watch --config webpack.config.js",

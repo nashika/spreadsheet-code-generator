@@ -12,7 +12,7 @@ import {templateLoader} from "./template-loader";
     "select-column-header": "onSelectColumnHeader",
   },
   watch: {
-    "currentSheet": "watchCurrentSheet",
+    "currentSheet": ColumnComponent.prototype.watchCurrentSheet,
   }
 })
 export class ColumnComponent extends BaseComponent {
@@ -44,6 +44,8 @@ export class ColumnComponent extends BaseComponent {
 
   remove():void {
     this.$root.services.column.remove(this.columnIndex);
+    this.columnIndex = 0;
+    this.column = null;
   }
 
   onSelectColumnHeader(index:number):void {
