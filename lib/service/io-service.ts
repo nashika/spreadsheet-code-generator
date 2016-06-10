@@ -17,6 +17,12 @@ export class IoService extends BaseService {
     return path.join(this.saveDir, `${sheetName}.json`);
   }
 
+  protected list():string[] {
+    return fs.readdirSync(this.saveDir)
+      .filter((f) => f.match(/\.json$/) ? true : false)
+      .map((f) => f.replace(/\.json$/, ""));
+  }
+
   protected load(sheetName:string):any {
     let filePath:string = this.filePath(sheetName);
     console.log(`Loadig ${filePath}.`);
@@ -27,19 +33,13 @@ export class IoService extends BaseService {
     }
   }
 
-  protected list():string[] {
-    return fs.readdirSync(this.saveDir)
-      .filter((f) => f.match(/\.json$/) ? true : false)
-      .map((f) => f.replace(/\.json$/, ""));
-  }
-
   protected save(sheetName:string, data:any):void {
     let filePath:string = this.filePath(sheetName);
     console.log(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(data, null, "  "));
   }
 
-  protected remove(sheetName:string):void {
+  protected unlink(sheetName:string):void {
     let filePath:string = this.filePath(sheetName);
     console.log(`Removing ${filePath}.`);
     fs.unlinkSync(filePath);

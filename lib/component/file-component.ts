@@ -19,8 +19,7 @@ export class FileComponent extends BaseComponent {
   }
 
   save():void {
-    alert("now construction"); // TODO
-    //this.$root.services.sheet.saveAll();
+    this.$root.services.sheet.saveAll();
   }
 
 }

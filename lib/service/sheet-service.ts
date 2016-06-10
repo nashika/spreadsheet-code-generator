@@ -22,7 +22,13 @@ export class SheetService extends IoService {
   }
 
   public saveAll():void {
-    //super.remove(sheetName);
+    _.forIn(this.app.sheets, (sheet, name) => {
+      this.save(name, sheet);
+    });
+    _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {
+      this.unlink(name);
+    });
+    this.app.services.data.saveAll();
   }
 
   public loadAll():void {

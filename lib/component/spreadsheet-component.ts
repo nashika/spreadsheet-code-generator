@@ -53,7 +53,6 @@ export class SpreadsheetComponent extends BaseComponent {
 
   watchCurrentSheet(now:ISheet, prev:ISheet):void {
     if (this.hot) {
-      //prev.data = this.getJsonData();
       this.hot.destroy();
       this.hot = null;
     }
