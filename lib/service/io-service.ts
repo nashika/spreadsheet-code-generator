@@ -1,16 +1,15 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import {BaseService} from "./base-service";
 import {AppComponent} from "../component/app-component";
-import {IRootVue} from "../component/base-component";
 
-export class IoService {
+export class IoService extends BaseService {
 
-  protected $root:IRootVue;
   protected saveDir:string;
 
-  constructor(protected app:AppComponent, dirName:string) {
-    this.$root = <any>app;
+  constructor(app:AppComponent, dirName:string) {
+    super(app);
     this.saveDir = path.join(this.app.saveBaseDir, dirName);
   }
 

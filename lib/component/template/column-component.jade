@@ -10,7 +10,7 @@ div.panel.panel-default("v-if"="currentSheet")
     li.list-group-item
       button.btn.btn-success.btn-block("@click"="add") #[i.fa.fa-plus] Add
     li.list-group-item("v-if"="column")
-      form.form-horizontal("@submit.prevent"="save")
+      form.form-horizontal("@submit.prevent"="modify")
         +form-group("Header")
           input#column-header.form-control(type="text", "v-model"="column.header")
         +form-group("Data")
@@ -21,7 +21,7 @@ div.panel.panel-default("v-if"="currentSheet")
             option(value="numeric") Numeric
         +form-group("Width")
           input#column-width.form-control(type="number", "v-model"="column.width")
-        button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Save
+        button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Modify
     li.list-group-item("v-if"="column")
       div.row
         div.col-xs-6

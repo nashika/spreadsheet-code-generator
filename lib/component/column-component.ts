@@ -30,19 +30,19 @@ export class ColumnComponent extends BaseComponent {
   }
 
   add():void {
-    this.$root.services.sheet.addColumn();
+    this.$root.services.column.add();
   }
 
-  save():void {
-    this.$root.services.sheet.saveColumn(this.columnIndex, this.column);
+  modify():void {
+    this.$root.services.column.modify(this.columnIndex, this.column);
   }
 
   move(right:boolean):void {
-    this.$root.services.sheet.moveColumn(this.columnIndex, right);
+    this.$root.services.column.move(this.columnIndex, right);
   }
-  
+
   remove():void {
-    this.$root.services.sheet.removeColumn(this.columnIndex);
+    this.$root.services.column.remove(this.columnIndex);
   }
 
   onSelectColumnHeader(index:number):void {

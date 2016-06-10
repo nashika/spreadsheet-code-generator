@@ -9,8 +9,9 @@ import {BaseComponent} from "./base-component";
 import {ColumnComponent} from "./column-component";
 import {SheetsComponent} from "./sheets-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
-import {DataService} from "../service/data-service";
 import {SheetService} from "../service/sheet-service";
+import {ColumnService} from "../service/column-service";
+import {DataService} from "../service/data-service";
 import {templateLoader} from "./template-loader";
 
 export interface ISheet {
@@ -43,6 +44,7 @@ export class AppComponent extends BaseComponent {
   currentSheet:ISheet;
   services:{
     sheet: SheetService,
+    column: ColumnService,
     data: DataService,
   };
 
@@ -53,6 +55,7 @@ export class AppComponent extends BaseComponent {
       currentSheet: null,
       services: {
         sheet: null,
+        column: null,
         data: null,
       },
     };
@@ -68,4 +71,5 @@ export class AppComponent extends BaseComponent {
 let app:AppComponent = new (<any>AppComponent)({el: "#app"});
 
 app.services.sheet = new SheetService(app);
+app.services.column = new ColumnService(app);
 app.services.data = new DataService(app);

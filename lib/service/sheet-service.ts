@@ -37,7 +37,7 @@ export class SheetService extends IoService {
     }
     let emptySheet:ISheet = {
       name: sheetName,
-      columns: _.times(5, this.generateInitialColumn),
+      columns: _.times(5, this.app.services.column.generateInitialColumn),
     };
     let emptyData:any[] = _.times(10, () => {return {}});
     this.save(sheetName, emptySheet);
@@ -60,58 +60,12 @@ export class SheetService extends IoService {
     this.reload(false);
   }
 
-  public addColumn():void {
-    this.app.currentSheet.columns.push(this.generateInitialColumn());
-    this.save(this.app.currentSheet.name, this.app.currentSheet);
-    this.reload();
-  }
-
-  public saveColumn(index:number, column:IColumn):void {
-    if (this.app.currentSheet.columns[index].data != column.data
-      && _.find(this.app.currentSheet.columns, {"data": column.data})) {
-      alert(`data="${column.data}" is already exists.`);
-      return;
-    }
-    this.app.currentSheet.columns[index] = column;
-    this.save(this.app.currentSheet.name, this.app.currentSheet);
-    this.reload();
-  }
-
-  public moveColumn(index:number, right:boolean):void {
-    let columns:IColumn[] = this.app.currentSheet.columns;
-    if (right) {
-      this.app.currentSheet.columns = _.concat(
-        _.take(columns, index), [columns[index + 1], columns[index]], _.takeRight(columns, columns.length - index - 2));
-    } else {
-      this.app.currentSheet.columns = _.concat(
-        _.take(columns, index - 1), [columns[index], columns[index - 1]], _.takeRight(columns, columns.length - index - 1));
-    }
-    this.save(this.app.currentSheet.name, this.app.currentSheet);
-    this.reload();
-  }
-
-  public removeColumn(index:number):void {
-    _.pullAt(this.app.currentSheet.columns, index);
-    this.save(this.app.currentSheet.name, this.app.currentSheet);
-    this.reload();
-  }
-
-  private reload(saveFlag:boolean = true):void {
+  public reload(saveFlag:boolean = true):void {
     let sheetFiles:string[] = fs.readdirSync(this.saveDir);
     while (this.app.sheets.length > 0) this.app.sheets.pop();
     for (let sheetFile of sheetFiles)
       this.app.sheets.push(this.load(sheetFile.replace(/\.json$/, "")));
     this.$root.$broadcast("before-change-sheet", this.app.currentSheet && this.app.currentSheet.name, saveFlag);
-  }
-
-  private generateInitialColumn(no:number = undefined):IColumn {
-    no = _.isUndefined(no) ? this.app.currentSheet.columns.length : no;
-    return {
-      header: `Col${no}`,
-      data: `data${no}`,
-      type: "text",
-      width: 80,
-    };
   }
 
 }
