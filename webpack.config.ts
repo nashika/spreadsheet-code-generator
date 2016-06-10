@@ -9,7 +9,7 @@ let webpackConfig:webpack.Configuration = {
   },
   output: {
     path: "./dist",
-    publicPath: "/dist/",
+    publicPath: "./dist/",
     filename: "[name].bundle.js",
   },
   resolve: {
@@ -25,6 +25,11 @@ let webpackConfig:webpack.Configuration = {
       {test: /\.jade$/, loader: "raw", },
       {test: /\.css$/, loaders: ["style", "css"], },
       {test: /\.scss$/, loaders: ["style", "css", "sass"], },
+      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/&limit=10000&mimetype=application/font-woff", },
+      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/&limit=10000&mimetype=application/font-woff", },
+      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/&limit=10000&mimetype=application/octet-stream", },
+      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file"},
+      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&mimetype=image/svg+xml", },
     ],
   },
   plugins: [

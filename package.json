@@ -29,6 +29,8 @@
     "css-loader": "^0.23.1",
     "electron-packager": "^7.0.3",
     "electron-prebuilt": "^1.2.1",
+    "file-loader": "^0.8.5",
+    "font-awesome": "^4.6.3",
     "html-loader": "^0.4.3",
     "jade": "^1.11.0",
     "jade-html-loader": "0.0.3",
@@ -41,6 +43,7 @@
     "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
     "typings": "^1.0.4",
+    "url-loader": "^0.5.7",
     "vue": "^1.0.24",
     "vue-class-component": "^3.2.0",
     "webpack": "^1.13.1"
