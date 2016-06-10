@@ -78,7 +78,16 @@ export class SheetIoService extends BaseIoService {
   }
 
   public moveColumn(index:number, right:boolean):void {
-    //this.app.currentSheetDefinition.
+    let columns:IColumnDefinition[] = this.app.currentSheetDefinition.columns;
+    if (right) {
+      this.app.currentSheetDefinition.columns = _.concat(
+        _.take(columns, index), [columns[index + 1], columns[index]], _.takeRight(columns, columns.length - index - 2));
+    } else {
+      this.app.currentSheetDefinition.columns = _.concat(
+        _.take(columns, index - 1), [columns[index], columns[index - 1]], _.takeRight(columns, columns.length - index - 1));
+    }
+    this.save(this.app.currentSheetDefinition.name, this.app.currentSheetDefinition);
+    this.reload();
   }
 
   private reload(saveFlag:boolean = true):void {

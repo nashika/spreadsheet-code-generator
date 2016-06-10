@@ -6,23 +6,25 @@ mixin form-group(title)
 
 div.panel.panel-default("v-if"="currentSheetDefinition")
   div.panel-heading #[i.fa.fa-columns] Manage Column
-  div.panel-body
-    button.btn.btn-success.btn-block("v-on:click"="add") #[i.fa.fa-plus] Add
-  div.panel-body("v-if"="columnDefinition")
-    form.form-horizontal("v-on:submit.prevent"="save")
-      +form-group("Header")
-        input#column-header.form-control(type="text", "v-model"="columnDefinition.header")
-      +form-group("Data")
-        input#column-data.form-control(type="text", "v-model"="columnDefinition.data")
-      +form-group("Type")
-        select#column-type.form-control("v-model"="columnDefinition.type")
-          option(value="text") Text
-          option(value="numeric") Numeric
-      +form-group("Width")
-        input#column-width.form-control(type="number", "v-model"="columnDefinition.width")
-      button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Save
+  ul.list-group
+    li.list-group-item
+      button.btn.btn-success.btn-block("@click"="add") #[i.fa.fa-plus] Add
+    li.list-group-item("v-if"="columnDefinition")
+      form.form-horizontal("@submit.prevent"="save")
+        +form-group("Header")
+          input#column-header.form-control(type="text", "v-model"="columnDefinition.header")
+        +form-group("Data")
+          input#column-data.form-control(type="text", "v-model"="columnDefinition.data")
+        +form-group("Type")
+          select#column-type.form-control("v-model"="columnDefinition.type")
+            option(value="text") Text
+            option(value="numeric") Numeric
+        +form-group("Width")
+          input#column-width.form-control(type="number", "v-model"="columnDefinition.width")
+        button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Save
+    li.list-group-item("v-if"="columnDefinition")
       div.row
         div.col-xs-6
-          button.btn.btn-block.btn-warning("v-on:click"="move(true)")
+          button.btn.btn-block.btn-warning("@click"="move(false)", ":disabled"="columnIndex == 0") #[i.fa.fa-arrow-left] Left
         div.col-xs-6
-          button.btn.btn-block.btn-warning("v-on:click"="move(false)")
+          button.btn.btn-block.btn-warning("@click"="move(true)", ":disabled"="columnIndex == currentSheetDefinition.columns.length - 1") Right #[i.fa.fa-arrow-right]

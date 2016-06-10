@@ -24,6 +24,7 @@ export class ColumnComponent extends BaseComponent {
 
   data():any {
     return {
+      columnIndex: 0,
       columnDefinition: null,
     }
   }
