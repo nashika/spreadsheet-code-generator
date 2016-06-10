@@ -1,9 +1,7 @@
-import * as fs from "fs";
-
 import _ = require("lodash");
 import Vue = vuejs.Vue;
 
-import {ISheet, AppComponent, IColumn} from "../component/app-component";
+import {ISheet, AppComponent} from "../component/app-component";
 import {IoService} from "./io-service";
 
 export class SheetService extends IoService {
@@ -77,8 +75,11 @@ export class SheetService extends IoService {
       return;
     }
     _.unset(this.app.sheets, this.app.currentSheet.name);
+    _.unset(this.app.datas, this.app.currentSheet.name);
     this.app.sheets = <any>_.assign({}, this.app.sheets);
+    this.app.datas = <any>_.assign({}, this.app.datas);
     this.app.currentSheet = null;
+    this.app.currentData = null;
     this.reload();
   }
 
