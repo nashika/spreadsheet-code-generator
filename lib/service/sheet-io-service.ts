@@ -88,7 +88,7 @@ export class SheetIoService extends BaseIoService {
     this.$root.$broadcast("before-change-sheet", this.app.currentSheetDefinition && this.app.currentSheetDefinition.name, saveFlag);
   }
 
-  private generateInitialColumn(no:number):IColumnDefinition {
+  private generateInitialColumn(no:number = null):IColumnDefinition {
     no = _.isUndefined(no) ? this.app.currentSheetDefinition.columns.length : no;
     return {
       header: `Col${no}`,
