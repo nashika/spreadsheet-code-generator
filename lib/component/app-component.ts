@@ -36,7 +36,7 @@ export interface IColumn {
   events: {
     "change-sheet": "onChangeSheet",
   },
-  ready: function () {
+  created: function () {
     this.services.sheet = new SheetService(this);
     this.services.column = new ColumnService(this);
     this.services.data = new DataService(this);
