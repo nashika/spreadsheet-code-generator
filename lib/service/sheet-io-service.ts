@@ -90,6 +90,12 @@ export class SheetIoService extends BaseIoService {
     this.reload();
   }
 
+  public removeColumn(index:number):void {
+    _.pullAt(this.app.currentSheet.columns, index);
+    this.save(this.app.currentSheet.name, this.app.currentSheet);
+    this.reload();
+  }
+
   private reload(saveFlag:boolean = true):void {
     let sheetFiles:string[] = fs.readdirSync(this.saveDir);
     while (this.app.sheets.length > 0) this.app.sheets.pop();
@@ -98,7 +104,7 @@ export class SheetIoService extends BaseIoService {
     this.$root.$broadcast("before-change-sheet", this.app.currentSheet && this.app.currentSheet.name, saveFlag);
   }
 
-  private generateInitialColumn(no:number = null):IColumn {
+  private generateInitialColumn(no:number = undefined):IColumn {
     no = _.isUndefined(no) ? this.app.currentSheet.columns.length : no;
     return {
       header: `Col${no}`,

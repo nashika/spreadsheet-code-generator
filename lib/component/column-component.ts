@@ -40,6 +40,10 @@ export class ColumnComponent extends BaseComponent {
   move(right:boolean):void {
     this.$root.services.sheetIo.moveColumn(this.columnIndex, right);
   }
+  
+  remove():void {
+    this.$root.services.sheetIo.removeColumn(this.columnIndex);
+  }
 
   onSelectColumnHeader(index:number):void {
     this.columnIndex = index;

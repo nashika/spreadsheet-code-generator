@@ -21,15 +21,15 @@ export class SheetsComponent extends BaseComponent {
     }
   }
 
-  onSelect(sheetName:string):void {
+  select(sheetName:string):void {
     this.$root.$broadcast("before-change-sheet", sheetName);
   }
 
-  onAdd():void {
+  add():void {
     this.$root.services.sheetIo.add(this.newName);
   }
 
-  onDelete():void {
+  remove():void {
     this.$root.services.sheetIo.remove();
   }
 

@@ -3,9 +3,15 @@
     "model": "Product",
     "label": "Product"
   },
-  {},
-  {},
-  {},
+  {
+    "model": "Person"
+  },
+  {
+    "model": "Address"
+  },
+  {
+    "model": "Area"
+  },
   {},
   {},
   {}

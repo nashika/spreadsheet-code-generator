@@ -1,15 +1,15 @@
 div.panel.panel-default
   div.panel-heading #[i.fa.fa-table] Sheets
   ul.list-group
-    li.list-group-item("v-for"="sheet in sheets", "v-on:click"="onSelect(sheet.name)",
+    li.list-group-item("v-for"="sheet in sheets", "@click"="select(sheet.name)",
     ":class"="{'list-group-item-info': sheet.name == (currentSheet && currentSheet.name)}") {{sheet.name}}
     li.list-group-item
       div.row
         div.col-md-8
           input.form-control(type="text", "v-model"="newName", placeholder="New sheet name")
         div.col-md-4
-          button.btn.btn-primary.btn-block("@click"="onAdd") #[i.fa.fa-plus] Add
+          button.btn.btn-primary.btn-block("@click"="add") #[i.fa.fa-plus] Add
     li.list-group-item
       div.row
         div.col-md-12
-          button.btn.btn-danger.btn-block("@click"="onDelete") #[i.fa.fa-trash] Delete
+          button.btn.btn-danger.btn-block("@click"="remove") #[i.fa.fa-trash] Delete

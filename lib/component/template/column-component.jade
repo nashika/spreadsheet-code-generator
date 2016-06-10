@@ -28,3 +28,7 @@ div.panel.panel-default("v-if"="currentSheet")
           button.btn.btn-block.btn-warning("@click"="move(false)", ":disabled"="columnIndex == 0") #[i.fa.fa-arrow-left] Left
         div.col-xs-6
           button.btn.btn-block.btn-warning("@click"="move(true)", ":disabled"="columnIndex == currentSheet.columns.length - 1") Right #[i.fa.fa-arrow-right]
+    li.list-group-item("v-if"="column")
+      div.row
+        div.col-xs-12
+          button.btn.btn-block.btn-danger("@click"="remove()") #[i.fa.fa-trash] Delete
