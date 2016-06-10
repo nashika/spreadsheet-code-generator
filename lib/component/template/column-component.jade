@@ -4,27 +4,27 @@ mixin form-group(title)
     div(class="col-xs-8")
       block
 
-div.panel.panel-default("v-if"="currentSheetDefinition")
+div.panel.panel-default("v-if"="currentSheet")
   div.panel-heading #[i.fa.fa-columns] Manage Column
   ul.list-group
     li.list-group-item
       button.btn.btn-success.btn-block("@click"="add") #[i.fa.fa-plus] Add
-    li.list-group-item("v-if"="columnDefinition")
+    li.list-group-item("v-if"="column")
       form.form-horizontal("@submit.prevent"="save")
         +form-group("Header")
-          input#column-header.form-control(type="text", "v-model"="columnDefinition.header")
+          input#column-header.form-control(type="text", "v-model"="column.header")
         +form-group("Data")
-          input#column-data.form-control(type="text", "v-model"="columnDefinition.data")
+          input#column-data.form-control(type="text", "v-model"="column.data")
         +form-group("Type")
-          select#column-type.form-control("v-model"="columnDefinition.type")
+          select#column-type.form-control("v-model"="column.type")
             option(value="text") Text
             option(value="numeric") Numeric
         +form-group("Width")
-          input#column-width.form-control(type="number", "v-model"="columnDefinition.width")
+          input#column-width.form-control(type="number", "v-model"="column.width")
         button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Save
-    li.list-group-item("v-if"="columnDefinition")
+    li.list-group-item("v-if"="column")
       div.row
         div.col-xs-6
           button.btn.btn-block.btn-warning("@click"="move(false)", ":disabled"="columnIndex == 0") #[i.fa.fa-arrow-left] Left
         div.col-xs-6
-          button.btn.btn-block.btn-warning("@click"="move(true)", ":disabled"="columnIndex == currentSheetDefinition.columns.length - 1") Right #[i.fa.fa-arrow-right]
+          button.btn.btn-block.btn-warning("@click"="move(true)", ":disabled"="columnIndex == currentSheet.columns.length - 1") Right #[i.fa.fa-arrow-right]

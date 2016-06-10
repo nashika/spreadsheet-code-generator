@@ -5,7 +5,7 @@ const electron = require('electron');
 const remote = electron.remote;
 const BrowserWindow = remote.BrowserWindow;
 
-import {BaseComponent, IRootVue} from "./base-component";
+import {BaseComponent} from "./base-component";
 import {ColumnComponent} from "./column-component";
 import {SheetsComponent} from "./sheets-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
@@ -13,12 +13,12 @@ import {DataIoService} from "../service/data-io-service";
 import {SheetIoService} from "../service/sheet-io-service";
 import {templateLoader} from "./template-loader";
 
-export interface ISheetDefinition {
+export interface ISheet {
   name:string;
-  columns:Array<IColumnDefinition>;
+  columns:Array<IColumn>;
 }
 
-export interface IColumnDefinition {
+export interface IColumn {
   header:string;
   data:string;
   type:string;
@@ -39,8 +39,8 @@ export interface IColumnDefinition {
 export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
-  currentSheetDefinition:ISheetDefinition;
-  sheetNames:string[];
+  sheets:ISheet[];
+  currentSheet:ISheet;
   services:{
     sheetIo: SheetIoService,
     dataIo: DataIoService,
@@ -49,9 +49,8 @@ export class AppComponent extends BaseComponent {
   data():any {
     return {
       saveBaseDir: path.join(remote.app.getAppPath(), "./sample"),
-      currentSheetName: "",
-      currentSheetDefinition: null,
-      sheetNames: [],
+      sheets: [],
+      currentSheet: null,
       services: {
         sheetIo: null,
         dataIo: null,
@@ -61,7 +60,7 @@ export class AppComponent extends BaseComponent {
 
   onChangeSheet(sheetName:string):void {
     if (!sheetName) return;
-    this.currentSheetDefinition = this.services.sheetIo.load(sheetName);
+    this.currentSheet = this.services.sheetIo.load(sheetName);
   }
 
 }

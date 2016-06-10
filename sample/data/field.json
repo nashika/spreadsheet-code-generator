@@ -1,10 +1,21 @@
 [
   {
-    "model": "a"
+    "model": "Product",
+    "field": "id"
   },
   {
-    "field": "a"
+    "model": "Product",
+    "field": "name"
   },
+  {
+    "model": "Product",
+    "field": "price"
+  },
+  {
+    "model": "Product"
+  },
+  {},
+  {},
   {},
   {}
 ]

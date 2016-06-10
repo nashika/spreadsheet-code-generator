@@ -1,6 +1,6 @@
 #global-area.row
   #menu-area.col-xs-3
-    sheets-component(":current-sheet-definition"="currentSheetDefinition", ":sheet-names"="sheetNames")
-    column-component(":current-sheet-definition"="currentSheetDefinition")
+    sheets-component(":current-sheet"="currentSheet", ":sheets"="sheets")
+    column-component(":current-sheet"="currentSheet")
   #main-area.col-xs-9
-    spreadsheet-component(":current-sheet-definition"="currentSheetDefinition")
+    spreadsheet-component(":current-sheet"="currentSheet")

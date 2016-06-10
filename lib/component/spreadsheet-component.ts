@@ -1,22 +1,22 @@
 import Component from "vue-class-component";
 
 import {BaseComponent} from "./base-component";
-import {IColumnDefinition, ISheetDefinition} from "./app-component";
+import {IColumn, ISheet} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("spreadsheet"),
-  props: ["currentSheetDefinition"],
+  props: ["currentSheet"],
   events: {
     "before-change-sheet": "onBeforeChangeSheet",
   },
   watch: {
-    "currentSheetDefinition": "watchCurrentSheetDefinition",
+    "currentSheet": "watchCurrentSheet",
   }
 })
 export class SpreadsheetComponent extends BaseComponent {
 
-  currentSheetDefinition:ISheetDefinition;
+  currentSheet:ISheet;
 
   hot:ht.Methods;
 
@@ -31,11 +31,11 @@ export class SpreadsheetComponent extends BaseComponent {
     let results:any[] = [];
     for (let record of records) {
       let result:any = {};
-      for (let i = 0; i < this.currentSheetDefinition.columns.length; i++) {
-        let currentColumn:IColumnDefinition = this.currentSheetDefinition.columns[i];
-        let currentCellData:any = record[i];
-        if (currentCellData !== null && currentCellData !== "") {
-          result[currentColumn.data] = currentCellData;
+      for (let i = 0; i < this.currentSheet.columns.length; i++) {
+        let column:IColumn = this.currentSheet.columns[i];
+        let cellData:any = record[i];
+        if (cellData !== null && cellData !== "") {
+          result[column.data] = cellData;
         }
       }
       results.push(result);
@@ -52,7 +52,7 @@ export class SpreadsheetComponent extends BaseComponent {
   onBeforeChangeSheet(sheetName:string, saveFlag:boolean = true):void {
     if (this.hot) {
       if (saveFlag) {
-        let beforeSheetName = this.currentSheetDefinition.name;
+        let beforeSheetName = this.currentSheet.name;
         this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
       }
       this.hot.destroy();
@@ -61,14 +61,14 @@ export class SpreadsheetComponent extends BaseComponent {
     this.$root.$emit("change-sheet", sheetName);
   }
 
-  watchCurrentSheetDefinition():void {
+  watchCurrentSheet():void {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
-    let sheetName:string = this.currentSheetDefinition && this.currentSheetDefinition.name;
+    let sheetName:string = this.currentSheet && this.currentSheet.name;
     if (!sheetName) return;
     let data:any[] = this.$root.$data.services.dataIo.load(sheetName);
     let colHeaders:string[] = [];
     let columns:any[] = [];
-    for (let c of this.currentSheetDefinition.columns) {
+    for (let c of this.currentSheet.columns) {
       colHeaders.push(c.header);
       columns.push({
         data: c.data,

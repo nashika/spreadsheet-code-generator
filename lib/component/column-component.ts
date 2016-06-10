@@ -2,30 +2,30 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {IColumnDefinition, ISheetDefinition} from "./app-component";
+import {IColumn, ISheet} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("column"),
-  props: ["currentSheetDefinition"],
+  props: ["currentSheet"],
   events: {
     "select-column-header": "onSelectColumnHeader",
   },
   watch: {
-    "currentSheetDefinition": "watchCurrentSheetDefinition",
+    "currentSheet": "watchCurrentSheet",
   }
 })
 export class ColumnComponent extends BaseComponent {
 
-  currentSheetDefinition:ISheetDefinition;
+  currentSheet:ISheet;
 
   columnIndex:number;
-  columnDefinition:IColumnDefinition;
+  column:IColumn;
 
   data():any {
     return {
       columnIndex: 0,
-      columnDefinition: null,
+      column: null,
     }
   }
 
@@ -34,20 +34,20 @@ export class ColumnComponent extends BaseComponent {
   }
 
   save():void {
-    this.$root.services.sheetIo.saveColumn(this.columnIndex, this.columnDefinition);
+    this.$root.services.sheetIo.saveColumn(this.columnIndex, this.column);
   }
 
   move(right:boolean):void {
     this.$root.services.sheetIo.moveColumn(this.columnIndex, right);
   }
 
-  watchCurrentSheetDefinition():void {
-    this.columnDefinition = null;
-  }
-
   onSelectColumnHeader(index:number):void {
     this.columnIndex = index;
-    this.columnDefinition = _.clone(this.currentSheetDefinition.columns[index]);
+    this.column = _.clone(this.currentSheet.columns[index]);
+  }
+
+  watchCurrentSheet():void {
+    this.column = null;
   }
 
 }

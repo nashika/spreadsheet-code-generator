@@ -1,16 +1,18 @@
 import Component from "vue-class-component";
 
 import {BaseComponent} from "./base-component";
-import {ISheetDefinition} from "./app-component";
+import {ISheet} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("sheets"),
-  props: ["sheetNames", "currentSheetDefinition"],
+  props: ["sheets", "currentSheet"],
 })
 export class SheetsComponent extends BaseComponent {
 
-  currentSheetDefinition:ISheetDefinition;
+  sheets:ISheet[];
+  currentSheet:ISheet;
+  
   newName:string;
 
   data() {

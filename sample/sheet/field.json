@@ -4,32 +4,38 @@
     {
       "data": "model",
       "type": "text",
-      "width": 60
+      "width": "120",
+      "header": "Model"
     },
     {
       "data": "field",
       "type": "text",
-      "width": "80"
+      "width": "120",
+      "header": "Field"
     },
     {
       "data": "extends",
       "type": "text",
-      "width": 80
+      "width": "120",
+      "header": "Extends"
     },
     {
-      "data": "width",
-      "type": "numeric",
-      "width": 40
-    },
-    {
-      "data": "data3",
+      "data": "label",
       "type": "text",
-      "width": 80
+      "width": "120",
+      "header": "Label"
     },
     {
-      "data": "data4",
+      "data": "format",
       "type": "text",
-      "width": 80
+      "width": "120",
+      "header": "Format"
+    },
+    {
+      "data": "expression",
+      "type": "text",
+      "width": "120",
+      "header": "Expression"
     },
     {
       "data": "data5",

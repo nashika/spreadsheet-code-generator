@@ -16,13 +16,14 @@
     {
       "data": "label",
       "type": "text",
-      "width": "80",
+      "width": "120",
       "header": "Label"
     },
     {
-      "data": "format",
+      "data": "view",
       "type": "text",
-      "width": "120"
+      "width": "120",
+      "header": "View"
     }
   ],
   "colHeaders": [
