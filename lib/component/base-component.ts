@@ -1,10 +1,10 @@
-import {SheetIoService} from "../service/sheet-io-service";
-import {DataIoService} from "../service/data-io-service";
+import {SheetService} from "../service/sheet-service";
+import {DataService} from "../service/data-service";
 
 export interface IRootVue extends vuejs.Vue {
   services: {
-    sheetIo:SheetIoService;
-    dataIo:DataIoService;
+    sheet:SheetService;
+    data:DataService;
   };
 }
 

@@ -53,7 +53,7 @@ export class SpreadsheetComponent extends BaseComponent {
     if (this.hot) {
       if (saveFlag) {
         let beforeSheetName = this.currentSheet.name;
-        this.$root.$data.services.dataIo.save(beforeSheetName, this.getJsonData());
+        this.$root.$data.services.data.save(beforeSheetName, this.getJsonData());
       }
       this.hot.destroy();
       this.hot = null;
@@ -65,7 +65,7 @@ export class SpreadsheetComponent extends BaseComponent {
     let container:HTMLElement = $(this.$el).find("#spreadsheet").get(0);
     let sheetName:string = this.currentSheet && this.currentSheet.name;
     if (!sheetName) return;
-    let data:any[] = this.$root.$data.services.dataIo.load(sheetName);
+    let data:any[] = this.$root.$data.services.data.load(sheetName);
     let colHeaders:string[] = [];
     let columns:any[] = [];
     for (let c of this.currentSheet.columns) {

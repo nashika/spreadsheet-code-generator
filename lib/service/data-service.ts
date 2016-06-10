@@ -1,9 +1,9 @@
 import Vue = vuejs.Vue;
 
-import {BaseIoService} from "./base-io-service";
+import {IoService} from "./io-service";
 import {AppComponent} from "../component/app-component";
 
-export class DataIoService extends BaseIoService {
+export class DataService extends IoService {
 
   constructor(app:AppComponent) {
     super(app, "data");

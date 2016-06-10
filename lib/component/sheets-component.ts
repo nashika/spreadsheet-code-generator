@@ -26,11 +26,11 @@ export class SheetsComponent extends BaseComponent {
   }
 
   add():void {
-    this.$root.services.sheetIo.add(this.newName);
+    this.$root.services.sheet.add(this.newName);
   }
 
   remove():void {
-    this.$root.services.sheetIo.remove();
+    this.$root.services.sheet.remove();
   }
 
 }

@@ -4,9 +4,9 @@ import _ = require("lodash");
 import Vue = vuejs.Vue;
 
 import {ISheet, AppComponent, IColumn} from "../component/app-component";
-import {BaseIoService} from "./base-io-service";
+import {IoService} from "./io-service";
 
-export class SheetIoService extends BaseIoService {
+export class SheetService extends IoService {
 
   constructor(app:AppComponent) {
     super(app, "sheet");
@@ -41,7 +41,7 @@ export class SheetIoService extends BaseIoService {
     };
     let emptyData:any[] = _.times(10, () => {return {}});
     this.save(sheetName, emptySheet);
-    this.app.services.dataIo.save(sheetName, emptyData);
+    this.app.services.data.save(sheetName, emptyData);
     this.reload();
   }
 
@@ -55,7 +55,7 @@ export class SheetIoService extends BaseIoService {
       return;
     }
     super.remove(sheetName);
-    this.app.services.dataIo.remove(sheetName);
+    this.app.services.data.remove(sheetName);
     this.app.currentSheet = null;
     this.reload(false);
   }

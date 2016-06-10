@@ -9,8 +9,8 @@ import {BaseComponent} from "./base-component";
 import {ColumnComponent} from "./column-component";
 import {SheetsComponent} from "./sheets-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
-import {DataIoService} from "../service/data-io-service";
-import {SheetIoService} from "../service/sheet-io-service";
+import {DataService} from "../service/data-service";
+import {SheetService} from "../service/sheet-service";
 import {templateLoader} from "./template-loader";
 
 export interface ISheet {
@@ -42,8 +42,8 @@ export class AppComponent extends BaseComponent {
   sheets:ISheet[];
   currentSheet:ISheet;
   services:{
-    sheetIo: SheetIoService,
-    dataIo: DataIoService,
+    sheet: SheetService,
+    data: DataService,
   };
 
   data():any {
@@ -52,20 +52,20 @@ export class AppComponent extends BaseComponent {
       sheets: [],
       currentSheet: null,
       services: {
-        sheetIo: null,
-        dataIo: null,
+        sheet: null,
+        data: null,
       },
     };
   }
 
   onChangeSheet(sheetName:string):void {
     if (!sheetName) return;
-    this.currentSheet = this.services.sheetIo.load(sheetName);
+    this.currentSheet = this.services.sheet.load(sheetName);
   }
 
 }
 
 let app:AppComponent = new (<any>AppComponent)({el: "#app"});
 
-app.services.sheetIo = new SheetIoService(app);
-app.services.dataIo = new DataIoService(app);
+app.services.sheet = new SheetService(app);
+app.services.data = new DataService(app);

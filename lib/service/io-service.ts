@@ -4,7 +4,7 @@ import * as path from "path";
 import {AppComponent} from "../component/app-component";
 import {IRootVue} from "../component/base-component";
 
-export class BaseIoService {
+export class IoService {
 
   protected $root:IRootVue;
   protected saveDir:string;
