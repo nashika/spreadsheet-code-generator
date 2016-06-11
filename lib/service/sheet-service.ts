@@ -8,7 +8,6 @@ export class SheetService extends IoService {
 
   constructor(app:AppComponent) {
     super(app, "sheet");
-    this.reload();
   }
 
   protected load(sheetName:string):ISheet {
@@ -35,7 +34,6 @@ export class SheetService extends IoService {
     for (let name of names)
       this.app.sheets[name] = this.load(name);
     this.app.services.data.loadAll();
-    this.reload();
   }
 
   public select(sheet:ISheet) {
@@ -63,7 +61,6 @@ export class SheetService extends IoService {
     };
     this.app.sheets = <any>_.assign({}, this.app.sheets, _.fromPairs([[sheetName, emptySheet]]));
     this.app.datas[sheetName] = (_.times(10, () => {return {}}));
-    this.reload();
   }
 
   public remove():void {
@@ -80,11 +77,6 @@ export class SheetService extends IoService {
     this.app.datas = <any>_.assign({}, this.app.datas);
     this.app.currentSheet = null;
     this.app.currentData = null;
-    this.reload();
-  }
-
-  public reload():void {
-    this.$root.$broadcast("before-change-sheet", this.app.currentSheet && this.app.currentSheet.name);
   }
 
 }

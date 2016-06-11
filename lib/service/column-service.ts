@@ -1,13 +1,12 @@
 import _ = require("lodash");
 
 import {BaseService} from "./base-service";
-import {IColumn, ISheet} from "../component/app-component";
+import {IColumn} from "../component/app-component";
 
 export class ColumnService extends BaseService {
 
   public add():void {
     this.app.currentSheet.columns.push(this.generateInitialColumn());
-    this.app.services.sheet.reload();
   }
 
   public modify(index:number, column:IColumn):void {
@@ -17,7 +16,6 @@ export class ColumnService extends BaseService {
       return;
     }
     this.app.currentSheet.columns.$set(index, column);
-    this.app.services.sheet.reload();
   }
 
   public move(index:number, right:boolean):void {
@@ -33,7 +31,6 @@ export class ColumnService extends BaseService {
 
   public remove(index:number):void {
     this.app.currentSheet.columns.$remove(this.app.currentSheet.columns[index]);
-    this.app.services.sheet.reload();
   }
 
   public generateInitialColumn(no:number = undefined):IColumn {

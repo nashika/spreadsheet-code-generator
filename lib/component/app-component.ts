@@ -1,9 +1,7 @@
 import * as path from "path";
 
 import Component from "vue-class-component";
-const electron = require('electron');
-const remote = electron.remote;
-const BrowserWindow = remote.BrowserWindow;
+import electron = require('electron');
 
 import {BaseComponent} from "./base-component";
 import {FileComponent} from "./file-component";
@@ -56,7 +54,7 @@ export class AppComponent extends BaseComponent {
 
   data():any {
     return {
-      saveBaseDir: path.join(remote.app.getAppPath(), "./sample"),
+      saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample"),
       sheets: {},
       currentSheet: null,
       datas: {},
