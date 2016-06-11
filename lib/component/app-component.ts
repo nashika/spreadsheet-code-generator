@@ -12,6 +12,7 @@ import {ColumnService} from "../service/column-service";
 import {DataService} from "../service/data-service";
 import {MenuService} from "../service/menu-service";
 import {templateLoader} from "./template-loader";
+import {ConfigService} from "../service/config-service";
 
 export interface ISheet {
   name:string;
@@ -25,6 +26,10 @@ export interface IColumn {
   width:number;
 }
 
+export interface IConfig {
+  recentSaveBaseDir: string;
+}
+
 @Component({
   template: templateLoader("app"),
   components: {
@@ -33,6 +38,7 @@ export interface IColumn {
     "spreadsheet-component": SpreadsheetComponent,
   },
   created: function () {
+    this.services.config = new ConfigService(this);
     this.services.sheet = new SheetService(this);
     this.services.column = new ColumnService(this);
     this.services.data = new DataService(this);
@@ -42,12 +48,14 @@ export interface IColumn {
 export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
+  config:IConfig;
   sheets:{[name:string]:ISheet};
   currentSheet:ISheet;
   datas:{[name:string]:any[]};
   currentData:any[];
   showMenu:boolean;
   services:{
+    config: ConfigService,
     sheet: SheetService,
     column: ColumnService,
     data: DataService,
@@ -57,12 +65,14 @@ export class AppComponent extends BaseComponent {
   data():any {
     return {
       saveBaseDir: "",
+      config: null,
       sheets: {},
       currentSheet: null,
       datas: {},
       currentData: null,
       showMenu: true,
       services: {
+        config: null,
         sheet: null,
         column: null,
         data: null,

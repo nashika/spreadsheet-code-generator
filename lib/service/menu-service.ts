@@ -1,3 +1,5 @@
+import path = require("path");
+
 import electron = require("electron");
 
 import {BaseService} from "./base-service";
@@ -8,6 +10,10 @@ export class MenuService extends BaseService {
 
   constructor(app:AppComponent) {
     super(app);
+    this.init();
+  }
+
+  protected init():void {
     let menu = electron.remote.Menu.buildFromTemplate([
       {
         label: "&File",
@@ -22,16 +28,12 @@ export class MenuService extends BaseService {
           {
             label: "&Open",
             accelerator: "Ctrl+O",
-            click: () => {
-              this.app.services.sheet.loadAll()
-            },
+            click: this.open,
           },
           {
             label: "&Save",
             accelerator: "Ctrl+S",
-            click: () => {
-              this.app.services.sheet.saveAll()
-            },
+            click: this.save,
           },
         ],
       },
@@ -76,4 +78,19 @@ export class MenuService extends BaseService {
     ]);
     electron.remote.getCurrentWindow().setMenu(menu);
   }
+
+  protected open = ():void => {
+    let dirs:string[] = electron.remote.dialog.showOpenDialog({
+      defaultPath: path.join(electron.remote.app.getAppPath(), "sample"),
+      properties: ["openDirectory"],
+    });
+    if (!dirs || dirs.length == 0) return;
+    this.app.saveBaseDir = dirs[0];
+    this.app.services.sheet.loadAll();
+  };
+
+  protected save = ():void => {
+    this.app.services.sheet.saveAll();
+  }
+
 }

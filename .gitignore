@@ -2,6 +2,7 @@
 dist/
 npm-debug.log*
 node_modules
+tmp
 typings
 **/*.js
 **/*.js.map

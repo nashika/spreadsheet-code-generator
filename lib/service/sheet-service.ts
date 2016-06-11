@@ -29,12 +29,6 @@ export class SheetService extends IoService {
   }
 
   public loadAll():void {
-    let dirs:string[] = electron.remote.dialog.showOpenDialog({
-      defaultPath: path.join(electron.remote.app.getAppPath(), "sample"),
-      properties: ["openDirectory"],
-    });
-    if (!dirs || dirs.length == 0) return;
-    this.app.saveBaseDir = dirs[0];
     this.app.sheets = {};
     let names:string[] = this.list();
     for (let name of names)
