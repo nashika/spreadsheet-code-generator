@@ -33,7 +33,12 @@ export class MenuService extends BaseService {
           {
             label: "&Save",
             accelerator: "Ctrl+S",
-            click: this.save,
+            click: this.saveTo,
+          },
+          {
+            label: "Save &As",
+            accelerator: "Ctrl+Shift+S",
+            click: this.saveAs,
           },
         ],
       },
@@ -84,8 +89,17 @@ export class MenuService extends BaseService {
     this.app.services.sheet.loadAll();
   };
 
-  protected save = ():void => {
-    this.openDir();
+  protected saveTo = ():void => {
+    this.save(false);
+  };
+
+  protected saveAs = ():void => {
+    this.save(true);
+  };
+
+  protected save(as:boolean = false) {
+    if (as || !this.app.saveBaseDir)
+      this.openDir();
     this.app.services.sheet.saveAll();
   };
 

@@ -23,6 +23,7 @@ export class DataService extends IoService {
   }
 
   public loadAll():void {
+    if (!this.checkDir()) return;
     this.app.datas = {};
     let names:string[] = this.list();
     for (let name of names)
@@ -31,6 +32,7 @@ export class DataService extends IoService {
   }
 
   public saveAll():void {
+    if (!this.checkAndCreateDir()) return;
     _.forIn(this.app.datas, (data, name) => {
       this.save(name, data);
     });

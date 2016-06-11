@@ -19,6 +19,7 @@ export class SheetService extends IoService {
   }
 
   public saveAll():void {
+    if (!this.checkAndCreateDir()) return;
     _.forIn(this.app.sheets, (sheet, name) => {
       this.save(name, sheet);
     });
@@ -29,6 +30,7 @@ export class SheetService extends IoService {
   }
 
   public loadAll():void {
+    if (!this.checkDir()) return;
     this.app.sheets = {};
     let names:string[] = this.list();
     for (let name of names)
