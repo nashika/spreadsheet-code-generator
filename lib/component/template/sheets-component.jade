@@ -1,8 +1,9 @@
 div.panel.panel-default
   div.panel-heading #[i.fa.fa-table] Sheets
   ul.list-group
-    li.list-group-item("v-for"="sheet in sheets", "@click"="select(sheet)",
+    li.list-group-item("v-for"="(sheetName, sheet) in sheets", "@click"="select(sheet)",
     ":class"="{'list-group-item-info': sheet == currentSheet}") {{sheet.name}}
+      span.label.label-danger.pull-right("v-if"="sheetMetas[sheetName].modified") !
     li.list-group-item
       div.row
         div.col-md-8

@@ -7,16 +7,20 @@ import {BaseComponent} from "./base-component";
 import {SheetsComponent} from "./sheets-component";
 import {ColumnComponent} from "./column-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
+import {ConfigService} from "../service/config-service";
 import {SheetService} from "../service/sheet-service";
 import {ColumnService} from "../service/column-service";
 import {DataService} from "../service/data-service";
 import {MenuService} from "../service/menu-service";
 import {templateLoader} from "./template-loader";
-import {ConfigService} from "../service/config-service";
 
 export interface ISheet {
   name:string;
   columns:Array<IColumn>;
+}
+
+export interface ISheetMeta {
+  modified:boolean;
 }
 
 export interface IColumn {
@@ -49,9 +53,11 @@ export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
   config:IConfig;
-  sheets:{[name:string]:ISheet};
+  sheets:{[sheetName:string]:ISheet};
+  sheetMetas:{[sheetName:string]:ISheetMeta};
+  datas:{[sheetName:string]:any[]};
   currentSheet:ISheet;
-  datas:{[name:string]:any[]};
+  currentSheetMeta:ISheetMeta;
   currentData:any[];
   showMenu:boolean;
   services:{
@@ -67,8 +73,10 @@ export class AppComponent extends BaseComponent {
       saveBaseDir: "",
       config: null,
       sheets: {},
-      currentSheet: null,
+      sheetMetas: {},
       datas: {},
+      currentSheet: null,
+      currentSheetMeta: null,
       currentData: null,
       showMenu: true,
       services: {

@@ -2,8 +2,9 @@ import path = require("path");
 
 import _ = require("lodash");
 import electron = require("electron");
+import vue = require("vue");
 
-import {ISheet, AppComponent} from "../component/app-component";
+import {ISheet} from "../component/app-component";
 import {IoService} from "./io-service";
 
 export class SheetService extends IoService {
@@ -16,6 +17,7 @@ export class SheetService extends IoService {
 
   protected save(sheetName:string, data:ISheet) {
     super.save(sheetName, data);
+    vue.set(this.app.sheetMetas[sheetName], "modified", false);
   }
 
   public saveAll():void {
@@ -32,15 +34,20 @@ export class SheetService extends IoService {
   public loadAll():void {
     if (!this.checkDir()) return;
     this.app.sheets = {};
+    this.app.sheetMetas = {};
     let names:string[] = this.list();
-    for (let name of names)
-      this.app.sheets[name] = this.load(name);
+    for (let name of names) {
+      vue.set(this.app.sheets, name, this.load(name));
+      vue.set(this.app.sheetMetas, name, {modified: false});
+    }
     this.app.currentSheet = null;
+    this.app.currentSheetMeta = null;
     this.app.services.data.loadAll();
   }
 
   public select(sheet:ISheet) {
     this.app.currentSheet = sheet;
+    this.app.currentSheetMeta = this.app.sheetMetas[sheet.name];
     this.app.currentData = this.app.datas[sheet.name];
   }
 
@@ -62,8 +69,9 @@ export class SheetService extends IoService {
       name: sheetName,
       columns: _.times(5, this.app.services.column.generateInitialColumn),
     };
-    this.app.sheets = <any>_.assign({}, this.app.sheets, _.fromPairs([[sheetName, emptySheet]]));
-    this.app.datas[sheetName] = (_.times(10, () => {return {}}));
+    vue.set(this.app.sheets, sheetName, emptySheet);
+    vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
+    vue.set(this.app.sheetMetas, sheetName, {modified: true});
   }
 
   public remove():void {
@@ -74,10 +82,9 @@ export class SheetService extends IoService {
     if (!confirm(`Are you sure to delete sheet:"${this.app.currentSheet.name}"?`)) {
       return;
     }
-    _.unset(this.app.sheets, this.app.currentSheet.name);
-    _.unset(this.app.datas, this.app.currentSheet.name);
-    this.app.sheets = <any>_.assign({}, this.app.sheets);
-    this.app.datas = <any>_.assign({}, this.app.datas);
+    vue.delete(this.app.sheets, this.app.currentSheet.name);
+    vue.delete(this.app.sheetMetas, this.app.currentSheet.name);
+    vue.delete(this.app.datas, this.app.currentSheet.name);
     this.app.currentSheet = null;
     this.app.currentData = null;
   }

@@ -1,4 +1,5 @@
 import _ = require("lodash");
+import vue = require("vue");
 
 import {BaseService} from "./base-service";
 import {IColumn} from "../component/app-component";
@@ -7,6 +8,7 @@ export class ColumnService extends BaseService {
 
   public add():void {
     this.app.currentSheet.columns.push(this.generateInitialColumn());
+    this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
   public modify(index:number, column:IColumn):void {
@@ -16,6 +18,7 @@ export class ColumnService extends BaseService {
       return;
     }
     this.app.currentSheet.columns.$set(index, column);
+    this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
   public move(index:number, right:boolean):void {
@@ -27,10 +30,12 @@ export class ColumnService extends BaseService {
       this.app.currentSheet.columns = _.concat(
         _.take(columns, index - 1), [columns[index], columns[index - 1]], _.takeRight(columns, columns.length - index - 1));
     }
+    this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
   public remove(index:number):void {
     this.app.currentSheet.columns.$remove(this.app.currentSheet.columns[index]);
+    this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
   public generateInitialColumn(no:number = undefined):IColumn {

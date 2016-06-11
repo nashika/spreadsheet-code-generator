@@ -1,6 +1,6 @@
 #global-area.row
   #menu-area.col-xs-3("v-if"="showMenu")
-    sheets-component(":current-sheet"="currentSheet", ":sheets"="sheets")
+    sheets-component(":current-sheet"="currentSheet", ":sheets"="sheets", ":sheet-metas"="sheetMetas")
     column-component(":current-sheet"="currentSheet")
   #main-area(":class"="{'col-xs-3': showMenu, 'col-xs-12': !showMenu}")
-    spreadsheet-component(":current-sheet"="currentSheet", ":current-data"="currentData")
+    spreadsheet-component(":current-sheet"="currentSheet", ":current-sheet-meta"="currentSheetMeta", ":current-data"="currentData")

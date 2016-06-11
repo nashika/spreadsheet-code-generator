@@ -2,12 +2,12 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {IColumn, ISheet} from "./app-component";
+import {ISheet, ISheetMeta} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("spreadsheet"),
-  props: ["currentSheet", "currentData"],
+  props: ["currentSheet", "currentSheetMeta", "currentData"],
   watch: {
     "currentSheet": {
       handler: SpreadsheetComponent.prototype.watchCurrentSheet,
@@ -18,6 +18,7 @@ import {templateLoader} from "./template-loader";
 export class SpreadsheetComponent extends BaseComponent {
 
   currentSheet:ISheet;
+  currentSheetMeta:ISheetMeta;
   currentData:any[];
 
   hot:ht.Methods;
@@ -30,6 +31,12 @@ export class SpreadsheetComponent extends BaseComponent {
 
   onAfterSelection(r:number, c:number, r2:number, c2:number):void {
     this.$root.$broadcast("select-column-header", c);
+  }
+
+  onAfterChange(changes:any[][]):void {
+    if (changes) {
+      this.currentSheetMeta.modified = true;
+    }
   }
 
   watchCurrentSheet(now:ISheet, prev:ISheet):void {
@@ -59,6 +66,7 @@ export class SpreadsheetComponent extends BaseComponent {
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
+      afterChange: this.onAfterChange,
       afterSelection: this.onAfterSelection,
     });
   }
