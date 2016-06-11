@@ -12,15 +12,19 @@ div.panel.panel-default("v-if"="currentSheet")
     li.list-group-item("v-if"="column")
       form.form-horizontal("@submit.prevent"="modify")
         +form-group("Header")
-          input#column-header.form-control(type="text", "v-model"="column.header")
+          input.form-control(type="text", "v-model"="column.header")
         +form-group("Data")
-          input#column-data.form-control(type="text", "v-model"="column.data")
+          input.form-control(type="text", "v-model"="column.data")
         +form-group("Type")
-          select#column-type.form-control("v-model"="column.type")
+          select.form-control("v-model"="column.type")
             option(value="text") Text
             option(value="numeric") Numeric
+            option(value="select") Select
+        div("v-if"="column.type == 'select'")
+          +form-group("Options")
+            textarea.form-control(rows=5, "v-model"="column.options")
         +form-group("Width")
-          input#column-width.form-control(type="number", "v-model"="column.width")
+          input.form-control(type="number", "v-model"="column.width")
         button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Modify
     li.list-group-item("v-if"="column")
       div.row

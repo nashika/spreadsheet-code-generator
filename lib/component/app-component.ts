@@ -27,6 +27,7 @@ export interface IColumn {
   header:string;
   data:string;
   type:string;
+  options?:string;
   width:number;
 }
 

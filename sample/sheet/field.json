@@ -28,8 +28,9 @@
     {
       "header": "Type",
       "data": "type",
-      "type": "text",
-      "width": "80"
+      "type": "select",
+      "width": "80",
+      "options": "\nstring\nnumber\nbelongsTo\ndatetime"
     },
     {
       "data": "format",

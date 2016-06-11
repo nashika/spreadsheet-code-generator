@@ -3,42 +3,49 @@
     "model": "Article",
     "field": "id",
     "label": "ID",
+    "type": "string",
     "width": 40
   },
   {
     "model": "Article",
     "field": "title",
     "label": "Title",
+    "type": "string",
     "width": 120
   },
   {
     "model": "Article",
     "field": "content",
     "label": "Content",
+    "type": "string",
     "width": 200
   },
   {
     "model": "Article",
     "field": "category_id",
     "label": "Category",
+    "type": "belongsTo",
     "width": 80
   },
   {
     "model": "Article",
     "field": "author_id",
     "label": "Author",
+    "type": "belongsTo",
     "width": 80
   },
   {
     "model": "Article",
     "field": "created",
     "label": "Created",
+    "type": "datetime",
     "width": 80
   },
   {
     "model": "Article",
     "field": "updated",
     "label": "Updated",
+    "type": "datetime",
     "width": 80
   },
   {},

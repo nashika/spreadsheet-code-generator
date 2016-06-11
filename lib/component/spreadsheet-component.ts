@@ -53,11 +53,25 @@ export class SpreadsheetComponent extends BaseComponent {
     let columns:any[] = [];
     for (let c of now.columns) {
       colHeaders.push(c.header);
-      columns.push({
+      let column:any;
+      switch (c.type) {
+        case "select":
+          column = {
+            editor: "select",
+            selectOptions: _.split(c.options, /\n/),
+          };
+          break;
+        default:
+          column = {
+            type: c.type,
+          };
+          break;
+      }
+      _.assign(column, {
         data: c.data,
-        type: c.type,
         width: c.width,
       });
+      columns.push(column);
     }
     this.hot = new Handsontable(container, {
       data: data,
