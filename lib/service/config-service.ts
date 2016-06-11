@@ -1,5 +1,10 @@
+import fs = require("fs");
+import path = require("path");
+
+import electron = require("electron");
+
 import {BaseService} from "./base-service";
-import {AppComponent} from "../component/app-component";
+import {AppComponent, IConfig} from "../component/app-component";
 
 export class ConfigService extends BaseService {
 
@@ -8,8 +13,26 @@ export class ConfigService extends BaseService {
     this.load();
   }
 
+  protected get filePath():string {
+    return path.join(electron.remote.app.getAppPath(), "./tmp/config.json");
+  }
+
   public load():void {
-    
+    let filePath:string = this.filePath;
+    console.log(`Loadig ${filePath}.`);
+    let result:IConfig;
+    if (fs.existsSync(filePath)) {
+      result = JSON.parse(fs.readFileSync(filePath).toString());
+    } else {
+      result = {};
+    }
+    this.app.config = result;
+  }
+
+  public save():void {
+    let filePath:string = this.filePath;
+    console.log(`Saving ${filePath}.`);
+    fs.writeFileSync(filePath, JSON.stringify(this.app.config, null, "  "));
   }
 
 }

@@ -33,6 +33,7 @@ export class SheetService extends IoService {
     let names:string[] = this.list();
     for (let name of names)
       this.app.sheets[name] = this.load(name);
+    this.app.currentSheet = null;
     this.app.services.data.loadAll();
   }
 

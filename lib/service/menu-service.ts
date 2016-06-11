@@ -80,17 +80,24 @@ export class MenuService extends BaseService {
   }
 
   protected open = ():void => {
-    let dirs:string[] = electron.remote.dialog.showOpenDialog({
-      defaultPath: path.join(electron.remote.app.getAppPath(), "sample"),
-      properties: ["openDirectory"],
-    });
-    if (!dirs || dirs.length == 0) return;
-    this.app.saveBaseDir = dirs[0];
+    this.openDir();
     this.app.services.sheet.loadAll();
   };
 
   protected save = ():void => {
+    this.openDir();
     this.app.services.sheet.saveAll();
+  };
+
+  protected openDir():void {
+    let dirs:string[] = electron.remote.dialog.showOpenDialog({
+      defaultPath: this.app.saveBaseDir || this.app.config.recentSaveBaseDir || path.join(electron.remote.app.getAppPath(), "sample"),
+      properties: ["openDirectory"],
+    });
+    if (!dirs || dirs.length == 0) return;
+    this.app.saveBaseDir = dirs[0];
+    this.app.config.recentSaveBaseDir = dirs[0];
+    this.app.services.config.save();
   }
 
 }

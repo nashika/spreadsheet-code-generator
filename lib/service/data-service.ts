@@ -2,7 +2,6 @@ import Vue = vuejs.Vue;
 import _ = require("lodash");
 
 import {IoService} from "./io-service";
-import {AppComponent} from "../component/app-component";
 
 export class DataService extends IoService {
 
@@ -28,6 +27,7 @@ export class DataService extends IoService {
     let names:string[] = this.list();
     for (let name of names)
       this.app.datas[name] = this.load(name);
+    this.app.currentData = null;
   }
 
   public saveAll():void {
