@@ -9,17 +9,16 @@ html, body {
   height: 100%;
 }
 
-#global-area {
+#container, #row {
   height: 100%;
 }
 
 #menu-area {
-  border-right: 1px solid $mono-lighter;
-  padding: 0px 5px;
   height: 100%;
+  padding: 5px;
 }
 
 #main-area {
-  padding: 0px;
   height: 100%;
+  padding: 0px;
 }

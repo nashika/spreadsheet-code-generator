@@ -7,12 +7,13 @@ import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("spreadsheet"),
-  props: ["currentSheet", "currentSheetMeta", "currentData"],
+  props: ["currentSheet", "currentSheetMeta", "currentData", "showMenu"],
   watch: {
     "currentSheet": {
       handler: SpreadsheetComponent.prototype.watchCurrentSheet,
       deep: true,
-    }
+    },
+    "showMenu": SpreadsheetComponent.prototype.watchShowMenu,
   },
 })
 export class SpreadsheetComponent extends BaseComponent {
@@ -69,6 +70,12 @@ export class SpreadsheetComponent extends BaseComponent {
       afterChange: this.onAfterChange,
       afterSelection: this.onAfterSelection,
     });
+  }
+
+  watchShowMenu():void {
+    if (this.hot) {
+      this.hot.render();
+    }
   }
 
 }

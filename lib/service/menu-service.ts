@@ -82,12 +82,19 @@ export class MenuService extends BaseService {
       }
     ]);
     electron.remote.getCurrentWindow().setMenu(menu);
+    this.openDefault();
   }
 
   protected open = ():void => {
     this.openDir();
     this.app.services.sheet.loadAll();
   };
+
+  protected openDefault() {
+    if (this.app.config.recentSaveBaseDir)
+      this.app.saveBaseDir = this.app.config.recentSaveBaseDir;
+    this.app.services.sheet.loadAll();
+  }
 
   protected saveTo = ():void => {
     this.save(false);
