@@ -20,19 +20,19 @@ export class SheetService extends IoService {
     vue.set(this.app.sheetMetas[sheetName], "modified", false);
   }
 
-  public saveAll():void {
-    if (!this.checkAndCreateDir()) return;
+  public saveAll():boolean {
+    if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.sheets, (sheet, name) => {
       this.save(name, sheet);
     });
     _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {
       this.unlink(name);
     });
-    this.app.services.data.saveAll();
+    return this.app.services.data.saveAll();
   }
 
-  public loadAll():void {
-    if (!this.checkDir()) return;
+  public loadAll():boolean {
+    if (!this.checkDir()) return false;
     this.app.sheets = {};
     this.app.sheetMetas = {};
     let names:string[] = this.list();
@@ -43,6 +43,7 @@ export class SheetService extends IoService {
     this.app.currentSheet = null;
     this.app.currentSheetMeta = null;
     this.app.services.data.loadAll();
+    return true;
   }
 
   public select(sheet:ISheet) {

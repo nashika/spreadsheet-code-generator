@@ -73,9 +73,9 @@ export class AppComponent extends BaseComponent {
     return {
       saveBaseDir: "",
       config: null,
-      sheets: {},
-      sheetMetas: {},
-      datas: {},
+      sheets: null,
+      sheetMetas: null,
+      datas: null,
       currentSheet: null,
       currentSheetMeta: null,
       currentData: null,

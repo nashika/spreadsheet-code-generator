@@ -1,4 +1,4 @@
-div.panel.panel-default
+div.panel.panel-default("v-if"="sheets")
   div.panel-heading #[i.fa.fa-table] Sheets
   ul.list-group
     li.list-group-item("v-for"="(sheetName, sheet) in sheets", "@click"="select(sheet)",

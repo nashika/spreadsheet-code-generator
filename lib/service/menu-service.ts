@@ -86,14 +86,18 @@ export class MenuService extends BaseService {
   }
 
   protected open = ():void => {
-    this.openDir();
-    this.app.services.sheet.loadAll();
+    if (!this.openDir()) return;
+    if (this.app.services.sheet.loadAll())
+      this.saveDirInfo();
   };
 
-  protected openDefault() {
+  protected openDefault():void {
     if (this.app.config.recentSaveBaseDir)
       this.app.saveBaseDir = this.app.config.recentSaveBaseDir;
-    this.app.services.sheet.loadAll();
+    else
+      this.app.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
+    if (this.app.services.sheet.loadAll())
+      this.saveDirInfo();
   }
 
   protected saveTo = ():void => {
@@ -104,20 +108,27 @@ export class MenuService extends BaseService {
     this.save(true);
   };
 
-  protected save(as:boolean = false) {
+  protected save(as:boolean = false):void {
     if (as || !this.app.saveBaseDir)
-      this.openDir();
-    this.app.services.sheet.saveAll();
+      if (!this.openDir())
+        return;
+    if (this.app.services.sheet.saveAll())
+      this.saveDirInfo();
   };
 
-  protected openDir():void {
+  protected openDir():boolean {
     let dirs:string[] = electron.remote.dialog.showOpenDialog({
-      defaultPath: this.app.saveBaseDir || this.app.config.recentSaveBaseDir || path.join(electron.remote.app.getAppPath(), "sample"),
+      defaultPath: this.app.saveBaseDir || this.app.config.recentSaveBaseDir,
       properties: ["openDirectory"],
     });
-    if (!dirs || dirs.length == 0) return;
+    if (!dirs || dirs.length == 0) return false;
     this.app.saveBaseDir = dirs[0];
-    this.app.config.recentSaveBaseDir = dirs[0];
+    return true;
+  }
+
+  protected saveDirInfo():void {
+    electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.app.saveBaseDir}]`);
+    this.app.config.recentSaveBaseDir = this.app.saveBaseDir;
     this.app.services.config.save();
   }
 
