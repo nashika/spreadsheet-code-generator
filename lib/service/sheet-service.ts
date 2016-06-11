@@ -1,14 +1,14 @@
+import path = require("path");
+
 import _ = require("lodash");
-import Vue = vuejs.Vue;
+import electron = require("electron");
 
 import {ISheet, AppComponent} from "../component/app-component";
 import {IoService} from "./io-service";
 
 export class SheetService extends IoService {
 
-  constructor(app:AppComponent) {
-    super(app, "sheet");
-  }
+  protected static DIR_NAME:string = "sheet";
 
   protected load(sheetName:string):ISheet {
     return super.load(sheetName);
@@ -29,6 +29,7 @@ export class SheetService extends IoService {
   }
 
   public loadAll():void {
+    this.app.saveBaseDir = path.join(electron.remote.app.getAppPath(), "./sample");
     this.app.sheets = {};
     let names:string[] = this.list();
     for (let name of names)

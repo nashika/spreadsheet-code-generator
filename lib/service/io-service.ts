@@ -6,11 +6,10 @@ import {AppComponent} from "../component/app-component";
 
 export class IoService extends BaseService {
 
-  protected saveDir:string;
-
-  constructor(app:AppComponent, dirName:string) {
-    super(app);
-    this.saveDir = path.join(this.app.saveBaseDir, dirName);
+  protected static DIR_NAME:string = "";
+  
+  protected get saveDir():string {
+    return path.join(this.app.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
   }
 
   protected filePath(sheetName:string):string {

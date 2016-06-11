@@ -6,9 +6,7 @@ import {AppComponent} from "../component/app-component";
 
 export class DataService extends IoService {
 
-  constructor(app:AppComponent) {
-    super(app, "data");
-  }
+  protected static DIR_NAME:string = "data";
 
   protected load(sheetName:string):any[] {
     let data:any[] = super.load(sheetName);
@@ -16,9 +14,12 @@ export class DataService extends IoService {
   }
 
   protected save(sheetName:string, data:any[]) {
-    data = <any>_.omitBy(data, _.isNull);
-    data = <any>_.omitBy(data, _.isUndefined);
-    data = <any>_.omitBy(data, (value) => value === "");
+    data = data.map((record) => {
+      record = <any>_.omitBy(record, _.isNull);
+      record = <any>_.omitBy(record, _.isUndefined);
+      record = <any>_.omitBy(record, (value) => value === "");
+      return record;
+    });
     super.save(sheetName, data);
   }
 

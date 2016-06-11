@@ -54,7 +54,7 @@ export class AppComponent extends BaseComponent {
 
   data():any {
     return {
-      saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample"),
+      saveBaseDir: "",
       sheets: {},
       currentSheet: null,
       datas: {},
