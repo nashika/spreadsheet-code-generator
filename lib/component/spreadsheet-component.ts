@@ -15,6 +15,8 @@ import {templateLoader} from "./template-loader";
     },
     "showMenu": SpreadsheetComponent.prototype.watchShowMenu,
   },
+  ready: SpreadsheetComponent.prototype.onReady,
+  beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
 })
 export class SpreadsheetComponent extends BaseComponent {
 
@@ -23,6 +25,7 @@ export class SpreadsheetComponent extends BaseComponent {
   currentData:any[];
 
   hot:ht.Methods;
+  resizeTimer:any;
 
   data() {
     return {
@@ -30,17 +33,32 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
-  onAfterSelection(r:number, c:number, r2:number, c2:number):void {
+  onReady() {
+    window.addEventListener("resize", this.resize);
+  }
+
+  onBeforeDestroy() {
+    window.removeEventListener("resize", this.resize);
+  }
+
+  resize() {
+    clearTimeout(this.resizeTimer);
+    this.resizeTimer = setTimeout(() => {
+      this.watchCurrentSheet(this.currentSheet);
+    }, 200);
+  }
+
+  afterSelection(r:number, c:number, r2:number, c2:number):void {
     this.$root.$broadcast("select-column-header", c);
   }
 
-  onAfterChange(changes:any[][]):void {
+  afterChange(changes:any[][]):void {
     if (changes) {
       this.currentSheetMeta.modified = true;
     }
   }
 
-  watchCurrentSheet(now:ISheet, prev:ISheet):void {
+  watchCurrentSheet(now:ISheet/*, prev:ISheet*/):void {
     if (this.hot) {
       this.hot.destroy();
       this.hot = null;
@@ -75,20 +93,22 @@ export class SpreadsheetComponent extends BaseComponent {
     }
     this.hot = new Handsontable(container, {
       data: data,
+      width: this.$el.offsetWidth - 1,
+      height: this.$el.offsetHeight - 1,
       columns: columns,
       rowHeaders: true,
       colHeaders: colHeaders,
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
-      afterChange: this.onAfterChange,
-      afterSelection: this.onAfterSelection,
+      afterChange: this.afterChange,
+      afterSelection: this.afterSelection,
     });
   }
 
   watchShowMenu():void {
     if (this.hot) {
-      this.hot.render();
+      this.watchCurrentSheet(this.currentSheet);
     }
   }
 
