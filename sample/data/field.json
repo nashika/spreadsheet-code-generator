@@ -2,37 +2,44 @@
   {
     "model": "Article",
     "field": "id",
-    "label": "ID"
+    "label": "ID",
+    "width": 40
   },
   {
     "model": "Article",
     "field": "title",
-    "label": "Title"
+    "label": "Title",
+    "width": 120
   },
   {
     "model": "Article",
     "field": "content",
-    "label": "Content"
+    "label": "Content",
+    "width": 200
   },
   {
     "model": "Article",
     "field": "category_id",
-    "label": "Category"
+    "label": "Category",
+    "width": 80
   },
   {
     "model": "Article",
     "field": "author_id",
-    "label": "Author"
+    "label": "Author",
+    "width": 80
   },
   {
     "model": "Article",
     "field": "created",
-    "label": "Created"
+    "label": "Created",
+    "width": 80
   },
   {
     "model": "Article",
     "field": "updated",
-    "label": "Updated"
+    "label": "Updated",
+    "width": 80
   },
   {},
   {},

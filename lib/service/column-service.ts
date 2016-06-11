@@ -17,6 +17,13 @@ export class ColumnService extends BaseService {
       alert(`data="${column.data}" is already exists.`);
       return;
     }
+    let oldColumn:IColumn = this.app.currentSheet.columns[index];
+    if (column.data != oldColumn.data) {
+      for (let record of this.app.currentData) {
+        vue.set(record, column.data, record[oldColumn.data]);
+        vue.delete(record, oldColumn.data);
+      }
+    }
     this.app.currentSheet.columns.$set(index, column);
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
