@@ -44,22 +44,16 @@
       "header": "Expression"
     },
     {
-      "data": "data5",
-      "type": "text",
-      "width": 80,
-      "header": "width"
+      "data": "width",
+      "type": "numeric",
+      "width": "80",
+      "header": "Width"
     },
     {
-      "data": "data6",
+      "data": "layout",
       "type": "text",
       "width": 80,
-      "header": "layout"
-    },
-    {
-      "data": "data8",
-      "type": "text",
-      "width": 80,
-      "header": "aaa"
+      "header": "Layout"
     }
   ],
   "colHeaders": [

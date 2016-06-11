@@ -17,6 +17,7 @@ export class DataService extends IoService {
       record = <any>_.omitBy(record, _.isNull);
       record = <any>_.omitBy(record, _.isUndefined);
       record = <any>_.omitBy(record, (value) => value === "");
+      record = _.pick(record, _.map(this.app.sheets[sheetName].columns, "data"));
       return record;
     });
     super.save(sheetName, data);

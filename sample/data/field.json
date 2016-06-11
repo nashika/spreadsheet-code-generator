@@ -1,27 +1,38 @@
 [
   {
     "model": "Article",
-    "field": "id"
+    "field": "id",
+    "label": "ID"
   },
   {
     "model": "Article",
-    "field": "title"
+    "field": "title",
+    "label": "Title"
   },
   {
     "model": "Article",
-    "field": "content"
+    "field": "content",
+    "label": "Content"
   },
   {
     "model": "Article",
-    "field": "category_id"
+    "field": "category_id",
+    "label": "Category"
   },
   {
     "model": "Article",
-    "field": "created"
+    "field": "author_id",
+    "label": "Author"
   },
   {
+    "model": "Article",
+    "field": "created",
+    "label": "Created"
+  },
+  {
+    "model": "Article",
     "field": "updated",
-    "model": "Article"
+    "label": "Updated"
   },
   {},
   {},
