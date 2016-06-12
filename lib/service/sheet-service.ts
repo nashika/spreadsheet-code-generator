@@ -111,6 +111,10 @@ export class SheetService extends IoService {
       alert(`No selected sheet.`);
       return;
     }
+    if (_.some(this.app.sheets, (sheet:ISheet) => this.app.currentSheet.name == sheet.parent)) {
+      alert(`Sheet "${this.app.currentSheet.name}" have child sheet, please move or delete it.`);
+      return;
+    }
     if (!confirm(`Are you sure to delete sheet:"${this.app.currentSheet.name}"?`)) {
       return;
     }
@@ -120,6 +124,12 @@ export class SheetService extends IoService {
     vue.delete(this.app.datas, sheetName);
     this.app.currentSheet = this.app.sheets["root"];
     this.app.currentData = null;
+  }
+
+  public isParentRecursive(target:ISheet, parent:ISheet):boolean {
+    if (target.parent == parent.name) return true;
+    if (!target.parent) return false;
+    return this.isParentRecursive(this.app.sheets[target.parent], parent);
   }
 
 }
