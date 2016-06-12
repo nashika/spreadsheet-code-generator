@@ -15,6 +15,12 @@
   },
   {
     "model": "Article",
+    "field": "type",
+    "label": "Type",
+    "type": "division"
+  },
+  {
+    "model": "Article",
     "field": "content",
     "label": "Content",
     "type": "string",
@@ -36,9 +42,16 @@
   },
   {
     "model": "Article",
+    "field": "public",
+    "label": "Public",
+    "type": "boolean"
+  },
+  {
+    "model": "Article",
     "field": "created",
     "label": "Created",
     "type": "datetime",
+    "format": "YYYY/MM/DD",
     "width": 80
   },
   {
@@ -46,6 +59,7 @@
     "field": "updated",
     "label": "Updated",
     "type": "datetime",
+    "format": "YYYY/MM/DD",
     "width": 80
   },
   {},

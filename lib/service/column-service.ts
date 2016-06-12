@@ -24,6 +24,7 @@ export class ColumnService extends BaseService {
         vue.delete(record, oldColumn.data);
       }
     }
+    if (column.type != "select") vue.delete(column, "options");
     this.app.currentSheet.columns.$set(index, column);
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }

@@ -30,7 +30,7 @@
       "data": "type",
       "type": "select",
       "width": "80",
-      "options": "\nstring\nnumber\nbelongsTo\ndatetime"
+      "options": "\nstring\nnumber\nboolean\ndivision\nbelongsTo\ndatetime"
     },
     {
       "data": "format",
@@ -39,10 +39,10 @@
       "header": "Format"
     },
     {
-      "data": "expression",
+      "header": "Options",
+      "data": "options",
       "type": "text",
-      "width": "120",
-      "header": "Expression"
+      "width": "120"
     },
     {
       "data": "width",
