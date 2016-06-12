@@ -30,7 +30,7 @@ export class ColumnComponent extends BaseComponent {
   }
 
   add():void {
-    this.$root.services.column.add();
+    this.$root.services.column.add(this.columnIndex);
   }
 
   modify():void {

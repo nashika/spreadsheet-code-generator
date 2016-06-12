@@ -6,8 +6,9 @@ import {IColumn} from "../component/app-component";
 
 export class ColumnService extends BaseService {
 
-  public add():void {
-    this.app.currentSheet.columns.push(this.generateInitialColumn());
+  public add(index:number):void {
+    let columns = this.app.currentSheet.columns;
+    this.app.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialColumn()], _.slice(columns, index));
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
