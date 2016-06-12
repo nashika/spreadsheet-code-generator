@@ -52,17 +52,8 @@ export class SheetService extends IoService {
     this.app.currentData = this.app.datas[sheet.name];
   }
 
-  public add(sheetName:string):boolean {
-    let parentSheetName:string = this.app.currentSheet && this.app.currentSheet.name;
-    if (!parentSheetName) {
-      alert(`Parent sheet not selected.`);
-      return true;
-    }
-    if (!sheetName) {
-      alert(`Sheet name is empty.`);
-      return false;
-    }
-    if (_.has(this.app.sheets, sheetName)) {
+  public add(sheetName:string, parentSheetName:string):boolean {
+    if (sheetName == "root" || _.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
     }
@@ -70,13 +61,10 @@ export class SheetService extends IoService {
       name: sheetName,
       columns: _.times(5, this.app.services.column.generateInitialColumn),
       parent: parentSheetName,
-      children: [],
     };
     vue.set(this.app.sheets, sheetName, emptySheet);
     vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
-    this.app.sheets[parentSheetName].children.push(sheetName);
-    this.app.sheetMetas[parentSheetName].modified = true;
     return true;
   }
 
@@ -89,14 +77,11 @@ export class SheetService extends IoService {
       return;
     }
     let sheetName:string = this.app.currentSheet.name;
-    let parentSheetName:string = this.app.currentSheet.parent;
     vue.delete(this.app.sheets, sheetName);
     vue.delete(this.app.sheetMetas, sheetName);
     vue.delete(this.app.datas, sheetName);
     this.app.currentSheet = null;
     this.app.currentData = null;
-    this.app.sheets[parentSheetName].children.$remove(sheetName);
-    this.app.sheetMetas[parentSheetName].modified = true;
   }
 
 }

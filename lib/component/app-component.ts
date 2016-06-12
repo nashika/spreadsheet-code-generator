@@ -18,7 +18,6 @@ export interface ISheet {
   name:string;
   columns:Array<IColumn>;
   parent:string;
-  children:string[];
 }
 
 export interface ISheetMeta {

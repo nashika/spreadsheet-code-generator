@@ -39,6 +39,5 @@
       "width": 120
     }
   ],
-  "parent": "model",
-  "children": []
+  "parent": "model"
 }
