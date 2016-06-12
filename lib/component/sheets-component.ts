@@ -52,7 +52,7 @@ export class SheetsComponent extends BaseComponent {
   add():void {
     if (this.$root.services.sheet.add(this.newSheetName, this.newSheetParent)) {
       this.newSheetName = "";
-      this.newSheetName = "root";
+      this.newSheetParent = "root";
       this.addModal = false;
     }
   }

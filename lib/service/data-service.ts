@@ -23,13 +23,16 @@ export class DataService extends IoService {
     super.save(sheetName, data);
   }
 
+  public newAll():void {
+    this.app.datas = {};
+    this.app.currentData = null;
+  }
+  
   public loadAll():boolean {
     if (!this.checkDir()) return false;
-    this.app.datas = {};
     let names:string[] = this.list();
     for (let name of names)
       this.app.datas[name] = this.load(name);
-    this.app.currentData = null;
     return true;
   }
 

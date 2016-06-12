@@ -20,6 +20,26 @@ export class SheetService extends IoService {
     vue.set(this.app.sheetMetas[sheetName], "modified", false);
   }
 
+  public newAll():void {
+    this.app.sheets = {};
+    this.app.sheetMetas = {};
+    this.app.currentSheet = null;
+    this.app.currentSheetMeta = null;
+    this.app.services.data.newAll();
+  }
+
+  public loadAll():boolean {
+    if (!this.checkDir()) return false;
+    this.newAll();
+    let names:string[] = this.list();
+    for (let name of names) {
+      vue.set(this.app.sheets, name, this.load(name));
+      vue.set(this.app.sheetMetas, name, {modified: false});
+    }
+    this.app.services.data.loadAll();
+    return true;
+  }
+
   public saveAll():boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.sheets, (sheet, name) => {
@@ -31,21 +51,6 @@ export class SheetService extends IoService {
     return this.app.services.data.saveAll();
   }
 
-  public loadAll():boolean {
-    if (!this.checkDir()) return false;
-    this.app.sheets = {};
-    this.app.sheetMetas = {};
-    let names:string[] = this.list();
-    for (let name of names) {
-      vue.set(this.app.sheets, name, this.load(name));
-      vue.set(this.app.sheetMetas, name, {modified: false});
-    }
-    this.app.currentSheet = null;
-    this.app.currentSheetMeta = null;
-    this.app.services.data.loadAll();
-    return true;
-  }
-
   public select(sheet:ISheet) {
     this.app.currentSheet = sheet;
     this.app.currentSheetMeta = this.app.sheetMetas[sheet.name];
@@ -53,6 +58,14 @@ export class SheetService extends IoService {
   }
 
   public add(sheetName:string, parentSheetName:string):boolean {
+    if (!parentSheetName) {
+      alert(`Parent sheet not selected.`);
+      return true;
+    }
+    if (!sheetName) {
+      alert(`Sheet name is empty.`);
+      return false;
+    }
     if (sheetName == "root" || _.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;

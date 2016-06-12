@@ -21,9 +21,7 @@ export class MenuService extends BaseService {
           {
             label: "&New",
             accelerator: "Ctrl+N",
-            click: () => {
-              alert("now construction")
-            },
+            click: this.new,
           },
           {
             label: "&Open",
@@ -85,6 +83,12 @@ export class MenuService extends BaseService {
     this.openDefault();
   }
 
+  protected new = ():void => {
+    this.app.saveBaseDir = "";
+    this.app.services.sheet.newAll();
+    this.saveDirInfo(false);
+  };
+
   protected open = ():void => {
     if (!this.openDir()) return;
     if (this.app.services.sheet.loadAll())
@@ -126,10 +130,10 @@ export class MenuService extends BaseService {
     return true;
   }
 
-  protected saveDirInfo():void {
+  protected saveDirInfo(save:boolean = true):void {
     electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.app.saveBaseDir}]`);
     this.app.config.recentSaveBaseDir = this.app.saveBaseDir;
-    this.app.services.config.save();
+    if (save) this.app.services.config.save();
   }
 
 }
