@@ -69,14 +69,6 @@ export class SheetService extends IoService {
   }
 
   public add(sheetName:string, parentSheetName:string):boolean {
-    if (!parentSheetName) {
-      alert(`Parent sheet not selected.`);
-      return true;
-    }
-    if (!sheetName) {
-      alert(`Sheet name is empty.`);
-      return false;
-    }
     if (_.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
@@ -89,6 +81,28 @@ export class SheetService extends IoService {
     vue.set(this.app.sheets, sheetName, emptySheet);
     vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
+    return true;
+  }
+
+  public edit(oldSheetName:string, newSheetName:string, parentSheetName:string):boolean {
+    if (oldSheetName != newSheetName && _.has(this.app.sheets, newSheetName)) {
+      alert(`Sheet "${newSheetName}" already exists.`);
+      return false;
+    }
+    this.app.sheets[oldSheetName].name = newSheetName;
+    this.app.sheets[oldSheetName].parent = parentSheetName;
+    this.app.sheetMetas[oldSheetName].modified = true;
+    if (newSheetName == oldSheetName) return true;
+    _.forIn(this.app.sheets, (sheet:ISheet) => {
+      if (sheet.parent == oldSheetName)
+        sheet.parent = newSheetName;
+    });
+    vue.set(this.app.sheets, newSheetName, this.app.sheets[oldSheetName]);
+    vue.delete(this.app.sheets, oldSheetName);
+    vue.set(this.app.datas, newSheetName, this.app.datas[oldSheetName]);
+    vue.delete(this.app.datas, oldSheetName);
+    vue.set(this.app.sheetMetas, newSheetName, this.app.sheetMetas[oldSheetName]);
+    vue.delete(this.app.sheetMetas, oldSheetName);
     return true;
   }
 

@@ -28,17 +28,21 @@ interface ITreeSheet {
 export class SheetsComponent extends BaseComponent {
 
   currentSheet:ISheet;
-  sheets:ISheet[];
-  sheetMetas:ISheetMeta[];
+  sheets:{[sheetName:string]:ISheet};
+  sheetMetas:{[sheetName:string]:ISheetMeta};
 
   treeSheets:ITreeSheet[];
   addModal:boolean;
+  editModal:boolean;
+  newSheetParent:string;
   newSheetName:string;
 
   data():any {
     return {
       treeSheets: [],
       addModal: false,
+      editModal: false,
+      newSheetParent: "",
       newSheetName: "",
     }
   }
@@ -54,8 +58,27 @@ export class SheetsComponent extends BaseComponent {
     }
   }
 
+  edit():void {
+    let newSheetParent:string = this.newSheetParent || this.currentSheet.parent;
+    if (this.$root.services.sheet.edit(this.currentSheet.name, this.newSheetName, newSheetParent)) {
+      this.newSheetName = "";
+      this.newSheetParent = "root";
+      this.editModal = false;
+    }
+  }
+
   remove():void {
     this.$root.services.sheet.remove();
+  }
+
+  isSelfOrChild(sheetName:string):boolean {
+    if (sheetName == this.currentSheet.name) return true;
+    let isParent = (sheetName:string, sheet:ISheet):boolean => {
+      if (sheet.parent == sheetName) return true;
+      if (!sheet.parent) return false;
+      return isParent(sheetName, this.sheets[sheet.parent]);
+    };
+    return isParent(this.currentSheet.name, this.sheets[sheetName]);
   }
 
   watchSheets():void {

@@ -3,9 +3,11 @@ div.panel.panel-default("v-if"="sheets")
     dropdown.pull-right
       button.btn.btn-primary.btn-xs(type="button", data-toggle="dropdown") #[i.fa.fa-bars] #[i.fa.fa-caret-down]
       ul.dropdown-menu(slot="dropdown-menu")
-        li("v-if"="currentSheet")
+        li
           a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add
-        li("v-if"="currentSheet && currentSheet.name != 'root'")
+        li("v-if"="currentSheet.name != 'root'")
+          a("@click"="editModal = true") #[i.fa.fa-fw.fa-pencil] Edit
+        li("v-if"="currentSheet.name != 'root'")
           a("@click"="remove") #[i.fa.fa-fw.fa-trash] Delete
   ul.list-group
     li.list-group-item("v-for"="treeSheet in treeSheets", "@click"="select(treeSheet.sheet)",
@@ -22,10 +24,30 @@ form("@submit.prevent"="add")
         label Parent Sheet
         input.form-control(type="text", "v-model"="currentSheet.name", ":readonly"="true")
         label New Sheet Name
-        input.form-control(type="text", "v-model"="newSheetName", placeholder="New sheet name", required)
+        input.form-control(type="text", "v-model"="newSheetName", required)
     div.modal-footer(slot="modal-footer")
       .row
         .col-xs-6
           button.btn.btn-block.btn-default(type="button", "@click"="addModal = false") Cancel
         .col-xs-6
           button.btn.btn-block.btn-primary(type="submit") Add
+
+form("@submit.prevent"="edit")
+  modal(":show.sync"="editModal")
+    div.modal-header(slot="modal-header")
+      h4.modal-title Edit Sheet
+    div.modal-body(slot="modal-body")
+      div.form-group
+        label Parent Sheet
+        select.form-control("v-model"="newSheetParent", required)
+          //option(value="", selected)
+          option("v-for"="treeSheet in treeSheets", "v-if"="!isSelfOrChild(treeSheet.sheet.name)",
+          ":value"="treeSheet.sheet.name", ":selected"="treeSheet.sheet.name == currentSheet.parent") {{treeSheet.sheet.name}}
+        label Sheet Name
+        input.form-control(type="text", "v-model"="newSheetName", required)
+    div.modal-footer(slot="modal-footer")
+      .row
+        .col-xs-6
+          button.btn.btn-block.btn-default(type="button", "@click"="editModal = false") Cancel
+        .col-xs-6
+          button.btn.btn-block.btn-primary(type="submit") Edit
