@@ -1,0 +1,9 @@
+div.panel.panel-default
+  div.panel-heading #[i.fa.fa-table] Menu
+  ul.list-group
+    li.list-group-item
+      radio-group.btn-group-justified(":value.sync"="mode", type="default")
+        radio(value="data") Data
+        radio(value="code") Code
+    li.list-group-item
+      button.btn.btn-block.btn-primary Generate

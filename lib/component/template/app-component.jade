@@ -1,6 +1,7 @@
 #container.container-fluid
   #row.row
     #menu-area.col-xs-3("v-if"="showMenu")
+      menu-component(":mode"="mode")
       sheets-component(":current-sheet"="currentSheet", ":sheets"="sheets", ":sheet-metas"="sheetMetas")
       column-component(":current-sheet"="currentSheet")
     #main-area(":class"="{'col-xs-9': showMenu, 'col-xs-12': !showMenu}")

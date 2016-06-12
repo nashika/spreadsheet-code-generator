@@ -3,6 +3,7 @@ import * as path from "path";
 import Component from "vue-class-component";
 import electron = require('electron');
 
+import {MenuComponent} from "./menu-component";
 import {BaseComponent} from "./base-component";
 import {SheetsComponent} from "./sheets-component";
 import {ColumnComponent} from "./column-component";
@@ -39,6 +40,7 @@ export interface IConfig {
 @Component({
   template: templateLoader("app"),
   components: {
+    "menu-component": MenuComponent,
     "sheets-component": SheetsComponent,
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
@@ -55,6 +57,7 @@ export class AppComponent extends BaseComponent {
 
   saveBaseDir:string;
   config:IConfig;
+  mode:string;
   sheets:{[sheetName:string]:ISheet};
   sheetMetas:{[sheetName:string]:ISheetMeta};
   datas:{[sheetName:string]:any[]};
@@ -74,6 +77,7 @@ export class AppComponent extends BaseComponent {
     return {
       saveBaseDir: "",
       config: null,
+      mode: "data",
       sheets: null,
       sheetMetas: null,
       datas: null,
