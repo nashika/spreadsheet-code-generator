@@ -25,5 +25,9 @@
       "width": 120,
       "header": "View"
     }
+  ],
+  "parent": "root",
+  "children": [
+    "field"
   ]
 }

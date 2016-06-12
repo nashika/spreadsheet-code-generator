@@ -1,9 +1,36 @@
 [
   {
+    "model": "*",
+    "field": "id",
+    "label": "ID",
+    "type": "number"
+  },
+  {
+    "model": "*",
+    "field": "update",
+    "label": "Update",
+    "type": "datetime",
+    "format": "YYYY/MM/DD",
+    "width": 120
+  },
+  {
+    "model": "*",
+    "field": "created",
+    "extends": "update",
+    "label": "Created"
+  },
+  {
+    "model": "*",
+    "field": "modified",
+    "extends": "update",
+    "label": "Updated"
+  },
+  {},
+  {
     "model": "Article",
     "field": "id",
     "label": "ID",
-    "type": "string",
+    "type": "number",
     "width": 40
   },
   {
@@ -56,12 +83,72 @@
   },
   {
     "model": "Article",
-    "field": "updated",
+    "field": "modified",
     "label": "Updated",
     "type": "datetime",
     "format": "YYYY/MM/DD",
     "width": 80
   },
+  {},
+  {
+    "model": "Author",
+    "field": "id",
+    "label": "ID",
+    "type": "number"
+  },
+  {
+    "model": "Author",
+    "field": "username",
+    "label": "Username",
+    "type": "string"
+  },
+  {
+    "model": "Author",
+    "field": "password",
+    "label": "Password",
+    "type": "string"
+  },
+  {
+    "model": "Author",
+    "field": "name",
+    "label": "Name",
+    "type": "string"
+  },
+  {
+    "model": "Author",
+    "field": "nickname",
+    "label": "Nickname",
+    "type": "string"
+  },
+  {
+    "model": "Author",
+    "field": "admin",
+    "label": "Admin",
+    "type": "boolean"
+  },
+  {
+    "model": "Author",
+    "field": "created",
+    "extends": "created"
+  },
+  {
+    "model": "Author",
+    "field": "modified",
+    "extends": "updated"
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
   {},
   {},
   {}
