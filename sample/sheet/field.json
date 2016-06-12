@@ -4,50 +4,50 @@
     {
       "data": "model",
       "type": "text",
-      "width": "120",
+      "width": 120,
       "header": "Model"
     },
     {
       "data": "field",
       "type": "text",
-      "width": "120",
+      "width": 120,
       "header": "Field"
     },
     {
       "data": "extends",
       "type": "text",
-      "width": "120",
+      "width": 120,
       "header": "Extends"
     },
     {
       "data": "label",
       "type": "text",
-      "width": "120",
+      "width": 120,
       "header": "Label"
     },
     {
       "header": "Type",
       "data": "type",
       "type": "select",
-      "width": "80",
+      "width": 80,
       "options": "\nstring\nnumber\nboolean\ndivision\nbelongsTo\ndatetime"
     },
     {
       "data": "format",
       "type": "text",
-      "width": "120",
+      "width": 120,
       "header": "Format"
     },
     {
       "header": "Options",
       "data": "options",
       "type": "text",
-      "width": "120"
+      "width": 120
     },
     {
       "data": "width",
       "type": "numeric",
-      "width": "80",
+      "width": 80,
       "header": "Width"
     },
     {
@@ -56,16 +56,5 @@
       "width": 80,
       "header": "Layout"
     }
-  ],
-  "colHeaders": [
-    "model",
-    "field",
-    "extends",
-    "Col3",
-    "Col4",
-    "Col5",
-    "Col6",
-    "AAA",
-    "Col8"
   ]
 }
