@@ -4,7 +4,7 @@ mixin form-group(title)
     div(class="col-xs-8")
       block
 
-div.panel.panel-default("v-if"="currentSheet")
+div.panel.panel-default("v-if"="currentSheet.name != 'root'")
   div.panel-heading #[i.fa.fa-columns] Manage Column
   ul.list-group
     li.list-group-item
