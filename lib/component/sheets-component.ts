@@ -12,6 +12,10 @@ interface ITreeSheet {
 
 @Component({
   template: templateLoader("sheets"),
+  components: {
+    dropdown: require("vue-strap").dropdown,
+    modal: require("vue-strap").modal,
+  },
   props: ["currentSheet", "sheets", "sheetMetas"],
   ready: SheetsComponent.prototype.watchSheets,
   watch: {
@@ -28,12 +32,14 @@ export class SheetsComponent extends BaseComponent {
   sheetMetas:ISheetMeta[];
 
   treeSheets:ITreeSheet[];
+  addModal:boolean;
   newName:string;
 
   data():any {
     return {
-      newName: "",
       treeSheets: [],
+      addModal: false,
+      newName: "",
     }
   }
 
@@ -42,8 +48,10 @@ export class SheetsComponent extends BaseComponent {
   }
 
   add():void {
-    this.$root.services.sheet.add(this.newName);
-    this.newName = "";
+    if (this.$root.services.sheet.add(this.newName)) {
+      this.newName = "";
+      this.addModal = false;
+    }
   }
 
   remove():void {
@@ -51,7 +59,6 @@ export class SheetsComponent extends BaseComponent {
   }
 
   watchSheets():void {
-    console.log("change sheets");
     this.treeSheets = this.treeSheetRecursive("root", 0);
   }
 

@@ -1,17 +1,23 @@
 div.panel.panel-default("v-if"="sheets")
   div.panel-heading #[i.fa.fa-table] Sheets
+    dropdown.pull-right
+      button.btn.btn-primary.btn-xs(type="button", data-toggle="dropdown") #[i.fa.fa-bars] #[i.fa.fa-caret-down]
+      ul.dropdown-menu(slot="dropdown-menu")
+        li
+          a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add
+        li("v-if"="currentSheet")
+          a("@click"="remove") #[i.fa.fa-fw.fa-trash] Delete
   ul.list-group
     li.list-group-item("v-for"="treeSheet in treeSheets", "@click"="select(treeSheet.sheet)",
     ":class"="{'list-group-item-info': treeSheet.sheet == currentSheet}",
     ":style"="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
       span.label.label-danger.pull-right("v-if"="sheetMetas[treeSheet.sheet.name].modified") !
-    li.list-group-item
-      div.row
-        div.col-md-8
-          input.form-control(type="text", "v-model"="newName", placeholder="New sheet name")
-        div.col-md-4
-          button.btn.btn-primary.btn-block("@click"="add") #[i.fa.fa-plus] Add
-    li.list-group-item("v-if"="currentSheet")
-      div.row
-        div.col-md-12
-          button.btn.btn-danger.btn-block("@click"="remove") #[i.fa.fa-trash] Delete
+
+modal(":show.sync"="addModal", ":callback"="add", ok-text="Add")
+  div.modal-header(slot="modal-header")
+    h4.modal-title Add Sheet
+  div.modal-body(slot="modal-body")
+    form("@submit.prevent"="add")
+      div.form-group
+        label Sheet Name
+        input.form-control(type="text", "v-model"="newName", placeholder="New sheet name", required)

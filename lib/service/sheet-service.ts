@@ -52,19 +52,19 @@ export class SheetService extends IoService {
     this.app.currentData = this.app.datas[sheet.name];
   }
 
-  public add(sheetName:string) {
+  public add(sheetName:string):boolean {
     let parentSheetName:string = this.app.currentSheet && this.app.currentSheet.name;
     if (!parentSheetName) {
       alert(`Parent sheet not selected.`);
-      return ;
+      return true;
     }
     if (!sheetName) {
       alert(`Sheet name is empty.`);
-      return;
+      return false;
     }
     if (_.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
-      return;
+      return false;
     }
     let emptySheet:ISheet = {
       name: sheetName,
@@ -77,6 +77,7 @@ export class SheetService extends IoService {
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
     this.app.sheets[parentSheetName].children.push(sheetName);
     this.app.sheetMetas[parentSheetName].modified = true;
+    return true;
   }
 
   public remove():void {

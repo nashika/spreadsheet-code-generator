@@ -3,7 +3,8 @@
     "model": "*",
     "field": "id",
     "label": "ID",
-    "type": "number"
+    "type": "number",
+    "width": 40
   },
   {
     "model": "*",
@@ -29,8 +30,7 @@
   {
     "model": "Article",
     "field": "id",
-    "label": "ID",
-    "type": "number",
+    "extends": "id",
     "width": 40
   },
   {
@@ -93,8 +93,7 @@
   {
     "model": "Author",
     "field": "id",
-    "label": "ID",
-    "type": "number"
+    "extends": "id"
   },
   {
     "model": "Author",
