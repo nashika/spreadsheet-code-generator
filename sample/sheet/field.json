@@ -57,6 +57,5 @@
       "header": "Layout"
     }
   ],
-  "parent": "model",
-  "children": []
+  "parent": "model"
 }

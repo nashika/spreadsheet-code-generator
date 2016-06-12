@@ -26,9 +26,5 @@
       "header": "View"
     }
   ],
-  "parent": "root",
-  "children": [
-    "field",
-    "association"
-  ]
+  "parent": "root"
 }
