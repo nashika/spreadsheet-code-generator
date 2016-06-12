@@ -27,7 +27,7 @@ export class DataService extends IoService {
     this.app.datas = {};
     this.app.currentData = null;
   }
-  
+
   public loadAll():boolean {
     if (!this.checkDir()) return false;
     let names:string[] = this.list();
@@ -39,6 +39,7 @@ export class DataService extends IoService {
   public saveAll():boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.datas, (data, name) => {
+      if (name == "root") return;
       this.save(name, data);
     });
     _.forEach(_.difference(this.list(), _.keys(this.app.datas)), (name) => {

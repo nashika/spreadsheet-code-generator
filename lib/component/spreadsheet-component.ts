@@ -63,6 +63,7 @@ export class SpreadsheetComponent extends BaseComponent {
       this.hot.destroy();
       this.hot = null;
     }
+    if (now.name == "root") return;
     let container:Element = this.$el.querySelector("#spreadsheet");
     let sheetName:string = now && now.name;
     if (!sheetName) return;

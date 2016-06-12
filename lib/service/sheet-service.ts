@@ -21,10 +21,20 @@ export class SheetService extends IoService {
   }
 
   public newAll():void {
-    this.app.sheets = {};
-    this.app.sheetMetas = {};
-    this.app.currentSheet = null;
-    this.app.currentSheetMeta = null;
+    this.app.sheets = {
+      root: {
+        name: "root",
+        columns: [],
+        parent: "",
+      }
+    };
+    this.app.sheetMetas = {
+      root: {
+        modified: false
+      }
+    };
+    this.app.currentSheet = this.app.sheets["root"];
+    this.app.currentSheetMeta = this.app.sheetMetas["root"];
     this.app.services.data.newAll();
   }
 
@@ -43,6 +53,7 @@ export class SheetService extends IoService {
   public saveAll():boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.sheets, (sheet, name) => {
+      if (name == "root") return;
       this.save(name, sheet);
     });
     _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {

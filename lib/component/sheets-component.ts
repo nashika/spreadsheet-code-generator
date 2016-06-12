@@ -62,7 +62,7 @@ export class SheetsComponent extends BaseComponent {
   }
 
   watchSheets():void {
-    this.treeSheets = this.treeSheetRecursive("root", 0);
+    this.treeSheets = this.treeSheetRecursive("", 0);
   }
 
   treeSheetRecursive(parentSheetName:string, level:number):ITreeSheet[] {
