@@ -33,14 +33,12 @@ export class SheetsComponent extends BaseComponent {
 
   treeSheets:ITreeSheet[];
   addModal:boolean;
-  newSheetParent:string;
   newSheetName:string;
 
   data():any {
     return {
       treeSheets: [],
       addModal: false,
-      newSheetParent: "",
       newSheetName: "",
     }
   }
@@ -50,9 +48,8 @@ export class SheetsComponent extends BaseComponent {
   }
 
   add():void {
-    if (this.$root.services.sheet.add(this.newSheetName, this.newSheetParent)) {
+    if (this.$root.services.sheet.add(this.newSheetName, this.currentSheet.name)) {
       this.newSheetName = "";
-      this.newSheetParent = "root";
       this.addModal = false;
     }
   }

@@ -77,7 +77,7 @@ export class SheetService extends IoService {
       alert(`Sheet name is empty.`);
       return false;
     }
-    if (sheetName == "root" || _.has(this.app.sheets, sheetName)) {
+    if (_.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
     }

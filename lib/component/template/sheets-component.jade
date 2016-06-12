@@ -3,9 +3,9 @@ div.panel.panel-default("v-if"="sheets")
     dropdown.pull-right
       button.btn.btn-primary.btn-xs(type="button", data-toggle="dropdown") #[i.fa.fa-bars] #[i.fa.fa-caret-down]
       ul.dropdown-menu(slot="dropdown-menu")
-        li
-          a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add
         li("v-if"="currentSheet")
+          a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add
+        li("v-if"="currentSheet && currentSheet.name != 'root'")
           a("@click"="remove") #[i.fa.fa-fw.fa-trash] Delete
   ul.list-group
     li.list-group-item("v-for"="treeSheet in treeSheets", "@click"="select(treeSheet.sheet)",
@@ -13,15 +13,19 @@ div.panel.panel-default("v-if"="sheets")
     ":style"="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
       span.label.label-danger.pull-right("v-if"="sheetMetas[treeSheet.sheet.name] && sheetMetas[treeSheet.sheet.name].modified") !
 
-modal(":show.sync"="addModal", ":callback"="add", ok-text="Add")
-  div.modal-header(slot="modal-header")
-    h4.modal-title Add Sheet
-  div.modal-body(slot="modal-body")
-    form("@submit.prevent"="add")
+form("@submit.prevent"="add")
+  modal(":show.sync"="addModal")
+    div.modal-header(slot="modal-header")
+      h4.modal-title Add Sheet
+    div.modal-body(slot="modal-body")
       div.form-group
         label Parent Sheet
-        select.form-control("v-model"="newSheetParent")
-          option(value="root", selected) root
-          option("v-for"="treeSheet in treeSheets", ":value"="treeSheet.sheet.name") {{treeSheet.sheet.name}}
+        input.form-control(type="text", "v-model"="currentSheet.name", ":readonly"="true")
         label New Sheet Name
         input.form-control(type="text", "v-model"="newSheetName", placeholder="New sheet name", required)
+    div.modal-footer(slot="modal-footer")
+      .row
+        .col-xs-6
+          button.btn.btn-block.btn-default(type="button", "@click"="addModal = false") Cancel
+        .col-xs-6
+          button.btn.btn-block.btn-primary(type="submit") Add
