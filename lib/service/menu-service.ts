@@ -84,6 +84,8 @@ export class MenuService extends BaseService {
   }
 
   protected new = ():void => {
+    if (!window.confirm(`All editing data will be erased, Do you really want to new project?`))
+      return;
     this.app.saveBaseDir = "";
     this.app.services.sheet.newAll();
     this.saveDirInfo(false);
