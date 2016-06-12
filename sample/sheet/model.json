@@ -28,6 +28,7 @@
   ],
   "parent": "root",
   "children": [
-    "field"
+    "field",
+    "association"
   ]
 }

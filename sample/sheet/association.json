@@ -1,0 +1,44 @@
+{
+  "name": "association",
+  "columns": [
+    {
+      "header": "Model",
+      "data": "model",
+      "type": "text",
+      "width": 120
+    },
+    {
+      "header": "Association",
+      "data": "association",
+      "type": "text",
+      "width": 120
+    },
+    {
+      "header": "Extends",
+      "data": "extends",
+      "type": "text",
+      "width": 120
+    },
+    {
+      "header": "Type",
+      "data": "type",
+      "type": "select",
+      "width": 120,
+      "options": "belongsTo\nhasMany\nhasOne\nbelongsToMany"
+    },
+    {
+      "header": "Target",
+      "data": "target",
+      "type": "text",
+      "width": 120
+    },
+    {
+      "header": "Foreign Key",
+      "data": "foreignKey",
+      "type": "text",
+      "width": 120
+    }
+  ],
+  "parent": "model",
+  "children": []
+}
