@@ -104,7 +104,7 @@ export class SheetService extends IoService {
     vue.delete(this.app.sheets, sheetName);
     vue.delete(this.app.sheetMetas, sheetName);
     vue.delete(this.app.datas, sheetName);
-    this.app.currentSheet = null;
+    this.app.currentSheet = this.app.sheets["root"];
     this.app.currentData = null;
   }
 
