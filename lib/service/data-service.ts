@@ -1,5 +1,5 @@
-import Vue = vuejs.Vue;
 import _ = require("lodash");
+import vue = require("vue");
 
 import {IoService} from "./io-service";
 
@@ -32,7 +32,7 @@ export class DataService extends IoService {
     if (!this.checkDir()) return false;
     let names:string[] = this.list();
     for (let name of names)
-      this.app.datas[name] = this.load(name);
+      vue.set(this.app.datas, name, this.load(name));
     return true;
   }
 

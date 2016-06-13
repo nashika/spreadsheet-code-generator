@@ -5,6 +5,7 @@
     "webpack": "registry:npm/webpack#1.12.9+20160418172948"
   },
   "globalDependencies": {
+    "ace": "registry:dt/ace#0.0.0+20160317120654",
     "github-electron": "registry:dt/github-electron#1.2.1+20160602155650",
     "handsontable": "registry:dt/handsontable#0.24.3+20160514172927",
     "node": "registry:dt/node#6.0.0+20160602155235",

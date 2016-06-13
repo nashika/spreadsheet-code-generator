@@ -11,6 +11,7 @@ import {ConfigService} from "../service/config-service";
 import {SheetService} from "../service/sheet-service";
 import {ColumnService} from "../service/column-service";
 import {DataService} from "../service/data-service";
+import {CodeService} from "../service/code-service";
 import {MenuService} from "../service/menu-service";
 import {templateLoader} from "./template-loader";
 
@@ -50,6 +51,7 @@ export interface IConfig {
     this.services.sheet = new SheetService(this);
     this.services.column = new ColumnService(this);
     this.services.data = new DataService(this);
+    this.services.code = new CodeService(this);
     this.services.menu = new MenuService(this);
   },
 })
@@ -61,15 +63,18 @@ export class AppComponent extends BaseComponent {
   sheets:{[sheetName:string]:ISheet};
   sheetMetas:{[sheetName:string]:ISheetMeta};
   datas:{[sheetName:string]:any[]};
+  codes:{[sheetName:string]:string};
   currentSheet:ISheet;
   currentSheetMeta:ISheetMeta;
   currentData:any[];
+  currentCode:string;
   showMenu:boolean;
   services:{
     config: ConfigService,
     sheet: SheetService,
     column: ColumnService,
     data: DataService,
+    code: CodeService,
     menu: MenuService,
   };
 
@@ -90,6 +95,7 @@ export class AppComponent extends BaseComponent {
         sheet: null,
         column: null,
         data: null,
+        code: null,
         menu: null,
       },
     };

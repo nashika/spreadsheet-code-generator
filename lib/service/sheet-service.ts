@@ -36,6 +36,7 @@ export class SheetService extends IoService {
     this.app.currentSheet = this.app.sheets["root"];
     this.app.currentSheetMeta = this.app.sheetMetas["root"];
     this.app.services.data.newAll();
+    this.app.services.code.newAll();
   }
 
   public loadAll():boolean {
@@ -46,7 +47,8 @@ export class SheetService extends IoService {
       vue.set(this.app.sheets, name, this.load(name));
       vue.set(this.app.sheetMetas, name, {modified: false});
     }
-    this.app.services.data.loadAll();
+    if (!this.app.services.data.loadAll()) return false;
+    if (!this.app.services.code.loadAll()) return false;
     return true;
   }
 
@@ -59,13 +61,16 @@ export class SheetService extends IoService {
     _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {
       this.unlink(name);
     });
-    return this.app.services.data.saveAll();
+    if (!this.app.services.data.saveAll()) return false;
+    if (!this.app.services.code.saveAll()) return false;
+    return true;
   }
 
   public select(sheet:ISheet) {
     this.app.currentSheet = sheet;
     this.app.currentSheetMeta = this.app.sheetMetas[sheet.name];
     this.app.currentData = this.app.datas[sheet.name];
+    this.app.currentCode = this.app.codes[sheet.name];
   }
 
   public add(sheetName:string, parentSheetName:string):boolean {
@@ -79,8 +84,9 @@ export class SheetService extends IoService {
       parent: parentSheetName,
     };
     vue.set(this.app.sheets, sheetName, emptySheet);
-    vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
+    vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
+    vue.set(this.app.codes, sheetName, "");
     return true;
   }
 
@@ -99,10 +105,12 @@ export class SheetService extends IoService {
     });
     vue.set(this.app.sheets, newSheetName, this.app.sheets[oldSheetName]);
     vue.delete(this.app.sheets, oldSheetName);
-    vue.set(this.app.datas, newSheetName, this.app.datas[oldSheetName]);
-    vue.delete(this.app.datas, oldSheetName);
     vue.set(this.app.sheetMetas, newSheetName, this.app.sheetMetas[oldSheetName]);
     vue.delete(this.app.sheetMetas, oldSheetName);
+    vue.set(this.app.datas, newSheetName, this.app.datas[oldSheetName]);
+    vue.delete(this.app.datas, oldSheetName);
+    vue.set(this.app.codes, newSheetName, this.app.codes[oldSheetName]);
+    vue.delete(this.app.codes, oldSheetName);
     return true;
   }
 
@@ -122,8 +130,10 @@ export class SheetService extends IoService {
     vue.delete(this.app.sheets, sheetName);
     vue.delete(this.app.sheetMetas, sheetName);
     vue.delete(this.app.datas, sheetName);
+    vue.delete(this.app.codes, sheetName);
     this.app.currentSheet = this.app.sheets["root"];
     this.app.currentData = null;
+    this.app.currentCode = this.app.codes["root"];
   }
 
   public isParentRecursive(target:ISheet, parent:ISheet):boolean {

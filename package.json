@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/nashika/spreadsheet-code-generator#readme",
   "devDependencies": {
+    "ace-builds": "^1.2.2",
     "bootstrap-sass": "^3.3.6",
     "cross-env": "^1.0.8",
     "css-loader": "^0.23.1",

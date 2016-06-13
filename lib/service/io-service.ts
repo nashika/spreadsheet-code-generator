@@ -12,8 +12,8 @@ export class IoService extends BaseService {
     return path.join(this.app.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
   }
 
-  protected filePath(sheetName:string):string {
-    return path.join(this.saveDir, `${sheetName}.json`);
+  protected filePath(sheetName:string, ext:string):string {
+    return path.join(this.saveDir, `${sheetName}.${ext}`);
   }
 
   protected checkDir():boolean {
@@ -47,24 +47,33 @@ export class IoService extends BaseService {
       .map((f) => f.replace(/\.json$/, ""));
   }
 
-  protected load(sheetName:string):any {
-    let filePath:string = this.filePath(sheetName);
+  protected load(sheetName:string, ext:string = "json"):any {
+    let filePath:string = this.filePath(sheetName, ext);
     console.log(`Loadig ${filePath}.`);
     if (fs.existsSync(filePath)) {
-      return JSON.parse(fs.readFileSync(filePath).toString());
+      let data:string = fs.readFileSync(filePath).toString();
+      if (ext == "json")
+        return JSON.parse(data);
+      else
+        return data;
     } else {
       return null;
     }
   }
 
-  protected save(sheetName:string, data:any):void {
-    let filePath:string = this.filePath(sheetName);
+  protected save(sheetName:string, data:any, ext:string = "json"):void {
+    let filePath:string = this.filePath(sheetName, ext);
     console.log(`Saving ${filePath}.`);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, "  "));
+    let writeData:string;
+    if (ext == "json")
+      writeData = JSON.stringify(data, null, "  ");
+    else 
+      writeData = data;
+    fs.writeFileSync(filePath, writeData);
   }
 
-  protected unlink(sheetName:string):void {
-    let filePath:string = this.filePath(sheetName);
+  protected unlink(sheetName:string, ext:string = "json"):void {
+    let filePath:string = this.filePath(sheetName, ext);
     console.log(`Removing ${filePath}.`);
     fs.unlinkSync(filePath);
   }
