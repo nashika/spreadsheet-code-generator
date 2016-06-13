@@ -20,4 +20,8 @@ export class MenuComponent extends BaseComponent {
     };
   }
 
+  generate() {
+    this.$root.services.generator.generate();
+  }
+
 }

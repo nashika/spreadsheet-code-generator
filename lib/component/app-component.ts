@@ -13,6 +13,7 @@ import {ColumnService} from "../service/column-service";
 import {DataService} from "../service/data-service";
 import {CodeService} from "../service/code-service";
 import {MenuService} from "../service/menu-service";
+import {GeneratorService} from "../service/generator-service";
 import {templateLoader} from "./template-loader";
 
 export interface ISheet {
@@ -34,7 +35,7 @@ export interface IColumn {
 }
 
 export interface IConfig {
-  recentSaveBaseDir?: string;
+  recentSaveBaseDir?:string;
 }
 
 @Component({
@@ -53,6 +54,7 @@ export interface IConfig {
     this.services.data = new DataService(this);
     this.services.code = new CodeService(this);
     this.services.menu = new MenuService(this);
+    this.services.generator = new GeneratorService(this);
   },
 })
 export class AppComponent extends BaseComponent {
@@ -70,12 +72,13 @@ export class AppComponent extends BaseComponent {
   currentCode:string;
   showMenu:boolean;
   services:{
-    config: ConfigService,
-    sheet: SheetService,
-    column: ColumnService,
-    data: DataService,
-    code: CodeService,
-    menu: MenuService,
+    config:ConfigService;
+    sheet:SheetService;
+    column:ColumnService;
+    data:DataService;
+    code:CodeService;
+    menu:MenuService;
+    generator:GeneratorService;
   };
 
   data():any {
@@ -99,6 +102,7 @@ export class AppComponent extends BaseComponent {
         data: null,
         code: null,
         menu: null,
+        generator: null,
       },
     };
   }
