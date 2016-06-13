@@ -4,11 +4,11 @@ html
   head
     meta(charset="utf-8")
     title spreadsheet-code-generator
-    link(rel="stylesheet", href="./node_modules/handsontable/dist/handsontable.full.min.css")
+    link(rel="stylesheet", href="./dist/handsontable/handsontable.full.min.css")
   body
     div#app
-    script(src="./node_modules/handsontable/dist/handsontable.full.min.js")
-    script(src="./node_modules/ace-builds/src-min-noconflict/ace.js")
+    script(src="./dist/handsontable/handsontable.full.min.js")
+    script(src="./dist/ace/ace.js")
     script.
       window.originalRequire = require;
     script(src="./dist/app.bundle.js")

@@ -1,5 +1,5 @@
 import webpack = require("webpack");
-let CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
+let CopyWebpackPlugin = require("copy-webpack-plugin");
 let UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 
 let webpackConfig:webpack.Configuration = {
@@ -33,6 +33,13 @@ let webpackConfig:webpack.Configuration = {
     ],
   },
   plugins: [
+    new CopyWebpackPlugin([
+      {from: "node_modules/ace-builds/src-min-noconflict/ace.js", to: "ace/ace.js"},
+      {from: "node_modules/ace-builds/src-min-noconflict/mode-javascript.js", to: "ace/mode-javascript.js"},
+      {from: "node_modules/ace-builds/src-min-noconflict/worker-javascript.js", to: "ace/worker-javascript.js"},
+      {from: "node_modules/handsontable/dist/handsontable.full.min.css", to: "handsontable/handsontable.full.min.css"},
+      {from: "node_modules/handsontable/dist/handsontable.full.min.js", to: "handsontable/handsontable.full.min.js"},
+    ])
   ].concat(process.env.NODE_ENV == "production" ? [new UglifyJsPlugin({
       compress: {
         warnings: false,
