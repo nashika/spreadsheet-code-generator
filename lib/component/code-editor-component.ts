@@ -37,6 +37,7 @@ export class CodeEditorComponent extends BaseComponent {
     this.editor = ace.edit(container);
     this.editor.setTheme("ace/theme/chrome");
     this.editor.getSession().setMode("ace/mode/javascript");
+    this.editor.getSession().setTabSize(2);
     this.editor.$blockScrolling = Infinity;
     (<any>this.editor).on("change", this.change);
     this.changeSheet();
