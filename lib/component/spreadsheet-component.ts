@@ -10,7 +10,7 @@ import {templateLoader} from "./template-loader";
   props: ["currentSheet", "currentSheetMeta", "currentData", "showMenu"],
   watch: {
     "currentSheet": {
-      handler: SpreadsheetComponent.prototype.watchCurrentSheet,
+      handler: SpreadsheetComponent.prototype.rebuildSpreadsheet,
       deep: true,
     },
     "showMenu": SpreadsheetComponent.prototype.watchShowMenu,
@@ -35,6 +35,7 @@ export class SpreadsheetComponent extends BaseComponent {
 
   onReady() {
     window.addEventListener("resize", this.resize);
+    this.rebuildSpreadsheet();
   }
 
   onBeforeDestroy() {
@@ -44,7 +45,7 @@ export class SpreadsheetComponent extends BaseComponent {
   resize() {
     clearTimeout(this.resizeTimer);
     this.resizeTimer = setTimeout(() => {
-      this.watchCurrentSheet(this.currentSheet);
+      this.rebuildSpreadsheet();
     }, 200);
   }
 
@@ -58,19 +59,19 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
-  watchCurrentSheet(now:ISheet/*, prev:ISheet*/):void {
+  rebuildSpreadsheet():void {
     if (this.hot) {
       this.hot.destroy();
       this.hot = null;
     }
-    if (now.name == "root") return;
+    if (this.currentSheet.name == "root") return;
     let container:Element = this.$el.querySelector("#spreadsheet");
-    let sheetName:string = now && now.name;
+    let sheetName:string = this.currentSheet.name;
     if (!sheetName) return;
     let data:any[] = this.currentData;
     let colHeaders:string[] = [];
     let columns:any[] = [];
-    for (let c of now.columns) {
+    for (let c of this.currentSheet.columns) {
       colHeaders.push(c.header);
       let column:any;
       switch (c.type) {
@@ -109,7 +110,7 @@ export class SpreadsheetComponent extends BaseComponent {
 
   watchShowMenu():void {
     if (this.hot) {
-      this.watchCurrentSheet(this.currentSheet);
+      this.rebuildSpreadsheet();
     }
   }
 
