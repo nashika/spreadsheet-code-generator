@@ -16,7 +16,8 @@ export class SheetService extends IoService {
   }
 
   protected save(sheetName:string, data:ISheet) {
-    super.save(sheetName, data);
+    if (sheetName != "root")
+      super.save(sheetName, data);
     vue.set(this.app.sheetMetas[sheetName], "modified", false);
   }
 
@@ -55,7 +56,6 @@ export class SheetService extends IoService {
   public saveAll():boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.sheets, (sheet, name) => {
-      if (name == "root") return;
       this.save(name, sheet);
     });
     _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {

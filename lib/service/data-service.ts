@@ -13,6 +13,7 @@ export class DataService extends IoService {
   }
 
   protected save(sheetName:string, data:any[]) {
+    if (name == "root") return;
     data = data.map((record) => {
       record = <any>_.omitBy(record, _.isNull);
       record = <any>_.omitBy(record, _.isUndefined);
@@ -39,7 +40,6 @@ export class DataService extends IoService {
   public saveAll():boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.datas, (data, name) => {
-      if (name == "root") return;
       this.save(name, data);
     });
     _.forEach(_.difference(this.list(), _.keys(this.app.datas)), (name) => {
