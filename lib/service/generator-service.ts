@@ -1,48 +1,28 @@
-import fs = require("fs");
-import path = require("path");
-
 import electron = require("electron");
 
-declare function originalRequire(path:string):any;
-declare module originalRequire {
-  var cache:{[path:string]:any};
-}
-
 import {BaseService} from "./base-service";
-
-export interface IGeneratorAccessor {
-
-}
+import {GeneratorProcess} from "../generator/generator-process";
 
 export class GeneratorService extends BaseService {
 
-  errorQuestionFlag:boolean = false;
+  public errorQuestionFlag:boolean = false;
 
   public generate():void {
     if (!this.app.saveBaseDir) {
       alert(`Please save files before generate.`);
       return;
     }
-    let codeDir:string = path.join(this.app.saveBaseDir, "./code/");
-    let generators:($:IGeneratorAccessor) => {[name:string]:(...args:any[]) => any};
-    for (let name of this.app.services.code.list()) {
+    let process:GeneratorProcess = new GeneratorProcess(this.app);
+    process.main();
+  }
 
-    }
-    let rootPath:string = path.join(codeDir, "./root.js");
-    delete originalRequire.cache[rootPath];
-    let result:any;
-    try {
-      result = originalRequire(rootPath);
-    } catch (e) {
-      if (!this.errorQuestionFlag) {
-        if (confirm(`Generate error occurred. show developper tool?`)) {
-          electron.remote.getCurrentWindow().webContents.openDevTools();
-        }
-        this.errorQuestionFlag = true;
+  public developerToolQuestion():void {
+    if (!this.app.services.generator.errorQuestionFlag) {
+      if (confirm(`Generate error occurred. show developper tool?`)) {
+        electron.remote.getCurrentWindow().webContents.openDevTools();
       }
-      throw e;
+      this.app.services.generator.errorQuestionFlag = true;
     }
-    console.log(result.generate());
   }
 
 }
