@@ -1,5 +1,3 @@
-import * as path from "path";
-
 import Component from "vue-class-component";
 import electron = require('electron');
 
@@ -8,6 +6,7 @@ import {BaseComponent} from "./base-component";
 import {SheetsComponent} from "./sheets-component";
 import {ColumnComponent} from "./column-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
+import {CodeEditorComponent} from "./code-editor-component";
 import {ConfigService} from "../service/config-service";
 import {SheetService} from "../service/sheet-service";
 import {ColumnService} from "../service/column-service";
@@ -44,6 +43,7 @@ export interface IConfig {
     "sheets-component": SheetsComponent,
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
+    "code-editor-component": CodeEditorComponent,
   },
   created: function () {
     this.services.config = new ConfigService(this);
