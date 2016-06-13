@@ -86,9 +86,11 @@ export class AppComponent extends BaseComponent {
       sheets: null,
       sheetMetas: null,
       datas: null,
+      codes: null,
       currentSheet: null,
       currentSheetMeta: null,
       currentData: null,
+      currentCode: "",
       showMenu: true,
       services: {
         config: null,

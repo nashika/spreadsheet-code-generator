@@ -27,9 +27,10 @@ export class SpreadsheetComponent extends BaseComponent {
   hot:ht.Methods;
   resizeTimer:any;
 
-  data() {
+  data():any {
     return {
       hot: false,
+      resizeTimer: null,
     }
   }
 
