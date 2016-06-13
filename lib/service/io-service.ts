@@ -42,7 +42,7 @@ export class IoService extends BaseService {
     }
   }
 
-  protected list():string[] {
+  public list():string[] {
     let regexp = new RegExp(`\\.${(<typeof IoService>this.constructor).EXT}$`);
     return fs.readdirSync(this.saveDir)
       .filter((f) => f.match(regexp) ? true : false)

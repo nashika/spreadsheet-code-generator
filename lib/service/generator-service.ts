@@ -10,6 +10,10 @@ declare module originalRequire {
 
 import {BaseService} from "./base-service";
 
+export interface IGeneratorAccessor {
+
+}
+
 export class GeneratorService extends BaseService {
 
   errorQuestionFlag:boolean = false;
@@ -20,6 +24,10 @@ export class GeneratorService extends BaseService {
       return;
     }
     let codeDir:string = path.join(this.app.saveBaseDir, "./code/");
+    let generators:($:IGeneratorAccessor) => {[name:string]:(...args:any[]) => any};
+    for (let name of this.app.services.code.list()) {
+
+    }
     let rootPath:string = path.join(codeDir, "./root.js");
     delete originalRequire.cache[rootPath];
     let result:any;

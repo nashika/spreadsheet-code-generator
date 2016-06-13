@@ -1,14 +1,13 @@
-let path = require("path");
+module.exports = ($) => { return {
 
-console.log("TEST32");
-
-module.exports = {
-
-  generate: ($) => {
+  generate: () => {
     return {
       path: "../app/log/",
-      code: "aaaa",
+      data: "aaaa",
     };
   },
 
-};
+}};
+
+console.log("TEST");
+
