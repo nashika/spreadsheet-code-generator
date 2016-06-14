@@ -5,6 +5,8 @@ import electron = require("electron");
 
 import {AppComponent} from "../component/app-component";
 import {GeneratorAccessor} from "./generator-accessor";
+import {GeneratorNodeElement} from "./generator-node-element";
+import {GeneratorNodeDefinition} from "./generator-node-definition";
 
 declare function originalRequire(path:string):any;
 declare module originalRequire {
@@ -17,8 +19,8 @@ export interface IGeneratorResult {
   override?:boolean,
 }
 
-export type TGeneratorSheetCode = ($:GeneratorAccessor) => TGeneratorSheetObject;
-export type TGeneratorSheetObject = {[name:string]:(...args:any[]) => any};
+export type TGeneratorSheetCode = ($:GeneratorAccessor) => TGeneratorSheetCodeObject;
+export type TGeneratorSheetCodeObject = {[name:string]:(...args:any[]) => any};
 
 export class GeneratorProcess {
 
@@ -27,27 +29,42 @@ export class GeneratorProcess {
   public main() {
     try {
       let accessor:GeneratorAccessor = new GeneratorAccessor();
-      let sheetObjects:{[sheetName:string]:TGeneratorSheetObject} = {};
+      let sheetCodeObjects:{[sheetName:string]:TGeneratorSheetCodeObject} = {};
       for (let sheetName of this.app.services.code.list()) {
-        sheetObjects[sheetName] = this.requireSheetObject(sheetName, accessor);
-        if (!sheetObjects[sheetName]) return;
+        sheetCodeObjects[sheetName] = this.requireSheetObject(sheetName, accessor);
+        if (!sheetCodeObjects[sheetName]) return;
       }
-      accessor._sheetObjects = sheetObjects;
+      accessor._sheetCodeObjects = sheetCodeObjects;
 
-      /*
-      console.log('Load CSV files was started.');
-      let readRecordsMap:TReadRecordsMap = {};
-      let readText:string;
-      for (let definitionName of DefinitionRegistry.keys) {
-        for (let fileName of [definitionName, `multi-${definitionName}`]) {
-          let filePath:string = path.join(`${DefinitionRegistry.CSV_DIR}/${fileName}.csv`);
-          if (fs.existsSync(filePath)) {
-            console.log(`Loading ${filePath} ...`);
-            readText = fs.readFileSync(filePath, "utf-8");
-            readRecordsMap[fileName] = parse(readText, {columns: true});
+      log.debug(`Create node definition tree was started.`);
+      let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodeObjects["root"]);
+      /*for (let definitionName in root.settings) {
+        let setting:SettingDefinition = root.settings[definitionName];
+        DefinitionClass.parentName = setting.params["parent"];
+        DefinitionClass.childrenNames = setting.params["children"];
+        DefinitionClass.ignoreParentParams = setting.params["ignoreParentParams"];
+      }*/
+      log.debug(`Create node definition tree was finished.`);
+
+      log.debug('Create node element tree was started.');
+      let rootNodeElement:GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition);
+      let createNodeRecursive = (sheetName:string, node:GeneratorNodeElement) => {
+        /*let DefinitionClass:typeof BaseDefinition = DefinitionRegistry.get(sheetName);
+        if (!_.includes(["root", "setting"], sheetName)) {
+          console.log(`Reading ${sheetName} records...`);
+          DefinitionClass.readRecords(root, readRecordsMap[sheetName], DefinitionClass);
+          if (readRecordsMap[`multi-${sheetName}`]) {
+            console.log(`Reading multi-${sheetName} records...`);
+            for (let record of readRecordsMap[`multi-${sheetName}`])
+              DefinitionClass.readMultiRecord(root, record, DefinitionClass);
           }
         }
-      }*/
+        for (let childName of DefinitionClass.childrenNames) {
+          createNodeRecursive(MyInflection.dasherize(MyInflection.underscore(childName)));
+        }*/
+      };
+      createNodeRecursive("root", rootNodeElement);
+      log.debug(`Create node element tree was finished.`);
 
       //console.log(result.generate());
     } catch (e) {
@@ -57,7 +74,7 @@ export class GeneratorProcess {
     }
   }
 
-  protected requireSheetObject(sheetName:string, accessor:GeneratorAccessor):TGeneratorSheetObject {
+  protected requireSheetObject(sheetName:string, accessor:GeneratorAccessor):TGeneratorSheetCodeObject {
     let codeDir:string = path.join(this.app.saveBaseDir, "./code/");
     let sheetCodePath:string = path.join(codeDir, `./${sheetName}.js`);
     if (originalRequire.cache[sheetCodePath])
@@ -68,7 +85,7 @@ export class GeneratorProcess {
       throw new Error(`Sheet code "${sheetName}.js" exports type="${typeof sheetCode}" data.
 Sheet code expects export type="function".\n\n${this.sheetCodeExample}`);
     }
-    let sheetObject:TGeneratorSheetObject;
+    let sheetObject:TGeneratorSheetCodeObject;
     try {
       sheetObject = sheetCode(accessor);
     } catch (e) {

@@ -1,6 +1,6 @@
 import _ = require("lodash");
 
-import {TGeneratorSheetObject, IGeneratorResult} from "./generator-process";
+import {TGeneratorSheetCodeObject, IGeneratorResult} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
 
 type TGeneratorReturn = string|{[key:string]:any}|Array<any>|IGeneratorResult[];
@@ -8,7 +8,7 @@ type TSortDataType = {child:GeneratorNodeElement, result:TGeneratorReturn};
 
 export class GeneratorAccessor {
 
-  public _sheetObjects:{[sheetName:string]:TGeneratorSheetObject};
+  public _sheetCodeObjects:{[sheetName:string]:TGeneratorSheetCodeObject};
   public _currentNode:GeneratorNodeElement;
   public _unitIndent:number = 4;
 
@@ -89,7 +89,7 @@ export class GeneratorAccessor {
   protected throwErrorGenerateChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
     throw new Error(`generateChildren error.
 ${message}
-sheetName=${this._currentNode.definition.sheetName}
+sheetName=${this._currentNode.definition.name}
 nodeName=${this._currentNode.name}
 funcName=${funcName}
 argJoinType=${argJoinType}

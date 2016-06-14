@@ -4,7 +4,7 @@ export class GeneratorNodeElement {
 
   public name:string;
   public data:{[columnName:string]:any};
-  
+
   protected _childrenMap:{[sheetName:string]:{[nodeName:string]:GeneratorNodeElement}};
 
   constructor(public definition:GeneratorNodeDefinition) {
@@ -26,15 +26,15 @@ export class GeneratorNodeElement {
   public setChildren(sheetName:string, nodes:{[nodeName:string]:GeneratorNodeElement}) {
     this._childrenMap[sheetName] = nodes;
   }
-  
+
   public generate(funcName:string) {
-    let generateFunc:Function = this.definition.sheetObject[funcName];
+    let generateFunc:Function = this.definition.sheetCodeObject[funcName];
     if (typeof generateFunc == "function") {
       return generateFunc();
     } else if (generateFunc === undefined) {
-      throw new Error(`Generate function ${this.definition.sheetName}.${funcName} is undefined.`)
+      throw new Error(`Generate function ${this.definition.name}.${funcName} is undefined.`)
     } else {
-      throw new Error(`Generate function ${this.definition.sheetName}${funcName} is not function.`);
+      throw new Error(`Generate function ${this.definition.name}${funcName} is not function.`);
     }
   }
 
