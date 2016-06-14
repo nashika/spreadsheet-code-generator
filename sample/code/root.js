@@ -8,6 +8,3 @@ module.exports = ($) => { return {
   },
 
 }};
-
-console.log("TEST");
-
