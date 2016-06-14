@@ -19,7 +19,7 @@ export class ConfigService extends BaseService {
 
   public load():void {
     let filePath:string = this.filePath;
-    console.log(`Loadig ${filePath}.`);
+    log.debug(`Loadig ${filePath}.`);
     let result:IConfig;
     if (fs.existsSync(filePath)) {
       result = JSON.parse(fs.readFileSync(filePath).toString());
@@ -31,7 +31,7 @@ export class ConfigService extends BaseService {
 
   public save():void {
     let filePath:string = this.filePath;
-    console.log(`Saving ${filePath}.`);
+    log.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.app.config, null, "  "));
   }
 

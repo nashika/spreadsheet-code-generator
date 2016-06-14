@@ -1,5 +1,9 @@
 import "font-awesome/css/font-awesome.css";
 
+import log = require("loglevel");
+(<any>window).log = log;
+log.setLevel("trace");
+
 import "./scss/style.scss";
 import {AppComponent} from "./component/app-component";
 

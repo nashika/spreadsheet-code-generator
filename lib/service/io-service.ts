@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 
 import {BaseService} from "./base-service";
-import {AppComponent} from "../component/app-component";
 
 export class IoService extends BaseService {
 
@@ -51,7 +50,7 @@ export class IoService extends BaseService {
 
   protected load(sheetName:string):any {
     let filePath:string = this.filePath(sheetName);
-    console.log(`Loadig ${filePath}.`);
+    log.debug(`Loadig ${filePath}.`);
     if (fs.existsSync(filePath)) {
       let data:string = fs.readFileSync(filePath).toString();
       if ((<typeof IoService>this.constructor).EXT == "json")
@@ -65,7 +64,7 @@ export class IoService extends BaseService {
 
   protected save(sheetName:string, data:any):void {
     let filePath:string = this.filePath(sheetName);
-    console.log(`Saving ${filePath}.`);
+    log.debug(`Saving ${filePath}.`);
     let writeData:string;
     if ((<typeof IoService>this.constructor).EXT == "json")
       writeData = JSON.stringify(data, null, "  ");
