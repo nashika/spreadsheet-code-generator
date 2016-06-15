@@ -16,6 +16,12 @@ export class GeneratorNodeElement {
     this._childrenMap = {};
     _.forIn(definition.children, (childDefinition:GeneratorNodeDefinition) => {
       this._childrenMap[childDefinition.name] = {};
+      let wildcardData:{[columnName:string]:any} = {};
+      _.forEach(_.drop(childDefinition.path), (sheetName:string) => {
+        wildcardData[sheetName] = "*";
+      });
+      let wildcardNode:GeneratorNodeElement = new GeneratorNodeElement(childDefinition, wildcardData);
+      this.addChild(wildcardNode);
     });
   }
 
@@ -23,8 +29,16 @@ export class GeneratorNodeElement {
     return this.data[this.definition.name];
   }
 
+  public get root():GeneratorNodeElement {
+    return this.parent ? this.parent.root : this;
+  }
+
+  public get path():Array<[string, string]> {
+    return <any>_.concat(this.parent ? this.parent.path : [], [[this.definition.name, this.name]])
+  }
+
   public getChild(sheetName:string, nodeName:string):GeneratorNodeElement {
-    return this._childrenMap[sheetName][nodeName];
+    return this._childrenMap[sheetName] && this._childrenMap[sheetName][nodeName];
   }
 
   protected addChild(node:GeneratorNodeElement):void {
@@ -47,8 +61,9 @@ export class GeneratorNodeElement {
    }*/
 
   public add(node:GeneratorNodeElement):void {
+    if (_.isEmpty(node.data)) return;
     if (this.definition == node.definition.parent) {
-      if (node.data[this.definition.name] == this.name)
+      if (this.definition.name == "root" || _.includes([this.name, "*"], node.data[this.definition.name]))
         this.addChild(node);
     } else {
       if (_.includes(this.definition.descendants, node.definition)) {
@@ -77,38 +92,32 @@ export class GeneratorNodeElement {
     let extendsStr:string = this.data["extends"];
     if (!extendsStr) return;
     // search inherit node from "extends" column data
-    let splitExtendsStr:Array<string> = extendsStr.split(".");
-    let inheritNodeElement:GeneratorNodeElement;
-/*    let searchTarget:{[key:string]:BaseDefinition};
-    let searchKey:string;
-    if (splitExtendsStr.length == 1) {
-      searchTarget = this.root.templates[MyInflection.pluralize((<typeof BaseDefinition>this.constructor).myName)];
-      searchKey = extendsStr;
-      inheritNodeElement = searchTarget[searchKey];
-    }
-    if (!inheritNodeElement) {
-      let searchNode:BaseDefinition = this;
-      let keys:Array<string> = [];
-      for (let i = 0; i < splitExtendsStr.length; i++) {
-        keys.unshift(MyInflection.pluralize((<typeof BaseDefinition>searchNode.constructor).myName));
-        searchNode = searchNode.parent;
-        if (!searchNode)
-          throw new Error(`Too many dots.`);
-      }
-      for (let i = 0; i < splitExtendsStr.length; i++) {
-        searchNode = searchNode.getChild(keys[i])[splitExtendsStr[i]];
-        if (!searchNode)
-          throw new Error(`Cant find extends parent. target=${extendsStr}`);
-      }
-      inheritNodeElement = searchNode;
-    }
+    let extendsPath:string[] = extendsStr.split(".");
+    // search base node with wildcard
+    let wildcardDepth = this.definition.depth - extendsPath.length;
+    if (wildcardDepth < 0) this.throwError(`extends="${extendsStr}" is invalid, maybe too many dots.`);
+    if (wildcardDepth >= this.definition.depth) this.throwError(`extends="${extendsStr}" is invalid. unknown depth.`);
+    let searchBaseRecursive = (node:GeneratorNodeElement, depth:number, currentDepth:number = 0):GeneratorNodeElement => {
+      if (currentDepth == depth) return node;
+      if (!node) return node;
+      let nextSheetName:string = this.definition.path[currentDepth + 1];
+      return searchBaseRecursive(node.getChild(nextSheetName, "*"), depth, currentDepth + 1);
+    };
+    let searchBaseNode:GeneratorNodeElement = searchBaseRecursive(this.root, wildcardDepth);
+    // search node from search base
+    let searchTargetRecursive = (node:GeneratorNodeElement, depth:number, path:string[]):GeneratorNodeElement => {
+      if (path.length == 0) return node;
+      if (!node) return node;
+      let nextNode:GeneratorNodeElement = node.getChild(this.definition.path[depth + 1], path[0]);
+      return searchTargetRecursive(nextNode, depth + 1, _.drop(path));
+    };
+    // search node form
+    let inheritNodeElement:GeneratorNodeElement = searchTargetRecursive(searchBaseNode, wildcardDepth, extendsPath);
     if (!inheritNodeElement)
-      throw new Error(`Cant find extend target. target=${extendsStr}`);*/
-
+      this.throwError(`Cant find extend target. extends=${extendsStr}`);
     // if inherit node "extends" column is not empty, do inherit node first.
     if (inheritNodeElement.data["extends"])
       inheritNodeElement.applyInherits();
-
     // merge this node and inherit node
     this.inheritNode(this.data, inheritNodeElement.data);
     // remove "extends" column data to notice finished
@@ -140,6 +149,10 @@ export class GeneratorNodeElement {
     } else {
       throw new Error(`Generate function ${this.definition.name}${funcName} is not function.`);
     }
+  }
+
+  protected throwError(msg:string):void {
+    throw new Error(`Node element error. ${msg}\npath="${JSON.stringify(this.path)}"`);
   }
 
 }

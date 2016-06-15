@@ -44,6 +44,10 @@ export class GeneratorNodeDefinition {
     return this._descendants;
   }
 
+  public get depth():number {
+    return this.parent ? this.parent.depth + 1 : 0;
+  }
+  
   public get path():string[] {
     if (!this.parent) return [this.name];
     return _.concat(this.parent.path, [this.name]);

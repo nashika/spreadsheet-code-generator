@@ -133,7 +133,7 @@
   {
     "model": "Author",
     "field": "modified",
-    "extends": "updated"
+    "extends": "modified"
   },
   {},
   {},
