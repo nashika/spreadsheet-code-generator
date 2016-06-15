@@ -26,6 +26,8 @@ export interface ISheetMeta {
   modified:boolean;
 }
 
+export type TSheetData = Array<{[columnName:string]:any}>;
+
 export interface IColumn {
   header:string;
   data:string;
@@ -64,7 +66,7 @@ export class AppComponent extends BaseComponent {
   mode:string;
   sheets:{[sheetName:string]:ISheet};
   sheetMetas:{[sheetName:string]:ISheetMeta};
-  datas:{[sheetName:string]:any[]};
+  datas:{[sheetName:string]:TSheetData};
   codes:{[sheetName:string]:string};
   currentSheet:ISheet;
   currentSheetMeta:ISheetMeta;

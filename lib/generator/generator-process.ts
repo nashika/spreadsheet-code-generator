@@ -4,7 +4,7 @@ import path = require("path");
 import electron = require("electron");
 import _ = require("lodash");
 
-import {AppComponent, ISheet} from "../component/app-component";
+import {AppComponent, ISheet, TSheetData} from "../component/app-component";
 import {GeneratorAccessor} from "./generator-accessor";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
@@ -51,23 +51,19 @@ export class GeneratorProcess {
       log.debug(`Create node definition tree was finished.`);
 
       log.debug('Create node element tree was started.');
-      let rootNodeElement:GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition);
-      let createNodeRecursive = (sheetName:string, node:GeneratorNodeElement) => {
-        /*let DefinitionClass:typeof BaseDefinition = DefinitionRegistry.get(sheetName);
-        if (!_.includes(["root", "setting"], sheetName)) {
-          console.log(`Reading ${sheetName} records...`);
-          DefinitionClass.readRecords(root, readRecordsMap[sheetName], DefinitionClass);
-          if (readRecordsMap[`multi-${sheetName}`]) {
-            console.log(`Reading multi-${sheetName} records...`);
-            for (let record of readRecordsMap[`multi-${sheetName}`])
-              DefinitionClass.readMultiRecord(root, record, DefinitionClass);
-          }
-        }
-        for (let childName of DefinitionClass.childrenNames) {
-          createNodeRecursive(MyInflection.dasherize(MyInflection.underscore(childName)));
-        }*/
+      let rootNodeElement:GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {});
+      let createNodeElementRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
+        console.log(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
+        let currentData:TSheetData = this.app.datas[currentNodeDefinition.name] || [];
+        _.forEach(currentData, (record:{[columnName:string]:any}) => {
+          let childNodeElement:GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
+          rootNodeElement.add(childNodeElement);
+        });
+        _.forIn(currentNodeDefinition.children, (childNodeDefinition:GeneratorNodeDefinition) => {
+          createNodeElementRecursive(childNodeDefinition);
+        });
       };
-      createNodeRecursive("root", rootNodeElement);
+      createNodeElementRecursive(rootNodeDefinition);
       log.debug(`Create node element tree was finished.`);
 
       //console.log(result.generate());
