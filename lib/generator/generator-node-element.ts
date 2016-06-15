@@ -95,8 +95,8 @@ export class GeneratorNodeElement {
     let extendsPath:string[] = extendsStr.split(".");
     // search base node with wildcard
     let wildcardDepth = this.definition.depth - extendsPath.length;
-    if (wildcardDepth < 0) this.throwError(`extends="${extendsStr}" is invalid, maybe too many dots.`);
-    if (wildcardDepth >= this.definition.depth) this.throwError(`extends="${extendsStr}" is invalid. unknown depth.`);
+    if (wildcardDepth < 0) this.throwError(`extends="${extendsStr}" is invalid, maybe too many dots.`, false);
+    if (wildcardDepth >= this.definition.depth) this.throwError(`extends="${extendsStr}" is invalid. unknown depth.`, false);
     let searchBaseRecursive = (node:GeneratorNodeElement, depth:number, currentDepth:number = 0):GeneratorNodeElement => {
       if (currentDepth == depth) return node;
       if (!node) return node;
@@ -114,7 +114,7 @@ export class GeneratorNodeElement {
     // search node form
     let inheritNodeElement:GeneratorNodeElement = searchTargetRecursive(searchBaseNode, wildcardDepth, extendsPath);
     if (!inheritNodeElement)
-      this.throwError(`Cant find extend target. extends=${extendsStr}`);
+      this.throwError(`Cant find extend target. extends="${extendsStr}"`, false);
     // if inherit node "extends" column is not empty, do inherit node first.
     if (inheritNodeElement.data["extends"])
       inheritNodeElement.applyInherits();
@@ -151,8 +151,13 @@ export class GeneratorNodeElement {
     }
   }
 
-  protected throwError(msg:string):void {
-    throw new Error(`Node element error. ${msg}\npath="${JSON.stringify(this.path)}"`);
+  protected throwError(msg:string, showStack:boolean = true):void {
+    let text:string = `path="${JSON.stringify(this.path)}"`;
+    if (showStack) {
+      throw new Error(`Node element error. ${msg}\n${text}`);
+    } else {
+      throw `Error. ${msg}\n${text}`;
+    }
   }
 
 }

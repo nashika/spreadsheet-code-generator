@@ -72,9 +72,15 @@ export class GeneratorProcess {
 
       //console.log(result.generate());
     } catch (e) {
-      this.app.services.generator.developerToolQuestion();
-      alert(e.stack || e);
-      throw e;
+      if (_.isString(e)) {
+        alert(e);
+      } else {
+        this.app.services.generator.developerToolQuestion();
+        if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
+          alert(e.stack || e);
+        }
+        throw e;
+      }
     }
   }
 
