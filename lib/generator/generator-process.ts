@@ -87,6 +87,7 @@ export class GeneratorProcess {
     log.debug(`Apply inherits was finished.`);
 
     log.debug(`Generate source datas was started.`);
+    accessor._currentNode = rootNodeElement;
     let generateResults:IGeneratorResult[] = <IGeneratorResult[]>rootNodeElement.generate();
     if (!_.isArray(generateResults))
       throw `Error. root sheet code main() return type="${typeof generateResults}" data, expects type="array".`;

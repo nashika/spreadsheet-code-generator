@@ -25,16 +25,20 @@ export class GeneratorAccessor {
     let backupNode:GeneratorNodeElement = this._currentNode;
     let joinType:string = argJoinType;
     _.forIn(this._currentNode.getChildren(childSheetName), (childNode:GeneratorNodeElement) => {
+      if (childNode.name == "*") return;
       this._currentNode = childNode;
       let childResult:TGeneratorReturn = childNode.generate(funcName);
       // auto decide join type
       if (joinType == "auto") {
         if (_.isString(childResult)) joinType = "string";
-        else if (_.isArray(childResult)) joinType = "array";
-        else if (_.isObject(childResult)) {
-          if (_.has(childResult, "data") && _.has(childResult, "path")) joinType = "result";
-          else joinType = "object";
-        } else this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "auto join type failed");
+        else if (_.isArray(childResult)) {
+          if (_.every(childResult, (childResultElement:any) => {
+              return _.has(childResultElement, "data") && _.has(childResultElement, "path")
+            })) joinType = "result";
+          else joinType = "array";
+        }
+        else if (_.isObject(childResult)) joinType = "object";
+        else this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "auto join type failed");
       }
       // type check from join type
       switch (joinType) {
@@ -48,8 +52,9 @@ export class GeneratorAccessor {
           if (!_.isObject(childResult)) this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects object");
           break;
         case "result":
-          if (!(_.has(childResult, "data") && _.has(childResult, "path")))
-            this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects {data: ... path: ...} object.");
+          if (!_.every(childResult, (childResultElement:any) => {
+              return _.has(childResultElement, "data") && _.has(childResultElement, "path")}))
+            this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects [{data: ... path: ...}, ...] object.");
           break;
         default:
           this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "unknown join type");
@@ -97,7 +102,11 @@ result=${childResult}
 resultType="${typeof childResult} is invalid return data.`);
   }
 
-  protected source(source:string):string {
+  public get this():any {
+    return this._currentNode.data;
+  }
+
+  public source(source:string):string {
     let result:string = "";
     let lines:Array<string> = source.split(/\n/g);
     if (lines[0] == "") lines.shift();
@@ -113,7 +122,7 @@ resultType="${typeof childResult} is invalid return data.`);
     return result;
   }
 
-  protected indent(numIndent:number, source:string):string {
+  public indent(numIndent:number, source:string):string {
     let result:string = "";
     let lines:Array<string> = source.split(/\n/g);
     lines.pop();
@@ -127,14 +136,14 @@ resultType="${typeof childResult} is invalid return data.`);
     return result;
   }
 
-  protected delete(flag:boolean = true):string {
+  public delete(flag:boolean = true):string {
     if (flag)
       return "###Delete###";
     else
       return "";
   }
 
-  protected noNewline():string {
+  public noNewline():string {
     return "###NoNewline###";
   }
 
