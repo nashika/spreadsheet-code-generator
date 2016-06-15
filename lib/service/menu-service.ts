@@ -57,7 +57,7 @@ export class MenuService extends BaseService {
         submenu: [
           {
             label: "&Reload",
-            accelerator: "Ctrl+R",
+            accelerator: "F5",
             click: () => {
               electron.remote.getCurrentWindow().reload();
             },
@@ -71,7 +71,7 @@ export class MenuService extends BaseService {
           },
           {
             label: "Toggle &Developer Tools",
-            accelerator: "Alt+Ctrl+I",
+            accelerator: "F12",
             click: () => {
               electron.remote.getCurrentWindow().webContents.toggleDevTools();
             },

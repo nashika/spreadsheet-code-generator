@@ -140,14 +140,14 @@ export class GeneratorNodeElement {
     }
   }
 
-  public generate(funcName:string) {
+  public generate(funcName:string = "main") {
     let generateFunc:Function = this.definition.getCode(funcName);
     if (typeof generateFunc == "function") {
       return generateFunc();
     } else if (generateFunc === undefined) {
-      throw new Error(`Generate function ${this.definition.name}.${funcName} is undefined.`)
+      this.throwError(`Generate function ${this.definition.name}.${funcName} is undefined.`);
     } else {
-      throw new Error(`Generate function ${this.definition.name}${funcName} is not function.`);
+      this.throwError(`Generate function ${this.definition.name}${funcName} is not function.`);
     }
   }
 

@@ -18,8 +18,10 @@ export class GeneratorService extends BaseService {
 
   public developerToolQuestion():void {
     if (!this.app.services.generator.errorQuestionFlag) {
-      if (confirm(`Generate error occurred. show developper tool?`)) {
-        electron.remote.getCurrentWindow().webContents.openDevTools();
+      if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
+        if (confirm(`Generate error occurred. show developper tool?`)) {
+          electron.remote.getCurrentWindow().webContents.openDevTools();
+        }
       }
       this.app.services.generator.errorQuestionFlag = true;
     }
