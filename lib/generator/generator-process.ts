@@ -28,10 +28,9 @@ export class GeneratorProcess {
   constructor(protected app:AppComponent) {
   }
 
-  public main():boolean {
+  public main():number {
     try {
-      this.proceed();
-      return true;
+      return this.proceed();
     } catch (e) {
       if (_.isString(e)) {
         alert(e);
@@ -42,12 +41,12 @@ export class GeneratorProcess {
         this.app.services.generator.developerToolQuestion();
         throw e;
       }
-      return false;
+      return -1;
     }
   }
 
-  protected proceed():void {
-    let accessor:GeneratorAccessor = new GeneratorAccessor();
+  protected proceed():number {
+    let accessor:GeneratorAccessor = new GeneratorAccessor(this.app);
     let sheetCodeObjects:{[sheetName:string]:TGeneratorSheetCodeObject} = {};
     for (let sheetName of this.app.services.code.list()) {
       sheetCodeObjects[sheetName] = this.requireSheetObject(sheetName, accessor);
@@ -88,36 +87,14 @@ export class GeneratorProcess {
     rootNodeElement.applyInheritsRecursive();
     log.debug(`Apply inherits was finished.`);
 
-    log.debug(`Generate source datas was started.`);
+    log.debug(`Generate process was started.`);
     accessor._currentNode = rootNodeElement;
-    let generateResults:IGeneratorResult[] = <IGeneratorResult[]>rootNodeElement.generate();
-    if (!_.isArray(generateResults))
-      throw `Error. root sheet code main() return type="${typeof generateResults}" data, expects type="array".`;
-    log.debug(`Generate source datas was finished.`);
+    accessor._writeCount = 0;
+    rootNodeElement.generate();
+    log.debug(`Generate process was finished.`);
 
-    log.debug('Write source files was started.');
-    for (let generateResult of generateResults) {
-      if (!_.isObject(generateResult))
-        throw `Error. root sheet code main() return invalid array element type="${typeof generateResult}". array element must be type="object".`;
-      let writePath:string = path.isAbsolute(generateResult.path) ? generateResult.path
-        : path.join(this.app.saveBaseDir, generateResult.path);
-      if (!_.isUndefined(generateResult.override) && !generateResult.override) {
-        if (fs.existsSync(writePath)) {
-          log.debug(`Skip ${writePath}. File exists.`);
-          continue;
-        }
-      }
-      if (!fs.existsSync(path.dirname(writePath))) {
-        throw `Error. Destination directory not found.
-destinationPath="${writePath}"
-destinationDir="${path.dirname(writePath)}`;
-      }
-      log.debug(`Writing ${writePath} ...`);
-      fs.writeFileSync(writePath, generateResult.data);
-    }
-    log.debug('Write source files was finished.');
-
-    log.debug("Generate process was done.");
+    log.debug(`Generate process was done. Write ${accessor._writeCount} files.`);
+    return accessor._writeCount;
   }
 
   protected requireSheetObject(sheetName:string, accessor:GeneratorAccessor):TGeneratorSheetCodeObject {

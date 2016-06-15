@@ -16,8 +16,9 @@ export class GeneratorService extends BaseService {
       return;
     }
     let process:GeneratorProcess = new GeneratorProcess(this.app);
-    if (process.main())
-      alert("Generate finished.");
+    let result:number = process.main();
+    if (result != -1)
+      alert(`Generate finished, write ${result} files.`);
   }
 
   public developerToolQuestion():void {

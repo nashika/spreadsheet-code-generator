@@ -1,11 +1,13 @@
 module.exports = ($) => { return {
 
   main: () => {
-    let results = $.generateChildren("model");
-    return [{
-      path: "./generated/test.txt",
-      data: "test",
-    }].concat(results);
+    //$.callChildren("model");
+    console.log(this.test());
+    $.write("./generated/test.txt", "test");
+  },
+  
+  test: () => {
+    return "TEST";
   },
 
 }};

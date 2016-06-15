@@ -1,7 +1,11 @@
+import fs = require("fs");
+import path = require("path");
+
 import _ = require("lodash");
 
 import {TGeneratorSheetCodeObject, IGeneratorResult} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
+import {AppComponent} from "../component/app-component";
 
 type TGeneratorReturn = string|{[key:string]:any}|Array<any>|IGeneratorResult[];
 type TSortDataType = {child:GeneratorNodeElement, result:TGeneratorReturn};
@@ -11,8 +15,9 @@ export class GeneratorAccessor {
   public _sheetCodeObjects:{[sheetName:string]:TGeneratorSheetCodeObject};
   public _currentNode:GeneratorNodeElement;
   public _unitIndent:number = 4;
+  public _writeCount:number = 0;
 
-  constructor() {
+  constructor(protected app:AppComponent) {
   }
 
   public generate(funcName:string = "main"):TGeneratorReturn {
@@ -89,6 +94,31 @@ export class GeneratorAccessor {
       default:
         this.throwErrorGenerateChildren(funcName, argJoinType, null, "unknown join type");
     }
+  }
+
+  public write(argPath:string, data:string, option:{override?:boolean} = {}) {
+    if (!_.isString(argPath))
+      throw `Error in $.write(path, data, option). arg "path" must be string, but it is type="${typeof argPath}"`;
+    if (!_.isString(data))
+      throw `Error in $.write(path, data, option). arg "data" must be string, but it is type="${typeof data}"`;
+    if (!_.isObject(option))
+      throw `Error in $.write(path, data, option). arg "option" must be string, but it is type="${typeof option}"`;
+    let writePath:string = path.isAbsolute(argPath) ? argPath
+      : path.join(this.app.saveBaseDir, argPath);
+    if (!_.isUndefined(option.override) && !option.override) {
+      if (fs.existsSync(writePath)) {
+        log.debug(`Skip ${writePath}. File exists.`);
+        return;
+      }
+    }
+    if (!fs.existsSync(path.dirname(writePath))) {
+      throw `Error. Destination directory not found.
+destinationPath="${writePath}"
+destinationDir="${path.dirname(writePath)}`;
+    }
+    log.debug(`Writing ${writePath} ...`);
+    fs.writeFileSync(writePath, data);
+    this._writeCount++;
   }
 
   protected throwErrorGenerateChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
