@@ -2,8 +2,9 @@ import fs = require("fs");
 import path = require("path");
 
 import electron = require("electron");
+import _ = require("lodash");
 
-import {AppComponent} from "../component/app-component";
+import {AppComponent, ISheet} from "../component/app-component";
 import {GeneratorAccessor} from "./generator-accessor";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
@@ -37,13 +38,16 @@ export class GeneratorProcess {
       accessor._sheetCodeObjects = sheetCodeObjects;
 
       log.debug(`Create node definition tree was started.`);
-      let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodeObjects["root"]);
-      /*for (let definitionName in root.settings) {
-        let setting:SettingDefinition = root.settings[definitionName];
-        DefinitionClass.parentName = setting.params["parent"];
-        DefinitionClass.childrenNames = setting.params["children"];
-        DefinitionClass.ignoreParentParams = setting.params["ignoreParentParams"];
-      }*/
+      let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodeObjects["root"], null);
+      let createNodeDefinitionRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
+        _.forIn(this.app.sheets, (sheet:ISheet) => {
+          if (sheet.parent != currentNodeDefinition.name) return;
+          let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodeObjects[sheet.name], currentNodeDefinition);
+          currentNodeDefinition.addChild(childNodeDefinition);
+          createNodeDefinitionRecursive(childNodeDefinition);
+        });
+      };
+      createNodeDefinitionRecursive(rootNodeDefinition);
       log.debug(`Create node definition tree was finished.`);
 
       log.debug('Create node element tree was started.');

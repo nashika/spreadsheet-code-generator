@@ -3,15 +3,32 @@ import {ISheet, IColumn} from "../component/app-component";
 
 export class GeneratorNodeDefinition {
 
-  constructor(protected sheet:ISheet,
-              public sheetCodeObject:TGeneratorSheetCodeObject) {}
+  protected childrenNodeDefinition:{[sheetName:string]:GeneratorNodeDefinition};
+  
+  constructor(protected _sheet:ISheet,
+              protected _sheetCodeObject:TGeneratorSheetCodeObject,
+              protected _parentNodeDefinition:GeneratorNodeDefinition) {
+    this.childrenNodeDefinition = {};
+  }
 
   public get name():string {
-    return this.sheet.name;
+    return this._sheet.name;
   }
-  
+
   public get columns():IColumn[] {
-    return this.sheet.columns;
+    return this._sheet.columns;
   }
   
+  public get parent():GeneratorNodeDefinition {
+    return this._parentNodeDefinition;
+  }
+  
+  public getCode(propName:string):any {
+    return this._sheetCodeObject[propName];
+  }
+  
+  public addChild(nodeDefinition:GeneratorNodeDefinition):void {
+    this.childrenNodeDefinition[nodeDefinition.name] = nodeDefinition;
+  }
+
 }

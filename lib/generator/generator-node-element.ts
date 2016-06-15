@@ -28,7 +28,7 @@ export class GeneratorNodeElement {
   }
 
   public generate(funcName:string) {
-    let generateFunc:Function = this.definition.sheetCodeObject[funcName];
+    let generateFunc:Function = this.definition.getCode(funcName);
     if (typeof generateFunc == "function") {
       return generateFunc();
     } else if (generateFunc === undefined) {
