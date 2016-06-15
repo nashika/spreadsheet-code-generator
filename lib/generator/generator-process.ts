@@ -28,19 +28,21 @@ export class GeneratorProcess {
   constructor(protected app:AppComponent) {
   }
 
-  public main() {
+  public main():boolean {
     try {
       this.proceed();
+      return true;
     } catch (e) {
       if (_.isString(e)) {
         alert(e);
       } else {
-        this.app.services.generator.developerToolQuestion();
         if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
           alert(e.stack || e);
         }
+        this.app.services.generator.developerToolQuestion();
         throw e;
       }
+      return false;
     }
   }
 

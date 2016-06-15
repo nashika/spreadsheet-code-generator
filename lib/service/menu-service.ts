@@ -49,7 +49,38 @@ export class MenuService extends BaseService {
             click: () => {
               this.app.showMenu = !this.app.showMenu;
             },
-          }
+          },
+        ],
+      },
+      {
+        label: "&Application",
+        submenu: [
+          {
+            label: "&Data Edit Mode",
+            click: () => {
+              this.app.mode = "data";
+            }
+          },
+          {
+            label: "&Code Edit Mode",
+            click: () => {
+              this.app.mode = "code";
+            }
+          },
+          {
+            label: "&Toggle Edit Mode",
+            accelerator: "Ctrl+T",
+            click: () => {
+              this.app.mode = this.app.mode == "data" ? "code" : "data";
+            }
+          },
+          {
+            label: "&Generate",
+            accelerator: "Ctrl+G",
+            click: () => {
+              this.app.services.generator.generate();
+            }
+          },
         ],
       },
       {
