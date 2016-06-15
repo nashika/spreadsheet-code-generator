@@ -66,6 +66,10 @@ export class GeneratorProcess {
       createNodeElementRecursive(rootNodeDefinition);
       log.debug(`Create node element tree was finished.`);
 
+      log.debug(`Apply inherits was started.`);
+      rootNodeElement.applyInheritsRecursive();
+      log.debug(`Apply inherits was finished.`);
+
       //console.log(result.generate());
     } catch (e) {
       this.app.services.generator.developerToolQuestion();

@@ -5,16 +5,18 @@ import {GeneratorNodeDefinition} from "./generator-node-definition";
 export class GeneratorNodeElement {
 
   public data:{[columnName:string]:any};
+  public parent:GeneratorNodeElement;
 
   protected _childrenMap:{[sheetName:string]:{[nodeName:string]:GeneratorNodeElement}};
 
   constructor(public definition:GeneratorNodeDefinition,
               _dataRecord:{[columnName:string]:any}) {
+    this.data = _.cloneDeep(_dataRecord);
+    this.parent = null;
     this._childrenMap = {};
     _.forIn(definition.children, (childDefinition:GeneratorNodeDefinition) => {
       this._childrenMap[childDefinition.name] = {};
     });
-    this.data = _.cloneDeep(_dataRecord)
   }
 
   public get name():string {
@@ -22,12 +24,14 @@ export class GeneratorNodeElement {
   }
 
   public getChild(sheetName:string, nodeName:string):GeneratorNodeElement {
-   return this._childrenMap[sheetName][nodeName];
+    return this._childrenMap[sheetName][nodeName];
   }
 
   protected addChild(node:GeneratorNodeElement):void {
-    if (node.name)
+    if (node.name) {
       this._childrenMap[node.definition.name][node.name] = node;
+      node.parent = this;
+    }
   }
 
   /*public setChild(sheetName:string, nodeName:string, node:GeneratorNodeElement):void {
@@ -55,6 +59,74 @@ export class GeneratorNodeElement {
               childNode.add(node);
           }
         });
+      }
+    }
+  }
+
+  public applyInheritsRecursive() {
+    _.forIn(this.definition.children, (childNodeDefinition:GeneratorNodeDefinition) => {
+      _.forIn(this.getChildren(childNodeDefinition.name), (childNodeElement:GeneratorNodeElement) => {
+        childNodeElement.applyInheritsRecursive();
+      });
+    });
+    this.applyInherits();
+  }
+
+  public applyInherits() {
+    // if "extends" column empty, do nothing
+    let extendsStr:string = this.data["extends"];
+    if (!extendsStr) return;
+    // search inherit node from "extends" column data
+    let splitExtendsStr:Array<string> = extendsStr.split(".");
+    let inheritNodeElement:GeneratorNodeElement;
+/*    let searchTarget:{[key:string]:BaseDefinition};
+    let searchKey:string;
+    if (splitExtendsStr.length == 1) {
+      searchTarget = this.root.templates[MyInflection.pluralize((<typeof BaseDefinition>this.constructor).myName)];
+      searchKey = extendsStr;
+      inheritNodeElement = searchTarget[searchKey];
+    }
+    if (!inheritNodeElement) {
+      let searchNode:BaseDefinition = this;
+      let keys:Array<string> = [];
+      for (let i = 0; i < splitExtendsStr.length; i++) {
+        keys.unshift(MyInflection.pluralize((<typeof BaseDefinition>searchNode.constructor).myName));
+        searchNode = searchNode.parent;
+        if (!searchNode)
+          throw new Error(`Too many dots.`);
+      }
+      for (let i = 0; i < splitExtendsStr.length; i++) {
+        searchNode = searchNode.getChild(keys[i])[splitExtendsStr[i]];
+        if (!searchNode)
+          throw new Error(`Cant find extends parent. target=${extendsStr}`);
+      }
+      inheritNodeElement = searchNode;
+    }
+    if (!inheritNodeElement)
+      throw new Error(`Cant find extend target. target=${extendsStr}`);*/
+
+    // if inherit node "extends" column is not empty, do inherit node first.
+    if (inheritNodeElement.data["extends"])
+      inheritNodeElement.applyInherits();
+
+    // merge this node and inherit node
+    this.inheritNode(this.data, inheritNodeElement.data);
+    // remove "extends" column data to notice finished
+    delete this.data["extends"];
+  }
+
+  private inheritNode(data:any, inheritData:any) {
+    for (let paramName in inheritData) {
+      if (inheritData[paramName] instanceof Object) {
+        if (data[paramName] === undefined) {
+          data[paramName] = {};
+          this.inheritNode(data[paramName], inheritData[paramName]);
+        } else if (data[paramName] instanceof Object) {
+          this.inheritNode(data[paramName], inheritData[paramName]);
+        }
+      } else {
+        if (data[paramName] === undefined)
+          data[paramName] = inheritData[paramName];
       }
     }
   }
