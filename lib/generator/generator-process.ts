@@ -14,12 +14,6 @@ declare module originalRequire {
   var cache:{[path:string]:any};
 }
 
-export interface IGeneratorResult {
-  data:string,
-  path:string,
-  override?:boolean,
-}
-
 export type TGeneratorSheetCode = {[name:string]:(...args:any[]) => any};
 
 export class GeneratorProcess {
@@ -89,7 +83,7 @@ export class GeneratorProcess {
     log.debug(`Generate process was started.`);
     accessor._currentNode = rootNodeElement;
     accessor._writeCount = 0;
-    rootNodeElement.generate(accessor);
+    rootNodeElement.call(accessor);
     log.debug(`Generate process was finished.`);
 
     log.debug(`Generate process was done. Write ${accessor._writeCount} files.`);

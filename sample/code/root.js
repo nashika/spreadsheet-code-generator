@@ -1,11 +1,12 @@
 module.exports = {
 
   main: function() {
-    this.generateChildren("model");
-    //console.log(this.test());
+    this.setIndent(2);
+    this.callChildren("model");
     this.write("./generated/test.txt", "test");
+    console.log(this.call("test"));
   },
-  
+
   test: function() {
     return "TEST";
   },

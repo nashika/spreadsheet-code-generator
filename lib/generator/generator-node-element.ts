@@ -54,6 +54,8 @@ export class GeneratorNodeElement {
    };*/
 
   public getChildren(sheetName:string):{[nodeName:string]:GeneratorNodeElement} {
+    if (!_.has(this._childrenMap, sheetName))
+      throw new Error(`Can not find child node. sheetName="${sheetName}".`);
     return this._childrenMap[sheetName];
   }
 
@@ -141,10 +143,10 @@ export class GeneratorNodeElement {
     }
   }
 
-  public generate(accessor:GeneratorAccessor, funcName:string = "main", args:any[] = []):any {
+  public call(accessor:GeneratorAccessor, funcName:string = "main", args:any[] = []):any {
     let generateFunc:Function = this.definition.getCode(funcName);
     if (typeof generateFunc == "function") {
-      return accessor.call(generateFunc, args);
+      return generateFunc.apply(accessor, args);
     } else if (generateFunc === undefined) {
       this.throwError(`Generate function ${this.definition.name}.${funcName} is undefined.`);
     } else {

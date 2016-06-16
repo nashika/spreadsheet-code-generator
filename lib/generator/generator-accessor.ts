@@ -3,7 +3,7 @@ import path = require("path");
 
 import _ = require("lodash");
 
-import {TGeneratorSheetCode, IGeneratorResult} from "./generator-process";
+import {TGeneratorSheetCode} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {AppComponent} from "../component/app-component";
 
@@ -12,8 +12,7 @@ interface IGenerateChildrenOption {
   sort?:(childA:any, childB:any) => number;
 }
 
-type TGeneratorReturn = string|{[key:string]:any}|Array<any>|IGeneratorResult[];
-type TSortDataType = {child:GeneratorNodeElement, result:TGeneratorReturn};
+type TSortDataType = {child:GeneratorNodeElement, result:any};
 
 export class GeneratorAccessor {
 
@@ -25,49 +24,49 @@ export class GeneratorAccessor {
   constructor(protected app:AppComponent) {
   }
 
-  public generate(funcName:string = "main", ...args:any[]):TGeneratorReturn {
-    return this._currentNode.generate(this, funcName, args);
+  public get data():any {
+    return this._currentNode.data;
   }
 
-  public call(func:Function, args:any[]):any {
-    return func.apply(this, args);
+  public call(funcName:string = "main", ...args:any[]):any {
+    return this._currentNode.call(this, funcName, args);
   }
 
-  public generateChildren(childSheetName:string, funcName:string = "main", options:IGenerateChildrenOption = {},
-                          ...args:any[]):TGeneratorReturn {
+  public callChildren(childSheetName:string, funcName:string = "main", options:IGenerateChildrenOption = {},
+                      ...args:any[]):any {
     let argJoinType:string = options.join || "auto";
-    let argSortFunuc:(childA:any, childB:any) => number = null;
+    let argSortFunc:(childA:any, childB:any) => number = null;
     let sortDatas:TSortDataType[] = [];
     let backupNode:GeneratorNodeElement = this._currentNode;
     let joinType:string = argJoinType;
     _.forIn(this._currentNode.getChildren(childSheetName), (childNode:GeneratorNodeElement) => {
       if (childNode.name == "*") return;
       this._currentNode = childNode;
-      let childResult:TGeneratorReturn = childNode.generate(this, funcName, args);
+      let childResult:any = childNode.call(this, funcName, args);
       // auto decide join type
       if (joinType == "auto") {
         if (_.isUndefined(childResult)) joinType = "void";
         else if (_.isString(childResult)) joinType = "string";
         else if (_.isArray(childResult)) joinType = "array";
         else if (_.isObject(childResult)) joinType = "object";
-        else this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "auto join type failed");
+        else this.throwErrorCallChildren(funcName, argJoinType, childResult, "auto join type failed");
       }
       // type check from join type
       switch (joinType) {
         case "void":
-          if (!_.isUndefined(childResult)) this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects void");
+          if (!_.isUndefined(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects void");
           break;
         case "string":
-          if (!_.isString(childResult)) this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects string");
+          if (!_.isString(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects string");
           break;
         case "array":
-          if (!_.isArray(childResult)) this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects array");
+          if (!_.isArray(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects array");
           break;
         case "object":
-          if (!_.isObject(childResult)) this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "result expects object");
+          if (!_.isObject(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
           break;
         default:
-          this.throwErrorGenerateChildren(funcName, argJoinType, childResult, "unknown join type");
+          this.throwErrorCallChildren(funcName, argJoinType, childResult, "unknown join type");
       }
       sortDatas.push({
         child: childNode,
@@ -75,11 +74,12 @@ export class GeneratorAccessor {
       });
     });
     this._currentNode = backupNode;
-    if (argSortFunuc)
+    if (argSortFunc)
       sortDatas.sort((a:TSortDataType, b:TSortDataType) => {
-        return argSortFunuc(a.child.data, b.child.data);
+        return argSortFunc(a.child.data, b.child.data);
       });
     switch (joinType) {
+      case "auto":
       case "void":
         return undefined;
       case "string":
@@ -98,8 +98,19 @@ export class GeneratorAccessor {
           resultObject = _.merge(resultObject, <any>sortData.result);
         return resultObject;
       default:
-        this.throwErrorGenerateChildren(funcName, argJoinType, null, "unknown join type");
+        this.throwErrorCallChildren(funcName, argJoinType, null, "unknown join type");
     }
+  }
+
+  protected throwErrorCallChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
+    throw new Error(`callChildren error.
+${message}
+sheetName=${this._currentNode.definition.name}
+nodeName=${this._currentNode.name}
+funcName=${funcName}
+argJoinType=${argJoinType}
+result=${childResult}
+resultType="${typeof childResult} is invalid return data.`);
   }
 
   public write = (argPath:string, data:string, option:{override?:boolean} = {}):void => {
@@ -127,24 +138,10 @@ destinationDir="${path.dirname(writePath)}`;
     this._writeCount++;
   };
 
-  protected throwErrorGenerateChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
-    throw new Error(`generateChildren error.
-${message}
-sheetName=${this._currentNode.definition.name}
-nodeName=${this._currentNode.name}
-funcName=${funcName}
-argJoinType=${argJoinType}
-result=${childResult}
-resultType="${typeof childResult} is invalid return data.`);
-  }
-
-  public get this():any {
-    return this._currentNode.data;
-  }
-
-  public source(source:string):string {
+  public source(argSource:any):string {
     let result:string = "";
-    let lines:Array<string> = source.split(/\n/g);
+    let source:string = _.isString(argSource) ? argSource : _.toString(argSource);
+    let lines:Array<string> = source.toString().split(/\n/g);
     if (lines[0] == "") lines.shift();
     if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line:string) => {
@@ -158,8 +155,9 @@ resultType="${typeof childResult} is invalid return data.`);
     return result;
   }
 
-  public indent(numIndent:number, source:string):string {
+  public indent(numIndent:number, argSource:any):string {
     let result:string = "";
+    let source:string = _.isString(argSource) ? argSource : _.toString(argSource);
     let lines:Array<string> = source.split(/\n/g);
     lines.pop();
     lines.forEach((line:string, index:number) => {
@@ -181,6 +179,10 @@ resultType="${typeof childResult} is invalid return data.`);
 
   public noNewline():string {
     return "###NoNewline###";
+  }
+
+  public setIndent(arg:number):void {
+    this._unitIndent = arg;
   }
 
 }
