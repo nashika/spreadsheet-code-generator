@@ -28,6 +28,14 @@ export class GeneratorAccessor {
     return this._currentNode.data;
   }
 
+  public get deleteLine():string {
+    return "###DeleteLine###";
+  }
+
+  public get noNewline():string {
+    return "###NoNewline###";
+  }
+
   public call(funcName:string = "main", ...args:any[]):any {
     return this._currentNode.call(this, funcName, args);
   }
@@ -145,7 +153,7 @@ destinationDir="${path.dirname(writePath)}`;
     if (lines[0] == "") lines.shift();
     if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line:string) => {
-      if (line.match(/###Delete###/)) return;
+      if (line.match(/###DeleteLine###/)) return;
       if (line.match(/###NoNewline###/)) {
         line = line.replace(/###NoNewline###/, "");
         result = result.replace(/\n$/m, "");
@@ -155,30 +163,19 @@ destinationDir="${path.dirname(writePath)}`;
     return result;
   }
 
-  public indent(numIndent:number, argSource:any):string {
+  public indent(numIndent:number, argSource:any, indentFirstLine:boolean = true):string {
     let result:string = "";
     let source:string = _.isString(argSource) ? argSource : _.toString(argSource);
     let lines:Array<string> = source.split(/\n/g);
-    lines.pop();
+    if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line:string, index:number) => {
       let newline:string = (index < lines.length - 1) ? "\n" : "";
-      if (line)
+      if (line && (index > 0 || indentFirstLine))
         result += _.repeat(" ", this._unitIndent * numIndent) + line + newline;
       else
         result += line + newline;
     });
     return result;
-  }
-
-  public delete(flag:boolean = true):string {
-    if (flag)
-      return "###Delete###";
-    else
-      return "";
-  }
-
-  public noNewline():string {
-    return "###NoNewline###";
   }
 
   public setIndent(arg:number):void {

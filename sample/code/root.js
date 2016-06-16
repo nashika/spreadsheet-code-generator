@@ -1,3 +1,5 @@
+let _ = require("lodash");
+
 module.exports = {
 
   main: function() {
@@ -12,3 +14,4 @@ module.exports = {
   },
 
 };
+console.log

@@ -145,6 +145,9 @@ export class GeneratorNodeElement {
 
   public call(accessor:GeneratorAccessor, funcName:string = "main", args:any[] = []):any {
     let generateFunc:Function = this.definition.getCode(funcName);
+    if (funcName == "data" && !generateFunc) {
+      return _.fromPairs([[this.name, this.data]]);
+    }
     if (typeof generateFunc == "function") {
       return generateFunc.apply(accessor, args);
     } else if (generateFunc === undefined) {

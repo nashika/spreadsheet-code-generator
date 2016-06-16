@@ -136,17 +136,89 @@
     "extends": "modified"
   },
   {},
+  {
+    "model": "Category",
+    "field": "id",
+    "extends": "id"
+  },
+  {
+    "model": "Category",
+    "field": "name",
+    "label": "Name",
+    "type": "string"
+  },
+  {
+    "model": "Category",
+    "field": "created",
+    "extends": "created"
+  },
+  {
+    "model": "Category",
+    "field": "modified",
+    "extends": "modified"
+  },
   {},
+  {
+    "model": "Tag",
+    "field": "id",
+    "extends": "id"
+  },
+  {
+    "model": "Tag",
+    "field": "name",
+    "label": "Name",
+    "type": "string"
+  },
+  {
+    "model": "Tag",
+    "field": "created",
+    "extends": "created"
+  },
+  {
+    "model": "Tag",
+    "field": "modified",
+    "extends": "modified"
+  },
   {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
+  {
+    "model": "Comment",
+    "field": "id",
+    "extends": "id"
+  },
+  {
+    "model": "Comment",
+    "field": "order_no",
+    "label": "Order",
+    "type": "number"
+  },
+  {
+    "model": "Comment",
+    "field": "article_id",
+    "label": "Article",
+    "type": "belongsTo"
+  },
+  {
+    "model": "Comment",
+    "field": "author_id",
+    "label": "Author",
+    "type": "belongsTo"
+  },
+  {
+    "model": "Comment",
+    "field": "content",
+    "label": "Content",
+    "type": "string"
+  },
+  {
+    "model": "Comment",
+    "field": "created",
+    "extends": "created"
+  },
+  {
+    "model": "Comment",
+    "field": "modified",
+    "extends": "modified"
+  },
   {},
   {},
   {},
