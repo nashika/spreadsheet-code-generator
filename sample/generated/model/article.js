@@ -16,14 +16,22 @@ export class Article {
       "field": "id",
       "label": "ID",
       "type": "number",
-      "width": 40
+      "width": 40,
+      "display": {
+        "list": "true",
+        "view": "true",
+        "edit": "true"
+      }
     },
     "title": {
       "model": "Article",
       "field": "title",
       "label": "Title",
       "type": "string",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "true"
+      }
     },
     "type": {
       "model": "Article",

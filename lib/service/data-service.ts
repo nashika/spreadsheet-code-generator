@@ -14,12 +14,17 @@ export class DataService extends IoService {
 
   protected save(sheetName:string, data:any[]) {
     if (name == "root") return;
+
     data = data.map((record) => {
-      record = <any>_.omitBy(record, _.isNull);
-      record = <any>_.omitBy(record, _.isUndefined);
-      record = <any>_.omitBy(record, (value) => value === "");
-      record = _.pick(record, _.map(this.app.sheets[sheetName].columns, "data"));
-      return record;
+      let result:any = {};
+      for (let column of this.app.sheets[sheetName].columns) {
+        let columnData:any = _.get(record, column.data);
+        if (_.isNull(columnData)) continue;
+        if (_.isUndefined(columnData)) continue;
+        if (columnData === "") continue;
+        _.set(result, column.data, columnData);
+      }
+      return result;
     });
     super.save(sheetName, data);
   }

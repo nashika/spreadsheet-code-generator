@@ -31,14 +31,22 @@
     "model": "Article",
     "field": "id",
     "extends": "id",
-    "width": 40
+    "width": 40,
+    "display": {
+      "list": "true",
+      "view": "true",
+      "edit": "true"
+    }
   },
   {
     "model": "Article",
     "field": "title",
     "label": "Title",
     "type": "string",
-    "width": 120
+    "width": 120,
+    "display": {
+      "list": "true"
+    }
   },
   {
     "model": "Article",

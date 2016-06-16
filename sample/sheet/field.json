@@ -51,10 +51,22 @@
       "header": "Width"
     },
     {
-      "data": "layout",
+      "data": "display.list",
       "type": "text",
       "width": 80,
-      "header": "Layout"
+      "header": "Disp List"
+    },
+    {
+      "header": "Disp View",
+      "data": "display.view",
+      "type": "text",
+      "width": 80
+    },
+    {
+      "header": "Disp Edit",
+      "data": "display.edit",
+      "type": "text",
+      "width": 80
     }
   ],
   "parent": "model"
