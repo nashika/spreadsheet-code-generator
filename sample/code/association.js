@@ -1,10 +1,6 @@
-module.exports = ($) => { return {
+module.exports = {
 
-  generate: () => {
-    return {
-      path: "../app/log/",
-      data: "aaaa",
-    };
+  generate: function () {
   },
 
-}};
+};

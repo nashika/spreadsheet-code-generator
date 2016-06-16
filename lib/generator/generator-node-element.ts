@@ -1,6 +1,7 @@
 import _ = require("lodash");
 
 import {GeneratorNodeDefinition} from "./generator-node-definition";
+import {GeneratorAccessor} from "./generator-accessor";
 
 export class GeneratorNodeElement {
 
@@ -140,10 +141,10 @@ export class GeneratorNodeElement {
     }
   }
 
-  public generate(funcName:string = "main") {
+  public generate(accessor:GeneratorAccessor, funcName:string = "main", args:any[] = []):any {
     let generateFunc:Function = this.definition.getCode(funcName);
     if (typeof generateFunc == "function") {
-      return generateFunc();
+      return accessor.call(generateFunc, args);
     } else if (generateFunc === undefined) {
       this.throwError(`Generate function ${this.definition.name}.${funcName} is undefined.`);
     } else {

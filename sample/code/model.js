@@ -1,14 +1,11 @@
-module.exports = ($) => { return {
+module.exports = {
 
-  main: () => {
-    let source = $.source(`
-export class ${$.this["model"]} {
+  main: function () {
+    let source = this.source(`
+export class ${this.this.model} {
 }
 `);
-    return [{
-      path: `./generated/${$.this["model"]}.txt`,
-      data: source,
-    }];
+    this.write(`./generated/${this.this.model}.txt`, source);
   },
 
-}};
+};

@@ -1,13 +1,13 @@
-module.exports = ($) => { return {
+module.exports = {
 
-  main: () => {
-    //$.callChildren("model");
-    console.log(this.test());
-    $.write("./generated/test.txt", "test");
+  main: function() {
+    this.generateChildren("model");
+    //console.log(this.test());
+    this.write("./generated/test.txt", "test");
   },
   
-  test: () => {
+  test: function() {
     return "TEST";
   },
 
-}};
+};

@@ -1,6 +1,7 @@
-import {TGeneratorSheetCodeObject} from "./generator-process";
-import {ISheet, IColumn} from "../component/app-component";
 import _ = require("lodash");
+
+import {ISheet, IColumn} from "../component/app-component";
+import {TGeneratorSheetCode} from "./generator-process";
 
 export class GeneratorNodeDefinition {
 
@@ -9,7 +10,7 @@ export class GeneratorNodeDefinition {
   protected _descendants:{[sheetName:string]:GeneratorNodeDefinition};
 
   constructor(protected _sheet:ISheet,
-              protected _sheetCodeObject:TGeneratorSheetCodeObject,
+              protected _sheetCode:TGeneratorSheetCode,
               protected _parent:GeneratorNodeDefinition) {
     this._children = {};
     this._descendants = {};
@@ -54,7 +55,7 @@ export class GeneratorNodeDefinition {
   }
 
   public getCode(propName:string):any {
-    return this._sheetCodeObject[propName];
+    return this._sheetCode[propName];
   }
 
   public addChild(nodeDefinition:GeneratorNodeDefinition):void {

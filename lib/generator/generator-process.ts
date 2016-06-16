@@ -20,8 +20,7 @@ export interface IGeneratorResult {
   override?:boolean,
 }
 
-export type TGeneratorSheetCode = ($:GeneratorAccessor) => TGeneratorSheetCodeObject;
-export type TGeneratorSheetCodeObject = {[name:string]:(...args:any[]) => any};
+export type TGeneratorSheetCode = {[name:string]:(...args:any[]) => any};
 
 export class GeneratorProcess {
 
@@ -47,19 +46,19 @@ export class GeneratorProcess {
 
   protected proceed():number {
     let accessor:GeneratorAccessor = new GeneratorAccessor(this.app);
-    let sheetCodeObjects:{[sheetName:string]:TGeneratorSheetCodeObject} = {};
+    let sheetCodes:{[sheetName:string]:TGeneratorSheetCode} = {};
     for (let sheetName of this.app.services.code.list()) {
-      sheetCodeObjects[sheetName] = this.requireSheetObject(sheetName, accessor);
-      if (!sheetCodeObjects[sheetName]) return;
+      sheetCodes[sheetName] = this.requireSheetObject(sheetName);
+      if (!sheetCodes[sheetName]) return;
     }
-    accessor._sheetCodeObjects = sheetCodeObjects;
+    accessor._sheetCodes = sheetCodes;
 
     log.debug(`Create node definition tree was started.`);
-    let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodeObjects["root"], null);
+    let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodes["root"], null);
     let createNodeDefinitionRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
       _.forIn(this.app.sheets, (sheet:ISheet) => {
         if (sheet.parent != currentNodeDefinition.name) return;
-        let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodeObjects[sheet.name], currentNodeDefinition);
+        let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodes[sheet.name], currentNodeDefinition);
         currentNodeDefinition.addChild(childNodeDefinition);
         createNodeDefinitionRecursive(childNodeDefinition);
       });
@@ -90,43 +89,40 @@ export class GeneratorProcess {
     log.debug(`Generate process was started.`);
     accessor._currentNode = rootNodeElement;
     accessor._writeCount = 0;
-    rootNodeElement.generate();
+    rootNodeElement.generate(accessor);
     log.debug(`Generate process was finished.`);
 
     log.debug(`Generate process was done. Write ${accessor._writeCount} files.`);
     return accessor._writeCount;
   }
 
-  protected requireSheetObject(sheetName:string, accessor:GeneratorAccessor):TGeneratorSheetCodeObject {
+  protected requireSheetObject(sheetName:string):TGeneratorSheetCode {
     let codeDir:string = path.join(this.app.saveBaseDir, "./code/");
     let sheetCodePath:string = path.join(codeDir, `./${sheetName}.js`);
     if (originalRequire.cache[sheetCodePath])
       delete originalRequire.cache[sheetCodePath];
     let sheetCode:TGeneratorSheetCode;
     sheetCode = originalRequire(sheetCodePath);
-    if (typeof sheetCode != "function") {
+    if (!_.isObject(sheetCode)) {
       throw `Sheet code "${sheetName}.js" exports type="${typeof sheetCode}" data.
-Sheet code expects export type="function".\n\n${this.sheetCodeExample}`;
+Sheet code expects export type="object".\n\n${this.exampleCode}}`;
     }
-    let sheetObject:TGeneratorSheetCodeObject;
-    try {
-      sheetObject = sheetCode(accessor);
-    } catch (e) {
-      throw `Sheet code "${sheetName}.js" initialize error.
-Sheet code expects export function, one argument and return object.\n\n${this.sheetCodeExample}`;
-    }
-    if (typeof sheetObject != "object") {
-      throw `Sheet code require("${sheetName}.js")($) return type="${typeof sheetCode}".
-Expects return type="object".\n\n${this.sheetCodeExample}`;
-    }
-    return sheetObject;
+    _.forEach(sheetCode, (prop:any, key:string) => {
+      if (_.isFunction(prop)) {
+        if (prop.toString().match(/^ *\(\) *=> *\{/)) {
+          throw `Sheet code "${sheetName}.js" property "${key}" is maybe arrow function.
+Please use normal function for custom "this".\n\n${this.exampleCode}`;
+        }
+      }
+    });
+    return sheetCode;
   }
 
-  protected sheetCodeExample:string = `[Example]
-module.exports = ($) => { return {
-  main: ...
-  funcA: ...
-  funcB: ...
-}};`;
+  protected exampleCode = `[Example]
+module.exports = {
+  main: function () => { ... }
+  funcA: function () => { ... }
+  funcB: function () => { ... }
+}`;
 
 }
