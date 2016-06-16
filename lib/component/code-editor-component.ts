@@ -35,8 +35,13 @@ export class CodeEditorComponent extends BaseComponent {
   onReady() {
     let container:HTMLElement = <HTMLElement>this.$el.querySelector("#code-editor");
     this.editor = ace.edit(container);
-    // this.editor.setTheme("ace/theme/chrome");
+    //this.editor.setTheme("ace/theme/chrome");
     this.editor.getSession().setMode("ace/mode/javascript");
+    this.editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableSnippets: true,
+      enableLiveAutocompletion: true,
+    });
     this.editor.getSession().setTabSize(2);
     this.editor.$blockScrolling = Infinity;
     (<any>this.editor).on("change", this.change);
