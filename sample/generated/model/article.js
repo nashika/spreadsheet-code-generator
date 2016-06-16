@@ -14,9 +14,9 @@ export class Article {
     "id": {
       "model": "Article",
       "field": "id",
-      "width": 40,
       "label": "ID",
-      "type": "number"
+      "type": "number",
+      "width": 40
     },
     "title": {
       "model": "Article",

@@ -122,25 +122,22 @@ export class GeneratorNodeElement {
     if (inheritNodeElement.data["extends"])
       inheritNodeElement.applyInherits();
     // merge this node and inherit node
-    this.inheritNode(this.data, inheritNodeElement.data);
+    this.inheritData(inheritNodeElement.data);
     // remove "extends" column data to notice finished
     delete this.data["extends"];
   }
 
-  private inheritNode(data:any, inheritData:any) {
-    for (let paramName in inheritData) {
-      if (inheritData[paramName] instanceof Object) {
-        if (data[paramName] === undefined) {
-          data[paramName] = {};
-          this.inheritNode(data[paramName], inheritData[paramName]);
-        } else if (data[paramName] instanceof Object) {
-          this.inheritNode(data[paramName], inheritData[paramName]);
-        }
-      } else {
-        if (data[paramName] === undefined)
-          data[paramName] = inheritData[paramName];
+  private inheritData(inheritData:any) {
+    let newData:{[columnName:string]:any} = {};
+    for (let column of this.definition.columns) {
+      let key:string = column.data;
+      if (_.has(this.data, key)) {
+        _.set(newData, key, _.get(this.data, key));
+      } else if (_.has(inheritData, key)) {
+        _.set(newData, key, _.get(inheritData, key));
       }
     }
+    this.data = newData;
   }
 
   public call(accessor:GeneratorAccessor, funcName:string = "main", args:any[] = []):any {
