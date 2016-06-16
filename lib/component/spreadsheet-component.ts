@@ -76,6 +76,11 @@ export class SpreadsheetComponent extends BaseComponent {
       colHeaders.push(c.header);
       let column:any;
       switch (c.type) {
+        case "json":
+          column = {
+            type:"text"
+          };
+          break;
         case "select":
           column = {
             editor: "select",

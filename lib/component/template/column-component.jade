@@ -18,6 +18,7 @@ div.panel.panel-default()
         +form-group("Type")
           select.form-control("v-model"="column.type")
             option(value="text") Text
+            option(value="json") JSON
             option(value="numeric") Numeric
             option(value="select") Select
         div("v-if"="column.type == 'select'")
