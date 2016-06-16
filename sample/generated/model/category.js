@@ -9,33 +9,31 @@ export class Category {
     "id": {
       "model": "Category",
       "field": "id",
-      "label": null,
-      "type": null,
-      "width": null
+      "label": "ID",
+      "type": "number",
+      "width": 40
     },
     "name": {
       "model": "Category",
       "field": "name",
       "label": "Name",
-      "type": "string",
-      "width": null,
-      "extends": ""
+      "type": "string"
     },
     "created": {
       "model": "Category",
       "field": "created",
-      "label": null,
-      "type": null,
-      "width": null,
-      "format": "YYYY/MM/DD"
+      "label": "Created",
+      "type": "datetime",
+      "format": "YYYY/MM/DD",
+      "width": 120
     },
     "modified": {
       "model": "Category",
       "field": "modified",
-      "label": null,
-      "type": null,
-      "width": null,
-      "format": "YYYY/MM/DD"
+      "label": "Updated",
+      "type": "datetime",
+      "format": "YYYY/MM/DD",
+      "width": 120
     }
   }
 

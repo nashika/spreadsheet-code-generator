@@ -15,6 +15,7 @@ export class GeneratorService extends BaseService {
       alert(`Please save files before generate.`);
       return;
     }
+    if (!this.app.services.data.loadAll()) return;
     let process:GeneratorProcess = new GeneratorProcess(this.app);
     let result:number = process.main();
     if (result != -1)

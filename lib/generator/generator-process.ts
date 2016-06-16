@@ -63,7 +63,7 @@ export class GeneratorProcess {
     log.debug('Create node element tree was started.');
     let rootNodeElement:GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
-      console.log(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
+      log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
       let currentData:TSheetData = this.app.datas[currentNodeDefinition.name] || [];
       _.forEach(currentData, (record:{[columnName:string]:any}) => {
         let childNodeElement:GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
