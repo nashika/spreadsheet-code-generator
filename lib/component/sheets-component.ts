@@ -73,6 +73,7 @@ export class SheetsComponent extends BaseComponent {
 
   isSelfOrChild(sheetName:string):boolean {
     if (sheetName == this.currentSheet.name) return true;
+    if (!this.sheets[sheetName]) return false;
     return this.$root.services.sheet.isParentRecursive(this.sheets[sheetName], this.currentSheet);
   }
 
