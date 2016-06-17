@@ -44,6 +44,7 @@ export class CodeService extends IoService {
 
   public edit(sheetName:string, value:string) {
     vue.set(this.app.codes, sheetName, value);
+    this.app.currentCode = value;
     this.app.sheetMetas[sheetName].modified = true;
   }
 
