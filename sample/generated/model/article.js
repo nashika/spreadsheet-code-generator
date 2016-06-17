@@ -18,9 +18,9 @@ export class Article {
       "type": "number",
       "width": 40,
       "display": {
-        "list": "true",
-        "view": "true",
-        "edit": "false"
+        "list": true,
+        "view": true,
+        "edit": false
       }
     },
     "title": {
@@ -30,7 +30,7 @@ export class Article {
       "type": "string",
       "width": 120,
       "display": {
-        "list": "true"
+        "list": true
       }
     },
     "type": {
@@ -38,9 +38,15 @@ export class Article {
       "field": "type",
       "label": "Type",
       "type": "division",
+      "options": {
+        "1": "text",
+        "2": "photo",
+        "3": "movie",
+        "4": "link"
+      },
       "width": 80,
       "display": {
-        "list": "false"
+        "list": false
       }
     },
     "content": {
@@ -50,7 +56,7 @@ export class Article {
       "type": "string",
       "width": 200,
       "display": {
-        "list": "false"
+        "list": false
       }
     },
     "category_id": {
@@ -60,7 +66,7 @@ export class Article {
       "type": "belongsTo",
       "width": 80,
       "display": {
-        "list": "true"
+        "list": true
       }
     },
     "author_id": {
@@ -70,7 +76,7 @@ export class Article {
       "type": "belongsTo",
       "width": 80,
       "display": {
-        "list": "true"
+        "list": true
       }
     },
     "public": {
@@ -80,7 +86,7 @@ export class Article {
       "type": "boolean",
       "width": 40,
       "display": {
-        "list": "true"
+        "list": true
       }
     },
     "created": {
@@ -91,9 +97,9 @@ export class Article {
       "format": "YYYY/MM/DD",
       "width": 80,
       "display": {
-        "list": "false",
-        "view": "true",
-        "edit": "false"
+        "list": false,
+        "view": true,
+        "edit": false
       }
     },
     "modified": {
@@ -104,9 +110,9 @@ export class Article {
       "format": "YYYY/MM/DD",
       "width": 80,
       "display": {
-        "list": "false",
-        "view": "true",
-        "edit": "false"
+        "list": false,
+        "view": true,
+        "edit": false
       }
     }
   }

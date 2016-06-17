@@ -16,16 +16,22 @@ export class GeneratorService extends BaseService {
       return;
     }
 
-    log.debug(`Loading sheets was started.`);
+    log.debug(`Load sheets was started.`);
     let sheets:{[sheetName:string]:ISheet} = this.app.services.sheet.loadAllForGenerate();
-    if (!sheets) throw `Loading sheets was failed.`;
-    log.debug(`Loading sheets was finished.`);
+    if (!sheets) {
+      alert(`Load sheets was failed.`);
+      return;
+    }
+    log.debug(`Load sheets was finished.`);
 
-    log.debug(`Loading sheet data was started.`);
+    log.debug(`Load sheet data was started.`);
     let sheetDatas:{[sheetName:string]:TSheetData} = this.app.services.data.loadAllForGenerate();
-    if (!sheetDatas) throw `Loading sheet data was failed.`;
-    log.debug(`Loading sheet data was finished.`);
-    
+    if (!sheetDatas) {
+      alert(`Load sheet data was failed.`);
+      return;
+    }
+    log.debug(`Load sheet data was finished.`);
+
     let codeNames:string[] = this.app.services.code.list();
     let process:GeneratorProcess = new GeneratorProcess(this.app.saveBaseDir, sheets, sheetDatas, codeNames);
     let result:number;

@@ -41,7 +41,7 @@
     {
       "header": "Options",
       "data": "options",
-      "type": "text",
+      "type": "json",
       "width": 120
     },
     {

@@ -17,9 +17,9 @@ export class Author {
       "type": "number",
       "width": 40,
       "display": {
-        "list": "true",
-        "view": "true",
-        "edit": "false"
+        "list": true,
+        "view": true,
+        "edit": false
       }
     },
     "username": {
@@ -60,9 +60,9 @@ export class Author {
       "format": "YYYY/MM/DD",
       "width": 120,
       "display": {
-        "list": "false",
-        "view": "true",
-        "edit": "false"
+        "list": false,
+        "view": true,
+        "edit": false
       }
     },
     "modified": {
@@ -73,9 +73,9 @@ export class Author {
       "format": "YYYY/MM/DD",
       "width": 120,
       "display": {
-        "list": "false",
-        "view": "true",
-        "edit": "false"
+        "list": false,
+        "view": true,
+        "edit": false
       }
     }
   }

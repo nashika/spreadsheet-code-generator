@@ -25,6 +25,26 @@ export class GeneratorProcess {
   }
 
   public main():number {
+    log.debug(`Parse sheet data was started.`);
+    for (let sheetName in this.sheets) {
+      if (sheetName == "root") continue;
+      let sheet:ISheet = this.sheets[sheetName];
+      let data:TSheetData = this.datas[sheetName];
+      for (let record of data) {
+        for (let column of sheet.columns) {
+          if (!_.has(record, column.data)) continue;
+          if (column.type == "json") {
+            let jsonData:string = _.get(record, column.data, "");
+            try {
+              _.set(record, column.data, JSON.parse(jsonData));
+            } catch (e) {
+              throw `JSON parse error. sheet="${sheetName}", column="${column.data}", record="${JSON.stringify(record)}"`;
+            }
+          }
+        }
+      }
+    }
+    log.debug(`Parse sheet data was finished.`);
 
     log.debug(`Initialize sheet code was started.`);
     let accessor:GeneratorAccessor = new GeneratorAccessor(this.saveBaseDir);
