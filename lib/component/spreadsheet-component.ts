@@ -2,8 +2,10 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {ISheet, ISheetMeta} from "./app-component";
+import {ISheet, ISheetMeta, IColumn} from "./app-component";
 import {templateLoader} from "./template-loader";
+
+type THandsontableChange = [number, string, any, any];
 
 @Component({
   template: templateLoader("spreadsheet"),
@@ -25,11 +27,13 @@ export class SpreadsheetComponent extends BaseComponent {
   currentData:any[];
 
   hot:ht.Methods;
+  columnMap: {[key:string]:IColumn};
   resizeTimer:any;
 
   data():any {
     return {
       hot: false,
+      columnMap: null,
       resizeTimer: null,
     }
   }
@@ -50,11 +54,35 @@ export class SpreadsheetComponent extends BaseComponent {
     }, 200);
   }
 
+  /*beforeChange(changes:THandsontableChange[], source:string) {
+    for (let change of changes) {
+      if (this.columnMap[change[1]].type == "json") {
+        if (change[3] == "") continue;
+        let cell = this.hot.getCell(change[0], <any>change[1]);
+        try {
+          JSON.parse(change[3]);
+        } catch (e){
+          alert(`"${change[3]}" is invalid JSON string.`);
+        }
+      }
+    }
+  }*/
+
+  jsonValidator(value:string, callback:(result:boolean) => void):void {
+    if (value == "") return callback(true);
+    try {
+      JSON.parse(value);
+    } catch (e){
+      return callback(false);
+    }
+    return callback(true);
+  }
+
   afterSelection(r:number, c:number, r2:number, c2:number):void {
     this.$root.$broadcast("select-column-header", c);
   }
 
-  afterChange(changes:any[][]):void {
+  afterChange(changes:THandsontableChange[]):void {
     if (changes) {
       this.currentSheetMeta.modified = true;
     }
@@ -72,13 +100,18 @@ export class SpreadsheetComponent extends BaseComponent {
     let data:any[] = this.currentData;
     let colHeaders:string[] = [];
     let columns:any[] = [];
+    this.columnMap = {};
     for (let c of this.currentSheet.columns) {
       colHeaders.push(c.header);
+      this.columnMap[c.data] = c;
       let column:any;
       switch (c.type) {
         case "json":
           column = {
-            type:"text"
+            type:"text",
+            validator: this.jsonValidator,
+            invalidCellClassName: "invalidCell",
+            allowInvalid: true,
           };
           break;
         case "select":
@@ -109,6 +142,7 @@ export class SpreadsheetComponent extends BaseComponent {
       contextMenu: true,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
+      //beforeChange: this.beforeChange,
       afterChange: this.afterChange,
       afterSelection: this.afterSelection,
     });

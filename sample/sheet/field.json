@@ -52,20 +52,20 @@
     },
     {
       "data": "display.list",
-      "type": "text",
+      "type": "json",
       "width": 80,
       "header": "Disp List"
     },
     {
       "header": "Disp View",
       "data": "display.view",
-      "type": "text",
+      "type": "json",
       "width": 80
     },
     {
       "header": "Disp Edit",
       "data": "display.edit",
-      "type": "text",
+      "type": "json",
       "width": 80
     }
   ],
