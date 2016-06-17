@@ -116,5 +116,28 @@ export class Article {
       }
     }
   }
-
+  
+  initializeAssociation() {
+    this.setAssociation("author", {
+      type: "belongsTo",
+      model: "Author",
+      foreignKey: "author_id",
+    });
+    this.setAssociation("category", {
+      type: "belongsTo",
+      model: "Category",
+      foreignKey: "category_id",
+    });
+    this.setAssociation("tags", {
+      type: "belongsToMany",
+      model: "Tag",
+      foreignKey: "article_tag",
+    });
+    this.setAssociation("comments", {
+      type: "hasMany",
+      model: "Comment",
+      foreignKey: "article_id",
+    });
+  }
+  
 }

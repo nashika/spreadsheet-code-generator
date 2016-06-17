@@ -51,5 +51,9 @@ export class Tag {
       }
     }
   }
+  
+  initializeAssociation() {
 
+  }
+  
 }

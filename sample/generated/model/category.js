@@ -51,5 +51,13 @@ export class Category {
       }
     }
   }
-
+  
+  initializeAssociation() {
+    this.setAssociation("articles", {
+      type: "hasMany",
+      model: "Article",
+      foreignKey: "category_id",
+    });
+  }
+  
 }

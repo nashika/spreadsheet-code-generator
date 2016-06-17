@@ -1,10 +1,16 @@
 [
   {
-    "model": "Article",
+    "model": "*",
     "association": "author",
     "type": "belongsTo",
     "target": "Author",
     "foreignKey": "author_id"
+  },
+  {},
+  {
+    "model": "Article",
+    "association": "author",
+    "extends": "author"
   },
   {
     "model": "Article",
@@ -61,9 +67,7 @@
   {
     "model": "Comment",
     "association": "author",
-    "type": "belongsTo",
-    "target": "Author",
-    "foreignKey": "author_id"
+    "extends": "author"
   },
   {},
   {},

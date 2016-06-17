@@ -79,5 +79,18 @@ export class Author {
       }
     }
   }
-
+  
+  initializeAssociation() {
+    this.setAssociation("articles", {
+      type: "hasMany",
+      model: "Article",
+      foreignKey: "author_id",
+    });
+    this.setAssociation("comments", {
+      type: "hasMany",
+      model: "Comment",
+      foreignKey: "author_id",
+    });
+  }
+  
 }

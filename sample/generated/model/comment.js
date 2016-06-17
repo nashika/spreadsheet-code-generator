@@ -72,5 +72,18 @@ export class Comment {
       }
     }
   }
-
+  
+  initializeAssociation() {
+    this.setAssociation("article", {
+      type: "belongsTo",
+      model: "Article",
+      foreignKey: "article_id",
+    });
+    this.setAssociation("author", {
+      type: "belongsTo",
+      model: "Author",
+      foreignKey: "author_id",
+    });
+  }
+  
 }
