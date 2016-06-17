@@ -15,7 +15,12 @@ export class Author {
       "field": "id",
       "label": "ID",
       "type": "number",
-      "width": 40
+      "width": 40,
+      "display": {
+        "list": "true",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "username": {
       "model": "Author",
@@ -53,7 +58,12 @@ export class Author {
       "label": "Created",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "modified": {
       "model": "Author",
@@ -61,7 +71,12 @@ export class Author {
       "label": "Updated",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     }
   }
 

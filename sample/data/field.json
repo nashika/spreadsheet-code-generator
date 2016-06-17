@@ -58,6 +58,7 @@
     "field": "type",
     "label": "Type",
     "type": "division",
+    "width": 80,
     "display": {
       "list": "false"
     }
@@ -97,6 +98,7 @@
     "field": "public",
     "label": "Public",
     "type": "boolean",
+    "width": 40,
     "display": {
       "list": "true"
     }

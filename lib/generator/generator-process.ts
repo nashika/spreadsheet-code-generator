@@ -39,6 +39,12 @@ export class GeneratorProcess {
   }
 
   protected proceed():number {
+    log.debug(`Load sheet data was started.`);
+    let sheetDatas:{[sheetName:string]:TSheetData} = this.app.services.data.loadAllForGenerate();
+    if (!sheetDatas) throw `Load sheet data failed.`;
+    log.debug(`Load sheet data was finished.`);
+
+    log.debug(`Initialize sheet code was started.`);
     let accessor:GeneratorAccessor = new GeneratorAccessor(this.app);
     let sheetCodes:{[sheetName:string]:TGeneratorSheetCode} = {};
     for (let sheetName of this.app.services.code.list()) {
@@ -46,6 +52,7 @@ export class GeneratorProcess {
       if (!sheetCodes[sheetName]) return;
     }
     accessor._sheetCodes = sheetCodes;
+    log.debug(`Initialize sheet code was finished.`);
 
     log.debug(`Create node definition tree was started.`);
     let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodes["root"], null);

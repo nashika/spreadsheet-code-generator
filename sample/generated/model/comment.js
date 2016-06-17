@@ -14,7 +14,12 @@ export class Comment {
       "field": "id",
       "label": "ID",
       "type": "number",
-      "width": 40
+      "width": 40,
+      "display": {
+        "list": "true",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "order_no": {
       "model": "Comment",
@@ -46,7 +51,12 @@ export class Comment {
       "label": "Created",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "modified": {
       "model": "Comment",
@@ -54,7 +64,12 @@ export class Comment {
       "label": "Updated",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     }
   }
 

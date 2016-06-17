@@ -2,17 +2,18 @@ import _ = require("lodash");
 import vue = require("vue");
 
 import {IoService} from "./io-service";
+import {TSheetData} from "../component/app-component";
 
 export class DataService extends IoService {
 
   protected static DIR_NAME:string = "data";
 
-  protected load(sheetName:string):any[] {
+  protected load(sheetName:string):TSheetData {
     let data:any[] = super.load(sheetName);
     return data ? data : [];
   }
 
-  protected save(sheetName:string, data:any[]) {
+  protected save(sheetName:string, data:TSheetData) {
     if (name == "root") return;
 
     data = data.map((record) => {
@@ -51,6 +52,15 @@ export class DataService extends IoService {
       this.unlink(name);
     });
     return true;
+  }
+  
+  public loadAllForGenerate():{[sheetName:string]:TSheetData} {
+    if (!this.checkDir()) return null;
+    let names:string[] = this.list();
+    let result:{[sheetName:string]:TSheetData} = {};
+    for (let name of names)
+      result[name] = this.load(name);
+    return result;
   }
 
 }

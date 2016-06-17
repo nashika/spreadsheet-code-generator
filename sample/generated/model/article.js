@@ -20,7 +20,7 @@ export class Article {
       "display": {
         "list": "true",
         "view": "true",
-        "edit": "true"
+        "edit": "false"
       }
     },
     "title": {
@@ -37,34 +37,51 @@ export class Article {
       "model": "Article",
       "field": "type",
       "label": "Type",
-      "type": "division"
+      "type": "division",
+      "width": 80,
+      "display": {
+        "list": "false"
+      }
     },
     "content": {
       "model": "Article",
       "field": "content",
       "label": "Content",
       "type": "string",
-      "width": 200
+      "width": 200,
+      "display": {
+        "list": "false"
+      }
     },
     "category_id": {
       "model": "Article",
       "field": "category_id",
       "label": "Category",
       "type": "belongsTo",
-      "width": 80
+      "width": 80,
+      "display": {
+        "list": "true"
+      }
     },
     "author_id": {
       "model": "Article",
       "field": "author_id",
       "label": "Author",
       "type": "belongsTo",
-      "width": 80
+      "width": 80,
+      "display": {
+        "list": "true"
+      }
     },
     "public": {
       "model": "Article",
       "field": "public",
       "label": "Public",
-      "type": "boolean"
+      "type": "boolean",
+      "width": 40,
+      "display": {
+        "list": "true"
+      }
     },
     "created": {
       "model": "Article",
@@ -72,7 +89,12 @@ export class Article {
       "label": "Created",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 80
+      "width": 80,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "modified": {
       "model": "Article",
@@ -80,7 +102,12 @@ export class Article {
       "label": "Updated",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 80
+      "width": 80,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     }
   }
 

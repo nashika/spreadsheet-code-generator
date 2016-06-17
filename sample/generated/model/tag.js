@@ -11,7 +11,12 @@ export class Tag {
       "field": "id",
       "label": "ID",
       "type": "number",
-      "width": 40
+      "width": 40,
+      "display": {
+        "list": "true",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "name": {
       "model": "Tag",
@@ -25,7 +30,12 @@ export class Tag {
       "label": "Created",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     },
     "modified": {
       "model": "Tag",
@@ -33,7 +43,12 @@ export class Tag {
       "label": "Updated",
       "type": "datetime",
       "format": "YYYY/MM/DD",
-      "width": 120
+      "width": 120,
+      "display": {
+        "list": "false",
+        "view": "true",
+        "edit": "false"
+      }
     }
   }
 
