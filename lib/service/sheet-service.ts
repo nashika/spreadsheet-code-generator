@@ -22,13 +22,7 @@ export class SheetService extends IoService {
   }
 
   public newAll():void {
-    this.app.sheets = {
-      root: {
-        name: "root",
-        columns: [],
-        parent: "",
-      }
-    };
+    this.app.sheets = {root: this.rootTemplate};
     this.app.sheetMetas = {
       root: {
         modified: false
@@ -38,6 +32,14 @@ export class SheetService extends IoService {
     this.app.currentSheetMeta = this.app.sheetMetas["root"];
     this.app.services.data.newAll();
     this.app.services.code.newAll();
+  }
+  
+  protected get rootTemplate():ISheet {
+    return {
+      name: "root",
+      columns: [],
+      parent: "",
+    };
   }
 
   public loadAll():boolean {
@@ -141,6 +143,15 @@ export class SheetService extends IoService {
     if (target.parent == parent.name) return true;
     if (!target.parent) return false;
     return this.isParentRecursive(this.app.sheets[target.parent], parent);
+  }
+
+  public loadAllForGenerate():{[sheetName:string]:ISheet} {
+    let names:string[] = this.list();
+    let result:{[sheetName:string]:ISheet} = {root: this.rootTemplate};
+    for (let name of names) {
+      result[name] = this.load(name);
+    }
+    return result;
   }
 
 }

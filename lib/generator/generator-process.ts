@@ -18,36 +18,18 @@ export type TGeneratorSheetCode = {[name:string]:(...args:any[]) => any};
 
 export class GeneratorProcess {
 
-  constructor(protected app:AppComponent) {
+  constructor(protected saveBaseDir:string,
+              protected sheets:{[sheetName:string]:ISheet},
+              protected datas:{[sheetName:string]:TSheetData},
+              protected codeNames:string[]) {
   }
 
   public main():number {
-    try {
-      return this.proceed();
-    } catch (e) {
-      if (_.isString(e)) {
-        alert(e);
-      } else {
-        if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
-          alert(e.stack || e);
-        }
-        this.app.services.generator.developerToolQuestion();
-        throw e;
-      }
-      return -1;
-    }
-  }
-
-  protected proceed():number {
-    log.debug(`Load sheet data was started.`);
-    let sheetDatas:{[sheetName:string]:TSheetData} = this.app.services.data.loadAllForGenerate();
-    if (!sheetDatas) throw `Load sheet data failed.`;
-    log.debug(`Load sheet data was finished.`);
 
     log.debug(`Initialize sheet code was started.`);
-    let accessor:GeneratorAccessor = new GeneratorAccessor(this.app);
+    let accessor:GeneratorAccessor = new GeneratorAccessor(this.saveBaseDir);
     let sheetCodes:{[sheetName:string]:TGeneratorSheetCode} = {};
-    for (let sheetName of this.app.services.code.list()) {
+    for (let sheetName of this.codeNames) {
       sheetCodes[sheetName] = this.requireSheetObject(sheetName);
       if (!sheetCodes[sheetName]) return;
     }
@@ -55,9 +37,9 @@ export class GeneratorProcess {
     log.debug(`Initialize sheet code was finished.`);
 
     log.debug(`Create node definition tree was started.`);
-    let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.app.sheets["root"], sheetCodes["root"], null);
+    let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.sheets["root"], sheetCodes["root"], null);
     let createNodeDefinitionRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
-      _.forIn(this.app.sheets, (sheet:ISheet) => {
+      _.forIn(this.sheets, (sheet:ISheet) => {
         if (sheet.parent != currentNodeDefinition.name) return;
         let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodes[sheet.name], currentNodeDefinition);
         currentNodeDefinition.addChild(childNodeDefinition);
@@ -71,7 +53,7 @@ export class GeneratorProcess {
     let rootNodeElement:GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
       log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
-      let currentData:TSheetData = this.app.datas[currentNodeDefinition.name] || [];
+      let currentData:TSheetData = this.datas[currentNodeDefinition.name] || [];
       _.forEach(currentData, (record:{[columnName:string]:any}) => {
         let childNodeElement:GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
         rootNodeElement.add(childNodeElement);
@@ -98,7 +80,7 @@ export class GeneratorProcess {
   }
 
   protected requireSheetObject(sheetName:string):TGeneratorSheetCode {
-    let codeDir:string = path.join(this.app.saveBaseDir, "./code/");
+    let codeDir:string = path.join(this.saveBaseDir, "./code/");
     let sheetCodePath:string = path.join(codeDir, `./${sheetName}.js`);
     if (originalRequire.cache[sheetCodePath])
       delete originalRequire.cache[sheetCodePath];

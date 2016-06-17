@@ -21,7 +21,7 @@ export class GeneratorAccessor {
   public _unitIndent:number = 4;
   public _writeCount:number = 0;
 
-  constructor(protected app:AppComponent) {
+  constructor(protected saveBaseDir:string) {
   }
 
   public get data():any {
@@ -129,7 +129,7 @@ resultType="${typeof childResult} is invalid return data.`);
     if (!_.isObject(option))
       throw `Error in $.write(path, data, option). arg "option" must be string, but it is type="${typeof option}"`;
     let writePath:string = path.isAbsolute(argPath) ? argPath
-      : path.join(this.app.saveBaseDir, argPath);
+      : path.join(this.saveBaseDir, argPath);
     if (!_.isUndefined(option.override) && !option.override) {
       if (fs.existsSync(writePath)) {
         log.debug(`Skip ${writePath}. File exists.`);
