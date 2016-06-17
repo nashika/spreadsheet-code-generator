@@ -140,6 +140,7 @@ export class SpreadsheetComponent extends BaseComponent {
       rowHeaders: true,
       colHeaders: colHeaders,
       contextMenu: true,
+      wordWrap: false,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
       //beforeChange: this.beforeChange,

@@ -61,7 +61,7 @@
     "field": "type",
     "label": "Type",
     "type": "division",
-    "options": "{\"1\": \"text\", \"2\":\"photo\", \"3\":\"movie\", \"4\":\"link\"}",
+    "options": "{\n  \"1\": \"text\",\n  \"2\":\"photo\",\n  \"3\":\"movie\",\n  \"4\":\"link\"\n}",
     "width": 80,
     "display": {
       "list": "false"
