@@ -5,6 +5,7 @@ import log = require("loglevel");
 log.setLevel("trace");
 
 import "./scss/style.scss";
+import "./etc/ace-custom-snippets";
 import {AppComponent} from "./component/app-component";
 
 let app:AppComponent = new (<any>AppComponent)({el: "#app"});

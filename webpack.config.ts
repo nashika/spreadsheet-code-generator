@@ -25,6 +25,7 @@ let webpackConfig:webpack.Configuration = {
       {test: /\.jade$/, loader: "raw", },
       {test: /\.css$/, loaders: ["style", "css"], },
       {test: /\.scss$/, loaders: ["style", "css", "sass"], },
+      {test: /\.snippets/, loader: "raw", },
       {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
       {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
       {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/octet-stream", },
