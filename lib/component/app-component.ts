@@ -37,7 +37,7 @@ export interface IColumn {
 }
 
 export interface IConfig {
-  recentSaveBaseDir?:string;
+  recentSaveBaseDirs?:string[];
 }
 
 @Component({

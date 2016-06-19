@@ -26,6 +26,7 @@ export class ConfigService extends BaseService {
     } else {
       result = {};
     }
+    if (!result.recentSaveBaseDirs) result.recentSaveBaseDirs = [];
     this.app.config = result;
   }
 
