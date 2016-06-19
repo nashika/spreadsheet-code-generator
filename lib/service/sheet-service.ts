@@ -90,7 +90,7 @@ export class SheetService extends IoService {
     vue.set(this.app.datas, sheetName, _.times(10, () => {
       return {}
     }));
-    vue.set(this.app.codes, sheetName, "");
+    vue.set(this.app.codes, sheetName, this.app.services.code.defaultCode);
     return true;
   }
 

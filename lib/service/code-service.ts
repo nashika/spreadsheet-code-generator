@@ -48,4 +48,16 @@ export class CodeService extends IoService {
     this.app.sheetMetas[sheetName].modified = true;
   }
 
+  public get defaultCode():string {
+    return `module.exports = {
+
+  main: function() {
+    
+  }
+
+}
+`;
+
+  }
+
 }
