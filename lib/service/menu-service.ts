@@ -187,6 +187,7 @@ export class MenuService extends BaseService {
     this.app.config.recentSaveBaseDirs = _.filter(this.app.config.recentSaveBaseDirs,
       (dir:string):boolean => _.toLower(dir) != _.toLower(this.app.saveBaseDir));
     this.app.config.recentSaveBaseDirs = _.concat(this.app.saveBaseDir, this.app.config.recentSaveBaseDirs);
+    this.app.config.recentSaveBaseDirs = _.take(this.app.config.recentSaveBaseDirs, 5);
     if (save) this.app.services.config.save();
     let submenu:Menu = <Menu>(<Menu>this.menu.items[0].submenu).items[2].submenu;
     (<any>submenu).clear();
