@@ -6,6 +6,7 @@ import _ = require("lodash");
 import {TGeneratorSheetCode} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {AppComponent} from "../component/app-component";
+import {GeneratorNodeDefinition} from "./generator-node-definition";
 
 interface IGenerateChildrenOption {
   join?:string;
@@ -21,11 +22,35 @@ export class GeneratorAccessor {
   public _unitIndent:number = 4;
   public _writeCount:number = 0;
 
+  protected _childrenCache:{[sheetName:string]:{[nodeName:string]:any}};
+  protected _childrenCachedNode:GeneratorNodeElement;
+
   constructor(protected saveBaseDir:string) {
   }
 
   public get data():any {
     return this._currentNode.data;
+  }
+
+  public get parent():any {
+    return this._currentNode.parent.data;
+  }
+
+  public get children():{[sheetName:string]:{[nodeName:string]:any}} {
+    if (this._currentNode == this._childrenCachedNode && this._childrenCache)
+      return this._childrenCache;
+    let result:{[sheetName:string]:{[nodeName:string]:any}};
+    result = _.mapValues(this._currentNode.definition.children, (def:GeneratorNodeDefinition):{[nodeName:string]:any} => {
+      let resultSheet:{[nodeName:string]:any};
+      resultSheet = _.mapValues(this._currentNode.getChildren(def.name), (node:GeneratorNodeElement):any => {
+        return node.data;
+      });
+      delete resultSheet["*"];
+      return resultSheet;
+    });
+    this._childrenCache = result;
+    this._childrenCachedNode = this._currentNode;
+    return result;
   }
 
   public get deleteLine():string {
@@ -57,24 +82,24 @@ export class GeneratorAccessor {
         else if (_.isString(childResult)) joinType = "string";
         else if (_.isArray(childResult)) joinType = "array";
         else if (_.isObject(childResult)) joinType = "object";
-        else this.throwErrorCallChildren(funcName, argJoinType, childResult, "auto join type failed");
+        else this._throwErrorCallChildren(funcName, argJoinType, childResult, "auto join type failed");
       }
       // type check from join type
       switch (joinType) {
         case "void":
-          if (!_.isUndefined(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects void");
+          if (!_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects void");
           break;
         case "string":
-          if (!_.isString(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects string");
+          if (!_.isString(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects string");
           break;
         case "array":
-          if (!_.isArray(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects array");
+          if (!_.isArray(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects array");
           break;
         case "object":
-          if (!_.isObject(childResult)) this.throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
+          if (!_.isObject(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
           break;
         default:
-          this.throwErrorCallChildren(funcName, argJoinType, childResult, "unknown join type");
+          this._throwErrorCallChildren(funcName, argJoinType, childResult, "unknown join type");
       }
       sortDatas.push({
         child: childNode,
@@ -106,11 +131,11 @@ export class GeneratorAccessor {
           resultObject = _.merge(resultObject, <any>sortData.result);
         return resultObject;
       default:
-        this.throwErrorCallChildren(funcName, argJoinType, null, "unknown join type");
+        this._throwErrorCallChildren(funcName, argJoinType, null, "unknown join type");
     }
   }
 
-  protected throwErrorCallChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
+  protected _throwErrorCallChildren(funcName:string, argJoinType:string, childResult:any, message:string) {
     throw new Error(`callChildren error.
 ${message}
 sheetName=${this._currentNode.definition.name}
