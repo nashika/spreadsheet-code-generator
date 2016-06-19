@@ -55,7 +55,7 @@ export class CodeService extends IoService {
     
   }
 
-}
+};
 `;
 
   }

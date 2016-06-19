@@ -26,6 +26,7 @@ export class ColumnService extends BaseService {
       }
     }
     if (column.type != "select") vue.delete(column, "options");
+    if (!_.includes(["text", "select"], column.type)) vue.delete(column, "json");
     this.app.currentSheet.columns.$set(index, column);
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }

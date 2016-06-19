@@ -18,9 +18,13 @@ div.panel.panel-default()
         +form-group("Type")
           select.form-control("v-model"="column.type")
             option(value="text") Text
-            option(value="json") JSON
-            option(value="numeric") Numeric
             option(value="select") Select
+            option(value="numeric") Numeric
+        div("v-if"="column.type == 'text' || column.type == 'select'")
+          +form-group("JSON")
+            div.checkbox
+              label
+                input(type="checkbox", "v-model"="column.json")
         div("v-if"="column.type == 'select'")
           +form-group("Options")
             textarea.form-control(rows=5, "v-model"="column.options")

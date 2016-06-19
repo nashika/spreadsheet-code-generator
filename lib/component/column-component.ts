@@ -9,7 +9,7 @@ import {templateLoader} from "./template-loader";
   template: templateLoader("column"),
   props: ["currentSheet"],
   events: {
-    "select-column-header": "onSelectColumnHeader",
+    "select-column": ColumnComponent.prototype.onSelectColumn,
   },
   watch: {
     "currentSheet": ColumnComponent.prototype.watchCurrentSheet,
@@ -34,7 +34,7 @@ export class ColumnComponent extends BaseComponent {
   }
 
   modify():void {
-    this.$root.services.column.modify(this.columnIndex, this.column);
+    this.$root.services.column.modify(this.columnIndex, _.clone(this.column));
   }
 
   move(right:boolean):void {
@@ -48,7 +48,7 @@ export class ColumnComponent extends BaseComponent {
     this.column = null;
   }
 
-  onSelectColumnHeader(index:number):void {
+  onSelectColumn(index:number):void {
     this.columnIndex = index;
     this.column = _.clone(this.currentSheet.columns[index]);
   }

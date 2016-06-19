@@ -32,6 +32,7 @@ export interface IColumn {
   header:string;
   data:string;
   type:string;
+  json?:boolean;
   options?:string;
   width:number;
 }

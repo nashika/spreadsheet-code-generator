@@ -54,20 +54,6 @@ export class SpreadsheetComponent extends BaseComponent {
     }, 200);
   }
 
-  /*beforeChange(changes:THandsontableChange[], source:string) {
-    for (let change of changes) {
-      if (this.columnMap[change[1]].type == "json") {
-        if (change[3] == "") continue;
-        let cell = this.hot.getCell(change[0], <any>change[1]);
-        try {
-          JSON.parse(change[3]);
-        } catch (e){
-          alert(`"${change[3]}" is invalid JSON string.`);
-        }
-      }
-    }
-  }*/
-
   jsonValidator(value:string, callback:(result:boolean) => void):void {
     if (value == "") return callback(true);
     try {
@@ -79,7 +65,9 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   afterSelection(r:number, c:number, r2:number, c2:number):void {
-    this.$root.$broadcast("select-column-header", c);
+    setTimeout(() => {
+      this.$root.$broadcast("select-column", c);
+    }, 0);
   }
 
   afterChange(changes:THandsontableChange[]):void {
@@ -106,14 +94,6 @@ export class SpreadsheetComponent extends BaseComponent {
       this.columnMap[c.data] = c;
       let column:any;
       switch (c.type) {
-        case "json":
-          column = {
-            type:"text",
-            validator: this.jsonValidator,
-            invalidCellClassName: "invalidCell",
-            allowInvalid: true,
-          };
-          break;
         case "select":
           column = {
             editor: "select",
@@ -125,6 +105,11 @@ export class SpreadsheetComponent extends BaseComponent {
             type: c.type,
           };
           break;
+      }
+      if (c.json) {
+        column.validator = this.jsonValidator;
+        column.invalidCellClassName = "invalidCell";
+        column.allowInvalid = true;
       }
       _.assign(column, {
         data: c.data,
@@ -143,7 +128,6 @@ export class SpreadsheetComponent extends BaseComponent {
       wordWrap: false,
       currentRowClassName: 'currentRow',
       currentColClassName: 'currentCol',
-      //beforeChange: this.beforeChange,
       afterChange: this.afterChange,
       afterSelection: this.afterSelection,
     });
