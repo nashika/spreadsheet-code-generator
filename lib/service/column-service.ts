@@ -8,7 +8,7 @@ export class ColumnService extends BaseService {
 
   public add(index:number):void {
     let columns = this.app.currentSheet.columns;
-    this.app.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialColumn()], _.slice(columns, index));
+    this.app.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialEmptyColumn()], _.slice(columns, index));
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
@@ -47,7 +47,31 @@ export class ColumnService extends BaseService {
     this.app.sheetMetas[this.app.currentSheet.name].modified = true;
   }
 
-  public generateInitialColumn(no:number = undefined):IColumn {
+  public generateInitialColumns(sheetName:string, parentSheetName:string):IColumn[] {
+    let treeColumns:IColumn[] = this.generateInitialTreeColumns(sheetName, parentSheetName);
+    let extendsColumns:IColumn[] = [{
+      header: "Extends",
+      data: "extends",
+      type: "text",
+      width: 120,
+    }];
+    let emptyColumns:IColumn[] = _.times(5, this.generateInitialEmptyColumn);
+    return _.concat(treeColumns, extendsColumns, emptyColumns);
+  }
+
+  protected generateInitialTreeColumns(sheetName:string, parentSheetName:string):IColumn[] {
+    if (sheetName == "root") return [];
+    let parentSheet = this.app.sheets[parentSheetName];
+    let sheetColumn:IColumn = {
+      header: _.startCase(sheetName),
+      data: _.camelCase(sheetName),
+      type: "text",
+      width: 120,
+    };
+    return _.concat(this.generateInitialTreeColumns(parentSheet.name, parentSheet.parent), [sheetColumn])
+  }
+
+  protected generateInitialEmptyColumn(no:number = undefined):IColumn {
     no = _.isUndefined(no) ? this.app.currentSheet.columns.length : no;
     return {
       header: `Col${no}`,

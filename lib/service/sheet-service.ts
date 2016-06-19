@@ -33,7 +33,7 @@ export class SheetService extends IoService {
     this.app.services.data.newAll();
     this.app.services.code.newAll();
   }
-  
+
   protected get rootTemplate():ISheet {
     return {
       name: "root",
@@ -82,12 +82,14 @@ export class SheetService extends IoService {
     }
     let emptySheet:ISheet = {
       name: sheetName,
-      columns: _.times(5, this.app.services.column.generateInitialColumn),
+      columns: this.app.services.column.generateInitialColumns(sheetName, parentSheetName),
       parent: parentSheetName,
     };
     vue.set(this.app.sheets, sheetName, emptySheet);
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
-    vue.set(this.app.datas, sheetName, _.times(10, () => {return {}}));
+    vue.set(this.app.datas, sheetName, _.times(10, () => {
+      return {}
+    }));
     vue.set(this.app.codes, sheetName, "");
     return true;
   }
