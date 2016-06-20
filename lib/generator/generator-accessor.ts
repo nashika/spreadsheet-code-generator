@@ -61,8 +61,8 @@ export class GeneratorAccessor {
     return "###DeleteLine###";
   }
 
-  public get noNewline():string {
-    return "###NoNewline###";
+  public get noNewLine():string {
+    return "###NoNewLine###";
   }
 
   public call(funcName:string = "main", ...args:any[]):any {
@@ -183,8 +183,8 @@ destinationDir="${path.dirname(writePath)}`;
     if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line:string) => {
       if (line.match(/###DeleteLine###/)) return;
-      if (line.match(/###NoNewline###/)) {
-        line = line.replace(/###NoNewline###/, "");
+      if (line.match(/###NoNewLine###/)) {
+        line = line.replace(/###NoNewLine###/, "");
         result = result.replace(/\n$/m, "");
       }
       result += line + "\n";
@@ -198,11 +198,11 @@ destinationDir="${path.dirname(writePath)}`;
     let lines:Array<string> = source.split(/\n/g);
     if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line:string, index:number) => {
-      let newline:string = (index < lines.length - 1) ? "\n" : "";
+      let newLine:string = (index < lines.length - 1) ? "\n" : "";
       if (line && (index > 0 || indentFirstLine))
-        result += _.repeat(" ", this._unitIndent * numIndent) + line + newline;
+        result += _.repeat(" ", this._unitIndent * numIndent) + line + newLine;
       else
-        result += line + newline;
+        result += line + newLine;
     });
     return result;
   }
