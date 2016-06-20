@@ -53,7 +53,7 @@ export class CodeService extends IoService {
 
   main: function() {
     
-  }
+  },
 
 };
 `;

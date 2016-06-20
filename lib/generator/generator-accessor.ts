@@ -28,6 +28,10 @@ export class GeneratorAccessor {
   constructor(protected saveBaseDir:string) {
   }
 
+  public get name():string {
+    return this._currentNode.name;
+  }
+
   public get data():any {
     return this._currentNode.data;
   }
