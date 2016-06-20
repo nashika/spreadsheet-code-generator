@@ -16,10 +16,11 @@ export class GeneratorNodeElement {
     this.parent = null;
     this._childrenMap = {};
     _.forIn(definition.children, (childDefinition:GeneratorNodeDefinition) => {
-      this._childrenMap[childDefinition.name] = {};
+      let childSheetName:string = _.camelCase(childDefinition.name);
+      this._childrenMap[childSheetName] = {};
       let wildcardData:{[columnName:string]:any} = {};
-      _.forEach(_.drop(childDefinition.path), (sheetName:string) => {
-        wildcardData[sheetName] = "*";
+      _.forEach(_.drop(childDefinition.path), (pathSheetName:string) => {
+        wildcardData[pathSheetName] = "*";
       });
       let wildcardNode:GeneratorNodeElement = new GeneratorNodeElement(childDefinition, wildcardData);
       this.addChild(wildcardNode);
@@ -39,12 +40,14 @@ export class GeneratorNodeElement {
   }
 
   public getChild(sheetName:string, nodeName:string):GeneratorNodeElement {
+    sheetName = _.camelCase(sheetName);
     return this._childrenMap[sheetName] && this._childrenMap[sheetName][nodeName];
   }
 
   protected addChild(node:GeneratorNodeElement):void {
+    let sheetName = _.camelCase(node.definition.name);
     if (node.name) {
-      this._childrenMap[node.definition.name][node.name] = node;
+      this._childrenMap[sheetName][node.name] = node;
       node.parent = this;
     }
   }
@@ -54,6 +57,7 @@ export class GeneratorNodeElement {
    };*/
 
   public getChildren(sheetName:string):{[nodeName:string]:GeneratorNodeElement} {
+    sheetName = _.camelCase(sheetName);
     if (!_.has(this._childrenMap, sheetName))
       throw new Error(`Can not find child node. sheetName="${sheetName}".`);
     return this._childrenMap[sheetName];

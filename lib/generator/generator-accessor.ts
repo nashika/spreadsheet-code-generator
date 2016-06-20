@@ -39,14 +39,14 @@ export class GeneratorAccessor {
   public get children():{[sheetName:string]:{[nodeName:string]:any}} {
     if (this._currentNode == this._childrenCachedNode && this._childrenCache)
       return this._childrenCache;
-    let result:{[sheetName:string]:{[nodeName:string]:any}};
-    result = _.mapValues(this._currentNode.definition.children, (def:GeneratorNodeDefinition):{[nodeName:string]:any} => {
-      let resultSheet:{[nodeName:string]:any};
-      resultSheet = _.mapValues(this._currentNode.getChildren(def.name), (node:GeneratorNodeElement):any => {
-        return node.data;
+    let result:{[sheetName:string]:{[nodeName:string]:any}} = {};
+    _.forIn(this._currentNode.definition.children, (def:GeneratorNodeDefinition):void => {
+      let sheetName:string = _.camelCase(def.name);
+      result[sheetName] = {};
+      _.forIn(this._currentNode.getChildren(sheetName), (node:GeneratorNodeElement):void => {
+        if (node.name == "*") return;
+        result[sheetName][node.name] = node.data;
       });
-      delete resultSheet["*"];
-      return resultSheet;
     });
     this._childrenCache = result;
     this._childrenCachedNode = this._currentNode;

@@ -35,7 +35,7 @@ export class SpreadsheetComponent extends BaseComponent {
       hot: false,
       columnMap: null,
       resizeTimer: null,
-    }
+    };
   }
 
   onReady() {

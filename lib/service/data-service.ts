@@ -53,13 +53,13 @@ export class DataService extends IoService {
     });
     return true;
   }
-  
+
   public loadAllForGenerate():{[sheetName:string]:TSheetData} {
     if (!this.checkDir()) return null;
     let names:string[] = this.list();
     let result:{[sheetName:string]:TSheetData} = {};
     for (let name of names)
-      result[name] = this.load(name);
+      result[_.camelCase(name)] = this.load(name);
     return result;
   }
 

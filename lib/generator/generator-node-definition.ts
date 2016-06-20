@@ -22,7 +22,7 @@ export class GeneratorNodeDefinition {
   }
 
   public get name():string {
-    return this._sheet.name;
+    return _.camelCase(this._sheet.name);
   }
 
   public get columns():IColumn[] {
@@ -48,7 +48,7 @@ export class GeneratorNodeDefinition {
   public get depth():number {
     return this.parent ? this.parent.depth + 1 : 0;
   }
-  
+
   public get path():string[] {
     if (!this.parent) return [this.name];
     return _.concat(this.parent.path, [this.name]);

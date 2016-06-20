@@ -151,7 +151,7 @@ export class SheetService extends IoService {
     let names:string[] = this.list();
     let result:{[sheetName:string]:ISheet} = {root: this.rootTemplate};
     for (let name of names) {
-      result[name] = this.load(name);
+      result[_.camelCase(name)] = this.load(name);
     }
     return result;
   }
