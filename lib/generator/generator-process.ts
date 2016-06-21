@@ -60,7 +60,7 @@ export class GeneratorProcess {
     let rootNodeDefinition:GeneratorNodeDefinition = new GeneratorNodeDefinition(this.sheets["root"], sheetCodes["root"], null);
     let createNodeDefinitionRecursive = (currentNodeDefinition:GeneratorNodeDefinition) => {
       _.forIn(this.sheets, (sheet:ISheet) => {
-        if (sheet.parent != currentNodeDefinition.name) return;
+        if (_.camelCase(sheet.parent) != currentNodeDefinition.name) return;
         let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodes[sheet.name], currentNodeDefinition);
         currentNodeDefinition.addChild(childNodeDefinition);
         createNodeDefinitionRecursive(childNodeDefinition);
