@@ -4,6 +4,7 @@ import electron = require('electron');
 import {MenuComponent} from "./menu-component";
 import {BaseComponent} from "./base-component";
 import {SheetsComponent} from "./sheets-component";
+import {SearchComponent} from "./search-component";
 import {ColumnComponent} from "./column-component";
 import {SpreadsheetComponent} from "./spreadsheet-component";
 import {CodeEditorComponent} from "./code-editor-component";
@@ -46,6 +47,7 @@ export interface IConfig {
   components: {
     "menu-component": MenuComponent,
     "sheets-component": SheetsComponent,
+    "search-component": SearchComponent,
     "column-component": ColumnComponent,
     "spreadsheet-component": SpreadsheetComponent,
     "code-editor-component": CodeEditorComponent,

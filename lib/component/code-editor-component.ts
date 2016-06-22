@@ -10,6 +10,9 @@ import {templateLoader} from "./template-loader";
   watch: {
     "currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
   },
+  events: {
+    "search": CodeEditorComponent.prototype.onSearch,
+  },
   ready: CodeEditorComponent.prototype.onReady,
   beforeDestroy: CodeEditorComponent.prototype.onBeforeDestroy,
 })
@@ -30,6 +33,10 @@ export class CodeEditorComponent extends BaseComponent {
       changeTimer: null,
       editor: null,
     };
+  }
+
+  onSearch(query:string):void {
+    this.editor.find(query);
   }
 
   onReady() {

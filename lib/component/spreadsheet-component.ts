@@ -7,6 +7,12 @@ import {templateLoader} from "./template-loader";
 
 type THandsontableChange = [number, string, any, any];
 
+interface IMyHandsontable extends ht.Methods {
+  search:{
+    query(q:string):any;
+  };
+}
+
 @Component({
   template: templateLoader("spreadsheet"),
   props: ["currentSheet", "currentSheetMeta", "currentData", "showMenu"],
@@ -17,6 +23,9 @@ type THandsontableChange = [number, string, any, any];
     },
     "showMenu": SpreadsheetComponent.prototype.watchShowMenu,
   },
+  events: {
+    "search": SpreadsheetComponent.prototype.onSearch,
+  },
   ready: SpreadsheetComponent.prototype.onReady,
   beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
 })
@@ -26,16 +35,38 @@ export class SpreadsheetComponent extends BaseComponent {
   currentSheetMeta:ISheetMeta;
   currentData:any[];
 
-  hot:ht.Methods;
-  columnMap: {[key:string]:IColumn};
+  hot:IMyHandsontable;
+  columnMap:{[key:string]:IColumn};
+  currentRow:number;
+  currentCol:number;
   resizeTimer:any;
 
   data():any {
     return {
       hot: false,
       columnMap: null,
+      currentRow: 0,
+      currentCol: 0,
       resizeTimer: null,
     };
+  }
+
+  onSearch(query:string) {
+    if (!this.hot) return;
+    let queryResults = this.hot.search.query(query);
+    if (!queryResults.length) return;
+    let queryResultSelect:any;
+    for (let queryResult of queryResults) {
+      if (this.currentRow > queryResult.row) continue;
+      if (this.currentRow == queryResult.row) {
+        if (this.currentCol >= queryResult.col) continue;
+      }
+      queryResultSelect = queryResult;
+      break;
+    }
+    if (!queryResultSelect) queryResultSelect = queryResults[0];
+    this.hot.selectCell(queryResultSelect.row, queryResultSelect.col);
+    this.hot.render();
   }
 
   onReady() {
@@ -65,6 +96,8 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   afterSelection(r:number, c:number, r2:number, c2:number):void {
+    this.currentRow = r;
+    this.currentCol = c;
     setTimeout(() => {
       this.$root.$broadcast("select-column", c);
     }, 0);
@@ -108,7 +141,7 @@ export class SpreadsheetComponent extends BaseComponent {
       }
       if (c.json) {
         column.validator = this.jsonValidator;
-        column.invalidCellClassName = "invalidCell";
+        column.invalidCellClassName = "invalid-cell";
         column.allowInvalid = true;
       }
       _.assign(column, {
@@ -117,7 +150,7 @@ export class SpreadsheetComponent extends BaseComponent {
       });
       columns.push(column);
     }
-    this.hot = new Handsontable(container, {
+    this.hot = <IMyHandsontable>new Handsontable(container, {
       data: data,
       width: this.$el.offsetWidth - 1,
       height: this.$el.offsetHeight - 1,
@@ -126,8 +159,11 @@ export class SpreadsheetComponent extends BaseComponent {
       colHeaders: colHeaders,
       contextMenu: true,
       wordWrap: false,
-      currentRowClassName: 'currentRow',
-      currentColClassName: 'currentCol',
+      search: <any>{
+        searchResultClass: "search-cell",
+      },
+      currentRowClassName: 'current-row',
+      currentColClassName: 'current-col',
       afterChange: this.afterChange,
       afterSelection: this.afterSelection,
     });

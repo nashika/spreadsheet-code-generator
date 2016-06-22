@@ -33,13 +33,16 @@ spreadsheet-component {
 }
 
 div#spreadsheet {
-  .currentRow {
-    background-color: #f8f8f8 !important;
+  .current-row {
+    background-color: #f8f8f8;
   }
-  .currentCol {
-    background-color: #f8f8f8 !important;
+  .current-col {
+    background-color: #f8f8f8;
   }
-  .invalidCell {
+  .search-cell {
+    background-color: #fcedd9 !important;
+  }
+  .invalid-cell {
     background-color: #ff8888 !important;
   }
 }
