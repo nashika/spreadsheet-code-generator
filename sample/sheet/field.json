@@ -41,8 +41,9 @@
     {
       "header": "Options",
       "data": "options",
-      "type": "json",
-      "width": 120
+      "type": "text",
+      "width": 120,
+      "json": true
     },
     {
       "data": "width",
@@ -52,21 +53,24 @@
     },
     {
       "data": "display.list",
-      "type": "json",
+      "type": "text",
       "width": 80,
-      "header": "Disp List"
+      "header": "Disp List",
+      "json": true
     },
     {
       "header": "Disp View",
       "data": "display.view",
-      "type": "json",
-      "width": 80
+      "type": "text",
+      "width": 80,
+      "json": true
     },
     {
       "header": "Disp Edit",
       "data": "display.edit",
-      "type": "json",
-      "width": 80
+      "type": "text",
+      "width": 80,
+      "json": true
     }
   ],
   "parent": "model"
