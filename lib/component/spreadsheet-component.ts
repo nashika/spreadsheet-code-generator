@@ -159,6 +159,7 @@ export class SpreadsheetComponent extends BaseComponent {
       colHeaders: colHeaders,
       contextMenu: true,
       wordWrap: false,
+      manualColumnFreeze: true,
       search: <any>{
         searchResultClass: "search-cell",
       },
