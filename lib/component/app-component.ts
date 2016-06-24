@@ -21,6 +21,7 @@ export interface ISheet {
   name:string;
   columns:Array<IColumn>;
   parent:string;
+  freezeColumn:number;
 }
 
 export interface ISheetMeta {

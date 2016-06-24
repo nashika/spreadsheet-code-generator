@@ -41,3 +41,7 @@ div.panel.panel-default()
       div.row
         div.col-xs-12
           button.btn.btn-block.btn-danger("@click"="remove()") #[i.fa.fa-trash] Delete
+    li.list-group-item("v-if"="column")
+      div.row
+        div.col-xs-12
+          button.btn.btn-block.btn-primary("@click"="freeze()", ":class"="{'active': columnIndex + 1 == currentSheet.freezeColumn}") #[i.fa.fa-map-pin] Freeze Column

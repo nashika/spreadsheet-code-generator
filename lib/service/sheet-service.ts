@@ -39,6 +39,7 @@ export class SheetService extends IoService {
       name: "root",
       columns: [],
       parent: "",
+      freezeColumn: 0,
     };
   }
 
@@ -84,6 +85,7 @@ export class SheetService extends IoService {
       name: sheetName,
       columns: this.app.services.column.generateInitialColumns(sheetName, parentSheetName),
       parent: parentSheetName,
+      freezeColumn: this.countSheetDepth(parentSheetName) + 1,
     };
     vue.set(this.app.sheets, sheetName, emptySheet);
     vue.set(this.app.sheetMetas, sheetName, {modified: true});
@@ -154,6 +156,12 @@ export class SheetService extends IoService {
       result[_.camelCase(name)] = this.load(name);
     }
     return result;
+  }
+
+  protected countSheetDepth(sheetName:string):number {
+    if (sheetName == "root") return 0;
+    let sheet:ISheet = this.app.sheets[sheetName];
+    return this.countSheetDepth(sheet.parent) + 1;
   }
 
 }

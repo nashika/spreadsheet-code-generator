@@ -48,6 +48,13 @@ export class ColumnComponent extends BaseComponent {
     this.column = null;
   }
 
+  freeze():void {
+    if (this.columnIndex + 1 == this.currentSheet.freezeColumn)
+      this.$root.services.column.freeze(0);
+    else
+      this.$root.services.column.freeze(this.columnIndex + 1);
+  }
+
   onSelectColumn(index:number):void {
     this.columnIndex = index;
     this.column = _.clone(this.currentSheet.columns[index]);

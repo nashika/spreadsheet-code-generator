@@ -160,6 +160,7 @@ export class SpreadsheetComponent extends BaseComponent {
       contextMenu: true,
       wordWrap: false,
       manualColumnFreeze: true,
+      fixedColumnsLeft: this.currentSheet.freezeColumn || 0,
       search: <any>{
         searchResultClass: "search-cell",
       },
