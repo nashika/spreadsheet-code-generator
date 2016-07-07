@@ -4,7 +4,7 @@ import _ = require("lodash");
 import electron = require("electron");
 import vue = require("vue");
 
-import {ISheet} from "../component/app-component";
+import {ISheet, ISheetMeta} from "../component/app-component";
 import {IoService} from "./io-service";
 
 export class SheetService extends IoService {
@@ -24,9 +24,7 @@ export class SheetService extends IoService {
   public newAll():void {
     this.app.sheets = {root: this.rootTemplate};
     this.app.sheetMetas = {
-      root: {
-        modified: false
-      }
+      root: this.sheetMetaTemplate,
     };
     this.app.currentSheet = this.app.sheets["root"];
     this.app.currentSheetMeta = this.app.sheetMetas["root"];
@@ -43,13 +41,21 @@ export class SheetService extends IoService {
     };
   }
 
+  protected get sheetMetaTemplate():ISheetMeta {
+    return {
+      modified: false,
+      rowOffset: 0,
+      colOffset: 0,
+    };
+  }
+
   public loadAll():boolean {
     if (!this.checkDir()) return false;
     this.newAll();
     let names:string[] = this.list();
     for (let name of names) {
       vue.set(this.app.sheets, name, this.load(name));
-      vue.set(this.app.sheetMetas, name, {modified: false});
+      vue.set(this.app.sheetMetas, name, this.sheetMetaTemplate);
     }
     if (!this.app.services.data.loadAll()) return false;
     if (!this.app.services.code.loadAll()) return false;

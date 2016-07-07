@@ -26,6 +26,8 @@ export interface ISheet {
 
 export interface ISheetMeta {
   modified:boolean;
+  colOffset:number;
+  rowOffset:number;
 }
 
 export type TSheetData = Array<{[columnName:string]:any}>;

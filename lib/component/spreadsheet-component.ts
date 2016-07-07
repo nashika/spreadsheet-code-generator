@@ -11,6 +11,7 @@ interface IMyHandsontable extends ht.Methods {
   search:{
     query(q:string):any;
   };
+  scrollViewportTo:(row:number, column:number)=>boolean;
 }
 
 @Component({
@@ -109,6 +110,11 @@ export class SpreadsheetComponent extends BaseComponent {
     }
   }
 
+  afterScroll():void {
+    this.currentSheetMeta.colOffset = this.hot.colOffset();
+    this.currentSheetMeta.rowOffset = this.hot.rowOffset();
+  }
+
   rebuildSpreadsheet():void {
     if (this.hot) {
       this.hot.destroy();
@@ -168,7 +174,10 @@ export class SpreadsheetComponent extends BaseComponent {
       currentColClassName: 'current-col',
       afterChange: this.afterChange,
       afterSelection: this.afterSelection,
+      afterScrollHorizontally: this.afterScroll,
+      afterScrollVertically: this.afterScroll,
     });
+    this.hot.scrollViewportTo(this.currentSheetMeta.rowOffset, this.currentSheetMeta.colOffset);
   }
 
   watchShowMenu():void {
