@@ -40,6 +40,10 @@ export class GeneratorAccessor {
     return this._currentNode.parent.data;
   }
 
+  public get columns():string[] {
+    return _.map(this._currentNode.definition.columns, column => column.data);
+  }
+
   public get children():{[sheetName:string]:{[nodeName:string]:any}} {
     if (this._currentNode == this._childrenCachedNode && this._childrenCache)
       return this._childrenCache;
