@@ -90,6 +90,7 @@ export class GeneratorAccessor {
         else if (_.isString(childResult)) joinType = "string";
         else if (_.isArray(childResult)) joinType = "array";
         else if (_.isObject(childResult)) joinType = "object";
+        else if (_.isUndefined(childResult)) joinType = "object";
         else this._throwErrorCallChildren(funcName, argJoinType, childResult, "auto join type failed");
       }
       // type check from join type
@@ -105,7 +106,7 @@ export class GeneratorAccessor {
           break;
         case "object":
         case "merge":
-          if (!_.isObject(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
+          if (!_.isObject(childResult) && !_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
           break;
         default:
           this._throwErrorCallChildren(funcName, argJoinType, childResult, "unknown join type");
