@@ -104,6 +104,7 @@ export class GeneratorAccessor {
           if (!_.isArray(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects array");
           break;
         case "object":
+        case "merge":
           if (!_.isObject(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
           break;
         default:
@@ -136,8 +137,13 @@ export class GeneratorAccessor {
       case "object":
         let resultObject:any = {};
         for (let sortData of sortDatas)
-          resultObject = _.merge(resultObject, <any>sortData.result);
+          resultObject = _.set(resultObject, sortData.child.name, <any>sortData.result);
         return resultObject;
+      case "merge":
+        let resultMerge:any = {};
+        for (let sortData of sortDatas)
+          resultMerge = _.merge(resultMerge, <any>sortData.result);
+        return resultMerge;
       default:
         this._throwErrorCallChildren(funcName, argJoinType, null, "unknown join type");
     }
