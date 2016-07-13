@@ -5,11 +5,9 @@ import _ = require("lodash");
 
 import {TGeneratorSheetCode} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
-import {AppComponent} from "../component/app-component";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 
 interface IGenerateChildrenOption {
-  join?:string;
   sort?:(childA:any, childB:any) => number;
 }
 
@@ -73,43 +71,33 @@ export class GeneratorAccessor {
     return this._currentNode.call(this, funcName, args);
   }
 
-  public callChildren(childSheetName:string, funcName:string = "main", options:IGenerateChildrenOption = {},
+  public callChildren(childSheetName:string, funcName:string = "main", joinType = "void", options:IGenerateChildrenOption = {},
                       ...args:any[]):any {
-    let argJoinType:string = options.join || "auto";
-    let argSortFunc:(childA:any, childB:any) => number = null;
     let sortDatas:TSortDataType[] = [];
     let backupNode:GeneratorNodeElement = this._currentNode;
-    let joinType:string = argJoinType;
     _.forIn(this._currentNode.getChildren(childSheetName), (childNode:GeneratorNodeElement) => {
       if (childNode.name == "*") return;
       this._currentNode = childNode;
       let childResult:any = childNode.call(this, funcName, args);
-      // auto decide join type
-      if (joinType == "auto") {
-        if (_.isUndefined(childResult)) joinType = "void";
-        else if (_.isString(childResult)) joinType = "string";
-        else if (_.isArray(childResult)) joinType = "array";
-        else if (_.isObject(childResult)) joinType = "object";
-        else if (_.isUndefined(childResult)) joinType = "object";
-        else this._throwErrorCallChildren(funcName, argJoinType, childResult, "auto join type failed");
-      }
       // type check from join type
       switch (joinType) {
         case "void":
-          if (!_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects void");
+          if (!_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects void");
           break;
         case "string":
-          if (!_.isString(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects string");
+          if (!_.isString(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects string");
           break;
         case "array":
-          if (!_.isArray(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects array");
-          break;
         case "object":
+          break;
+        case "concat":
+          if (!_.isArray(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects array");
+          break;
         case "merge":
-          if (!_.isObject(childResult) && !_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, argJoinType, childResult, "result expects object");
+          if (!_.isObject(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects object");
           break;
         default:
-          this._throwErrorCallChildren(funcName, argJoinType, childResult, "unknown join type");
+          this._throwErrorCallChildren(funcName, joinType, childResult, "unknown join type");
       }
       sortDatas.push({
         child: childNode,
@@ -117,9 +105,9 @@ export class GeneratorAccessor {
       });
     });
     this._currentNode = backupNode;
-    if (argSortFunc)
+    if (options.sort)
       sortDatas.sort((a:TSortDataType, b:TSortDataType) => {
-        return argSortFunc(a.child.data, b.child.data);
+        return options.sort(a.child.data, b.child.data);
       });
     switch (joinType) {
       case "auto":
@@ -133,20 +121,25 @@ export class GeneratorAccessor {
       case "array":
         let resultArray:any[] = [];
         for (let sortData of sortDatas)
-          resultArray = _.concat(resultArray, <any[]>sortData.result)
+          resultArray.push(<any[]>sortData.result);
         return resultArray;
       case "object":
         let resultObject:any = {};
         for (let sortData of sortDatas)
           resultObject = _.set(resultObject, sortData.child.name, <any>sortData.result);
         return resultObject;
+      case "concat":
+        let resultConcat:any[] = [];
+        for (let sortData of sortDatas)
+          resultConcat = _.concat(resultConcat, <any>sortData.result);
+        return resultConcat;
       case "merge":
         let resultMerge:any = {};
         for (let sortData of sortDatas)
           resultMerge = _.merge(resultMerge, <any>sortData.result);
         return resultMerge;
       default:
-        this._throwErrorCallChildren(funcName, argJoinType, null, "unknown join type");
+        this._throwErrorCallChildren(funcName, joinType, null, "unknown join type");
     }
   }
 
