@@ -136,7 +136,7 @@ export class SpreadsheetComponent extends BaseComponent {
         case "select":
           column = {
             editor: "select",
-            selectOptions: _.split(c.options, /\n/),
+            selectOptions: c.options,
           };
           break;
         default:

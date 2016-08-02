@@ -24,7 +24,12 @@
       "data": "type",
       "type": "select",
       "width": 120,
-      "options": "belongsTo\nhasMany\nhasOne\nbelongsToMany"
+      "options": [
+        "belongsTo",
+        "hasMany",
+        "hasOne",
+        "belongsToMany"
+      ]
     },
     {
       "header": "Target",

@@ -29,6 +29,14 @@ export class ColumnComponent extends BaseComponent {
     }
   }
 
+  get optionsAsString():string {
+    return _.join(this.column.options, "\n");
+  }
+
+  set optionsAsString(value:string) {
+    this.column.options = _.split(value, "\n");
+  }
+
   add():void {
     this.$root.services.column.add(this.columnIndex);
   }

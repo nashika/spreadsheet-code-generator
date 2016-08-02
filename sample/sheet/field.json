@@ -30,7 +30,14 @@
       "data": "type",
       "type": "select",
       "width": 80,
-      "options": "\nstring\nnumber\nboolean\ndivision\nbelongsTo\ndatetime"
+      "options": [
+        "string",
+        "number",
+        "boolean",
+        "division",
+        "belongsTo",
+        "datetime"
+      ]
     },
     {
       "data": "format",
