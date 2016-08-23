@@ -21,20 +21,14 @@ export class ColumnComponent extends BaseComponent {
 
   columnIndex:number;
   column:IColumn;
+  optionsText:string;
 
   data():any {
     return {
       columnIndex: 0,
       column: null,
+      optionsText: "",
     }
-  }
-
-  get optionsAsString():string {
-    return _.join(this.column.options, "\n");
-  }
-
-  set optionsAsString(value:string) {
-    this.column.options = _.split(value, "\n");
   }
 
   add():void {
@@ -42,7 +36,9 @@ export class ColumnComponent extends BaseComponent {
   }
 
   modify():void {
-    this.$root.services.column.modify(this.columnIndex, _.clone(this.column));
+    let column = _.clone(this.column);
+    column.options = _.split(this.optionsText, "\n");
+    this.$root.services.column.modify(this.columnIndex, column);
   }
 
   move(right:boolean):void {
@@ -66,6 +62,7 @@ export class ColumnComponent extends BaseComponent {
   onSelectColumn(index:number):void {
     this.columnIndex = index;
     this.column = _.clone(this.currentSheet.columns[index]);
+    this.optionsText = _.join(this.column.options, "\n");
   }
 
   watchCurrentSheet():void {

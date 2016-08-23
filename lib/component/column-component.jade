@@ -27,7 +27,7 @@ div.panel.panel-default()
                 input(type="checkbox", "v-model"="column.json")
         div("v-if"="column.type == 'select'")
           +form-group("Options")
-            textarea.form-control(rows=5, "v-model"="optionsAsString")
+            textarea.form-control(rows=5, "v-model"="optionsText", lazy)
         +form-group("Width")
           input.form-control(type="number", "v-model"="column.width", required, number)
         button.btn.btn-primary.btn-block(type="submit") #[i.fa.fa-save] Modify
