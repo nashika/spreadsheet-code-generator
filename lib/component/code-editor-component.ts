@@ -13,7 +13,6 @@ import {templateLoader} from "./template-loader";
   events: {
     "search": CodeEditorComponent.prototype.onSearch,
   },
-  ready: CodeEditorComponent.prototype.onReady,
   beforeDestroy: CodeEditorComponent.prototype.onBeforeDestroy,
 })
 export class CodeEditorComponent extends BaseComponent {
@@ -39,7 +38,7 @@ export class CodeEditorComponent extends BaseComponent {
     this.editor.find(query);
   }
 
-  onReady() {
+  ready() {
     let container:HTMLElement = <HTMLElement>this.$el.querySelector("#code-editor");
     this.editor = ace.edit(container);
     //this.editor.setTheme("ace/theme/chrome");

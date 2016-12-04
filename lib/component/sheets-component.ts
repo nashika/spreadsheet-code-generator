@@ -17,7 +17,6 @@ interface ITreeSheet {
     modal: require("vue-strap").modal,
   },
   props: ["currentSheet", "sheets", "sheetMetas"],
-  ready: SheetsComponent.prototype.watchSheets,
   watch: {
     "sheets": {
       handler: SheetsComponent.prototype.watchSheets,
@@ -45,6 +44,10 @@ export class SheetsComponent extends BaseComponent {
       newSheetParent: "",
       newSheetName: "",
     }
+  }
+
+  ready() {
+    this.watchSheets();
   }
 
   select(sheet:ISheet):void {

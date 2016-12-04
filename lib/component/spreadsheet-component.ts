@@ -26,8 +26,8 @@ interface IMyHandsontable extends ht.Methods {
   },
   events: {
     "search": SpreadsheetComponent.prototype.onSearch,
+    "insert": SpreadsheetComponent.prototype.onInsert,
   },
-  ready: SpreadsheetComponent.prototype.onReady,
   beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
 })
 export class SpreadsheetComponent extends BaseComponent {
@@ -70,7 +70,11 @@ export class SpreadsheetComponent extends BaseComponent {
     this.hot.render();
   }
 
-  onReady() {
+  onInsert() {
+    this.hot.alter("insert_row", this.currentRow);
+  }
+
+  ready() {
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
   }

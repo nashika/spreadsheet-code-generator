@@ -1,7 +1,10 @@
 div.panel.panel-default
   div.panel-heading #[i.fa.fa-table] Sheets
     dropdown.pull-right
-      button.btn.btn-primary.btn-xs(type="button", data-toggle="dropdown") #[i.fa.fa-bars] #[i.fa.fa-caret-down]
+      button.btn.btn-primary.dropdown-toggle.btn-xs(slot="button", type="button", data-toggle="dropdown")
+        i.fa.fa-bars
+        | &nbsp;
+        i.fa.fa-caret-down
       ul.dropdown-menu(slot="dropdown-menu")
         li
           a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add

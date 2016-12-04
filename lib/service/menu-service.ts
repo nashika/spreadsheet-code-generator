@@ -49,10 +49,18 @@ export class MenuService extends BaseService {
           {
             label: "&Exit",
             accelerator: "Alt+F4",
-            click: () => {
-              electron.remote.app.exit(0);
-            },
+            click: () => electron.remote.app.exit(0),
           },
+        ],
+      },
+      {
+        label: "&Edit",
+        submenu: [
+          {
+            label: "Insert new line",
+            accelerator: "Ctrl+I",
+            click: () => this.$root.$broadcast("insert"),
+          }
         ],
       },
       {

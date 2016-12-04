@@ -6,8 +6,8 @@ import {templateLoader} from "./template-loader";
 @Component({
   template: templateLoader("menu"),
   components: {
-    "radio-group": require("vue-strap").radioGroup,
-    radio: require("vue-strap").radioBtn,
+    "button-group": require("vue-strap").buttonGroup,
+    radio: require("vue-strap").radio,
   },
   props: ["mode"],
 })
