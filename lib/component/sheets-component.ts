@@ -74,10 +74,13 @@ export class SheetsComponent extends BaseComponent {
     this.$root.services.sheet.remove();
   }
 
-  isSelfOrChild(sheetName:string):boolean {
-    if (sheetName == this.currentSheet.name) return true;
-    if (!this.sheets[sheetName]) return false;
-    return this.$root.services.sheet.isParentRecursive(this.sheets[sheetName], this.currentSheet);
+  notSelfOrChildTreeSheets(treeSheets: ITreeSheet[]): ITreeSheet[] {
+    return _.filter(treeSheets, treeSheet => {
+      let sheetName = treeSheet.sheet.name;
+      if (sheetName == this.currentSheet.name) return false;
+      if (!this.sheets[sheetName]) return true;
+      return !this.$root.services.sheet.isParentRecursive(this.sheets[sheetName], this.currentSheet);
+    });
   }
 
   watchSheets():void {

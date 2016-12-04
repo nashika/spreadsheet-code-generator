@@ -44,7 +44,7 @@ form("@submit.prevent"="edit")
         label Parent Sheet
         select.form-control("v-model"="newSheetParent", required)
           //option(value="", selected)
-          option("v-for"="treeSheet in treeSheets", "v-if"="!isSelfOrChild(treeSheet.sheet.name)",
+          option("v-for"="treeSheet in notSelfOrChildTreeSheets(treeSheets)"
           ":value"="treeSheet.sheet.name", ":selected"="treeSheet.sheet.name == currentSheet.parent") {{treeSheet.sheet.name}}
         label Sheet Name
         input.form-control(type="text", "v-model"="newSheetName", required)
