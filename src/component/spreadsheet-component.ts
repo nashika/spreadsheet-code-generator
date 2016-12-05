@@ -129,8 +129,8 @@ export class SpreadsheetComponent extends BaseComponent {
       this.hot.destroy();
       this.hot = null;
     }
-    this.inheritRecords = new InheritRecords(this.currentData, this.currentSheet.columns);
     if (this.currentSheet.name == "root") return;
+    this.inheritRecords = new InheritRecords(this.currentData, this.currentSheet.columns);
     let container: Element = this.$el.querySelector("#spreadsheet");
     let sheetName: string = this.currentSheet.name;
     if (!sheetName) return;
@@ -138,18 +138,14 @@ export class SpreadsheetComponent extends BaseComponent {
     let colHeaders: string[] = _.map(this.currentSheet.columns, c => c.header);
     let colWidths: number[] = _.map(this.currentSheet.columns, c => c.width);
     let columns: any[] = _.map(this.currentSheet.columns, (c: IColumn) => {
-      let column: any;
+      let column: any = {};
       switch (c.type) {
         case "select":
-          column = {
-            editor: "select",
-            selectOptions: c.options,
-          };
+          column.editor = "select";
+          column.selectOptions = c.options;
           break;
         default:
-          column = {
-            type: c.type,
-          };
+          column.type = c.type;
           break;
       }
       if (c.json) {
@@ -157,9 +153,7 @@ export class SpreadsheetComponent extends BaseComponent {
         column.invalidCellClassName = "invalid-cell";
         column.allowInvalid = true;
       }
-      _.assign(column, {
-        data: c.data,
-      });
+      column.data = c.data;
       return column;
     });
     this.hot = <IMyHandsontable>new Handsontable(container, {
