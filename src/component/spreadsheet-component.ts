@@ -4,6 +4,7 @@ import _ = require("lodash");
 import {BaseComponent} from "./base-component";
 import {ISheet, ISheetMeta, IColumn} from "./app-component";
 import {templateLoader} from "./template-loader";
+import {InheritRecords} from "../util/inherit-records";
 
 type THandsontableChange = [number, string, any, any];
 
@@ -42,8 +43,7 @@ export class SpreadsheetComponent extends BaseComponent {
   resizeTimer: any;
 
   hot: IMyHandsontable;
-  inheritData: any;
-  inheritPaths: string[];
+  inheritRecords: InheritRecords;
 
   data(): any {
     return {
@@ -129,7 +129,7 @@ export class SpreadsheetComponent extends BaseComponent {
       this.hot.destroy();
       this.hot = null;
     }
-    this.rebuildInherit();
+    this.inheritRecords = new InheritRecords(this.currentData, this.currentSheet.columns);
     if (this.currentSheet.name == "root") return;
     let container: Element = this.$el.querySelector("#spreadsheet");
     let sheetName: string = this.currentSheet.name;
@@ -202,68 +202,28 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   protected customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
-    switch (cellProperties.type) {
-      case "text":
-      case "select":
-        (<any>Handsontable).renderers.TextRenderer.apply(this, arguments);
-        break;
-      case "numeric":
-        (<any>Handsontable).renderers.NumericRenderer.apply(this, arguments);
-        break;
-      default:
-        throw new Error();
-    }
     if (_.isNull(value) || value == "") {
       let extendsStr: string = instance.getDataAtRowProp(row, "extends");
       if (extendsStr) {
-        let inheritKey: string = this.padInheritKey(extendsStr);
-        if (this.inheritData[inheritKey]) {
-          let data = this.inheritData[inheritKey][prop];
-          if (!_.isUndefined(data)) {
-            td.innerText = data;
-            td.style.color = "#bbf";
-          }
+        let data: any = this.inheritRecords.get(extendsStr, prop);
+        if (data === false) {
+          td.style.backgroundColor = "#fbb";
+        } else if (!_.isUndefined(data)) {
+          value = data;
+          td.style.color = "#bbf";
         }
       }
     }
-  }
-
-  protected rebuildInherit() {
-    this.inheritData = {};
-    let flag = true;
-    this.inheritPaths = _(this.currentSheet.columns)
-      .filter((column: IColumn) => (column.data == "extends") ? flag = false : flag)
-      .map(column => column.data)
-      .value();
-    if (!_.find(this.currentSheet.columns, (column: IColumn) => column.data == "extends")) return;
-    _.each(this.currentData, rowData => {
-      if (_.find(this.inheritPaths, path => !rowData[path])) return;
-      let key: string = _(this.inheritPaths)
-        .map(path => rowData[path])
-        .join(".");
-      this.inheritData[key] = _.cloneDeep(rowData);
-    });
-    delete this.inheritData[_(this.inheritPaths).map(p => "*").join(".")];
-    _.each(this.inheritData, record => this.applyInherit(record));
-  }
-
-  private padInheritKey(inheritKey: string): string {
-    let wildcardCount: number = this.inheritPaths.length - _.split(inheritKey, ".").length;
-    if (wildcardCount)
-      inheritKey = _.times(wildcardCount, _.constant("*")).join(".") + "." + inheritKey;
-    return inheritKey;
-  }
-
-  private applyInherit(record: any): any {
-    let extendsStr: string = record["extends"];
-    if (!extendsStr) return record;
-    let parentInheritKey = this.padInheritKey(extendsStr);
-    if (this.inheritData[parentInheritKey]) {
-      let parentRecord = this.applyInherit(this.inheritData[parentInheritKey]);
-      _.defaults(record, parentRecord);
-      delete record["extends"];
-    } else {
-      //throw new Error();
+    switch (cellProperties.type) {
+      case "text":
+      case "select":
+        (<any>Handsontable).renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+        break;
+      case "numeric":
+        (<any>Handsontable).renderers.NumericRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+        break;
+      default:
+        throw new Error();
     }
   }
 
