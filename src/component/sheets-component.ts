@@ -6,8 +6,8 @@ import {ISheet, ISheetMeta} from "./app-component";
 import {templateLoader} from "./template-loader";
 
 interface ITreeSheet {
-  sheet:ISheet,
-  level:number,
+  sheet: ISheet,
+  level: number,
 }
 
 @Component({
@@ -26,17 +26,17 @@ interface ITreeSheet {
 })
 export class SheetsComponent extends BaseComponent {
 
-  currentSheet:ISheet;
-  sheets:{[sheetName:string]:ISheet};
-  sheetMetas:{[sheetName:string]:ISheetMeta};
+  currentSheet: ISheet;
+  sheets: {[sheetName: string]: ISheet};
+  sheetMetas: {[sheetName: string]: ISheetMeta};
 
-  treeSheets:ITreeSheet[];
-  addModal:boolean;
-  editModal:boolean;
-  newSheetParent:string;
-  newSheetName:string;
+  treeSheets: ITreeSheet[];
+  addModal: boolean;
+  editModal: boolean;
+  newSheetParent: string;
+  newSheetName: string;
 
-  data():any {
+  data(): any {
     return {
       treeSheets: [],
       addModal: false,
@@ -50,19 +50,19 @@ export class SheetsComponent extends BaseComponent {
     this.watchSheets();
   }
 
-  select(sheet:ISheet):void {
+  select(sheet: ISheet): void {
     this.$root.services.sheet.select(sheet);
   }
 
-  add():void {
+  add(): void {
     if (this.$root.services.sheet.add(this.newSheetName, this.currentSheet.name)) {
       this.newSheetName = "";
       this.addModal = false;
     }
   }
 
-  edit():void {
-    let newSheetParent:string = this.newSheetParent || this.currentSheet.parent;
+  edit(): void {
+    let newSheetParent: string = this.newSheetParent || this.currentSheet.parent;
     if (this.$root.services.sheet.edit(this.currentSheet.name, this.newSheetName, newSheetParent)) {
       this.newSheetName = "";
       this.newSheetParent = "root";
@@ -70,7 +70,7 @@ export class SheetsComponent extends BaseComponent {
     }
   }
 
-  remove():void {
+  remove(): void {
     this.$root.services.sheet.remove();
   }
 
@@ -83,18 +83,18 @@ export class SheetsComponent extends BaseComponent {
     });
   }
 
-  watchSheets():void {
+  watchSheets(): void {
     this.treeSheets = this.treeSheetRecursive("", 0);
   }
 
-  treeSheetRecursive(parentSheetName:string, level:number):ITreeSheet[] {
-    let result:ITreeSheet[] = [];
-    _.forIn(this.sheets, (sheet:ISheet) => {
+  treeSheetRecursive(parentSheetName: string, level: number): ITreeSheet[] {
+    let result: ITreeSheet[] = [];
+    _.forIn(this.sheets, (sheet: ISheet) => {
       if (sheet.parent == parentSheetName)
         result.push({sheet: sheet, level: level});
     });
     result = _.sortBy(result, "sheet.name");
-    return _.flatMap(result, (treeSheet:ITreeSheet) => {
+    return _.flatMap(result, (treeSheet: ITreeSheet) => {
       return _.concat([treeSheet], this.treeSheetRecursive(treeSheet.sheet.name, level + 1));
     });
   }

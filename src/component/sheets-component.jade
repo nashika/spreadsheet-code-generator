@@ -7,50 +7,50 @@ div.panel.panel-default
         i.fa.fa-caret-down
       ul.dropdown-menu(slot="dropdown-menu")
         li
-          a("@click"="addModal = true") #[i.fa.fa-fw.fa-plus] Add
-        li("v-if"="currentSheet.name != 'root'")
-          a("@click"="editModal = true") #[i.fa.fa-fw.fa-pencil] Edit
-        li("v-if"="currentSheet.name != 'root'")
-          a("@click"="remove") #[i.fa.fa-fw.fa-trash] Delete
+          a(@click="addModal = true") #[i.fa.fa-fw.fa-plus] Add
+        li(v-if="currentSheet.name != 'root'")
+          a(@click="editModal = true") #[i.fa.fa-fw.fa-pencil] Edit
+        li(v-if="currentSheet.name != 'root'")
+          a(@click="remove") #[i.fa.fa-fw.fa-trash] Delete
   ul.list-group
-    li.list-group-item("v-for"="treeSheet in treeSheets", "@click"="select(treeSheet.sheet)",
-    ":class"="{'list-group-item-info': treeSheet.sheet == currentSheet}",
-    ":style"="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
-      span.label.label-danger.pull-right("v-if"="sheetMetas[treeSheet.sheet.name] && sheetMetas[treeSheet.sheet.name].modified") !
+    li.list-group-item(v-for="treeSheet in treeSheets", @click="select(treeSheet.sheet)",
+    :class="{'list-group-item-info': treeSheet.sheet == currentSheet}",
+    :style="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
+      span.label.label-danger.pull-right(v-if="sheetMetas[treeSheet.sheet.name] && sheetMetas[treeSheet.sheet.name].modified") !
 
-form("@submit.prevent"="add")
-  modal(":show.sync"="addModal")
+form(@submit.prevent="add")
+  modal(:show.sync="addModal")
     div.modal-header(slot="modal-header")
       h4.modal-title Add Sheet
     div.modal-body(slot="modal-body")
       div.form-group
         label Parent Sheet
-        input.form-control(type="text", "v-model"="currentSheet.name", ":readonly"="true")
+        input.form-control(type="text", v-model="currentSheet.name", :readonly="true")
         label New Sheet Name
-        input.form-control(type="text", "v-model"="newSheetName", required)
+        input.form-control(type="text", v-model="newSheetName", required)
     div.modal-footer(slot="modal-footer")
       .row
         .col-xs-6
-          button.btn.btn-block.btn-default(type="button", "@click"="addModal = false") Cancel
+          button.btn.btn-block.btn-default(type="button", @click="addModal = false") Cancel
         .col-xs-6
           button.btn.btn-block.btn-primary(type="submit") Add
 
-form("@submit.prevent"="edit")
-  modal(":show.sync"="editModal")
+form(@submit.prevent="edit")
+  modal(:show.sync="editModal")
     div.modal-header(slot="modal-header")
       h4.modal-title Edit Sheet
     div.modal-body(slot="modal-body")
       div.form-group
         label Parent Sheet
-        select.form-control("v-model"="newSheetParent", required)
+        select.form-control(v-model="newSheetParent", required)
           //option(value="", selected)
-          option("v-for"="treeSheet in notSelfOrChildTreeSheets(treeSheets)"
-          ":value"="treeSheet.sheet.name", ":selected"="treeSheet.sheet.name == currentSheet.parent") {{treeSheet.sheet.name}}
+          option(v-for="treeSheet in notSelfOrChildTreeSheets(treeSheets)",
+          :value="treeSheet.sheet.name", :selected="treeSheet.sheet.name == currentSheet.parent") {{treeSheet.sheet.name}}
         label Sheet Name
-        input.form-control(type="text", "v-model"="newSheetName", required)
+        input.form-control(type="text", v-model="newSheetName", required)
     div.modal-footer(slot="modal-footer")
       .row
         .col-xs-6
-          button.btn.btn-block.btn-default(type="button", "@click"="editModal = false") Cancel
+          button.btn.btn-block.btn-default(type="button", @click="editModal = false") Cancel
         .col-xs-6
           button.btn.btn-block.btn-primary(type="submit") Edit

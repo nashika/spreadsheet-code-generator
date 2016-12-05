@@ -5,18 +5,18 @@ import {BaseService} from "./base-service";
 
 export class IoService extends BaseService {
 
-  protected static DIR_NAME:string = "";
-  protected static EXT:string = "json";
+  protected static DIR_NAME: string = "";
+  protected static EXT: string = "json";
 
-  protected get saveDir():string {
+  protected get saveDir(): string {
     return path.join(this.app.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
   }
 
-  protected filePath(sheetName:string):string {
+  protected filePath(sheetName: string): string {
     return path.join(this.saveDir, `${sheetName}.${(<typeof IoService>this.constructor).EXT}`);
   }
 
-  protected checkDir():boolean {
+  protected checkDir(): boolean {
     if (!fs.existsSync(this.saveDir)) {
       alert(`"${this.saveDir}" is not found.`);
       return false;
@@ -29,7 +29,7 @@ export class IoService extends BaseService {
 
   }
 
-  protected checkAndCreateDir():boolean {
+  protected checkAndCreateDir(): boolean {
     if (!fs.existsSync(this.saveDir)) {
       fs.mkdirSync(this.saveDir);
       return true;
@@ -41,18 +41,18 @@ export class IoService extends BaseService {
     }
   }
 
-  public list():string[] {
+  public list(): string[] {
     let regexp = new RegExp(`\\.${(<typeof IoService>this.constructor).EXT}$`);
     return fs.readdirSync(this.saveDir)
       .filter((f) => f.match(regexp) ? true : false)
       .map((f) => f.replace(regexp, ""));
   }
 
-  protected load(sheetName:string):any {
-    let filePath:string = this.filePath(sheetName);
+  protected load(sheetName: string): any {
+    let filePath: string = this.filePath(sheetName);
     log.debug(`Loadig ${filePath}.`);
     if (fs.existsSync(filePath)) {
-      let data:string = fs.readFileSync(filePath).toString();
+      let data: string = fs.readFileSync(filePath).toString();
       if ((<typeof IoService>this.constructor).EXT == "json")
         return JSON.parse(data);
       else
@@ -62,10 +62,10 @@ export class IoService extends BaseService {
     }
   }
 
-  protected save(sheetName:string, data:any):void {
-    let filePath:string = this.filePath(sheetName);
+  protected save(sheetName: string, data: any): void {
+    let filePath: string = this.filePath(sheetName);
     log.debug(`Saving ${filePath}.`);
-    let writeData:string;
+    let writeData: string;
     if ((<typeof IoService>this.constructor).EXT == "json")
       writeData = JSON.stringify(data, null, "  ");
     else
@@ -73,8 +73,8 @@ export class IoService extends BaseService {
     fs.writeFileSync(filePath, writeData);
   }
 
-  protected unlink(sheetName:string):void {
-    let filePath:string = this.filePath(sheetName);
+  protected unlink(sheetName: string): void {
+    let filePath: string = this.filePath(sheetName);
     console.log(`Removing ${filePath}.`);
     fs.unlinkSync(filePath);
   }

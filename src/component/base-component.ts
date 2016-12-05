@@ -6,19 +6,19 @@ import {CodeService} from "../service/code-service";
 import {GeneratorService} from "../service/generator-service";
 
 export interface IRootVue extends vuejs.Vue {
-  services:{
-    sheet:SheetService;
-    column:ColumnService;
-    data:DataService;
-    code:CodeService;
-    menu:MenuService;
-    generator:GeneratorService;
+  services: {
+    sheet: SheetService;
+    column: ColumnService;
+    data: DataService;
+    code: CodeService;
+    menu: MenuService;
+    generator: GeneratorService;
   };
 }
 
 export class BaseComponent {
 
-  $root:IRootVue;
-  $el:HTMLElement;
+  $root: IRootVue;
+  $el: HTMLElement;
 
 }

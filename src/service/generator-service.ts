@@ -7,17 +7,19 @@ import {ISheetMeta, ISheet, TSheetData} from "../component/app-component";
 
 export class GeneratorService extends BaseService {
 
-  public errorQuestionFlag:boolean = false;
+  public errorQuestionFlag: boolean = false;
 
-  public generate():void {
+  public generate(): void {
     if (!this.app.saveBaseDir || _.some(this.app.sheetMetas,
-        (sheetMeta:ISheetMeta) => { return sheetMeta.modified; })) {
+        (sheetMeta: ISheetMeta) => {
+          return sheetMeta.modified;
+        })) {
       alert(`Please save files before generate.`);
       return;
     }
 
     log.debug(`Load sheets was started.`);
-    let sheets:{[sheetName:string]:ISheet} = this.app.services.sheet.loadAllForGenerate();
+    let sheets: {[sheetName: string]: ISheet} = this.app.services.sheet.loadAllForGenerate();
     if (!sheets) {
       alert(`Load sheets was failed.`);
       return;
@@ -25,16 +27,16 @@ export class GeneratorService extends BaseService {
     log.debug(`Load sheets was finished.`);
 
     log.debug(`Load sheet data was started.`);
-    let sheetDatas:{[sheetName:string]:TSheetData} = this.app.services.data.loadAllForGenerate();
+    let sheetDatas: {[sheetName: string]: TSheetData} = this.app.services.data.loadAllForGenerate();
     if (!sheetDatas) {
       alert(`Load sheet data was failed.`);
       return;
     }
     log.debug(`Load sheet data was finished.`);
 
-    let codeNames:string[] = this.app.services.code.list();
-    let process:GeneratorProcess = new GeneratorProcess(this.app.saveBaseDir, sheets, sheetDatas, codeNames);
-    let result:number;
+    let codeNames: string[] = this.app.services.code.list();
+    let process: GeneratorProcess = new GeneratorProcess(this.app.saveBaseDir, sheets, sheetDatas, codeNames);
+    let result: number;
     try {
       result = process.main();
     } catch (e) {
@@ -54,7 +56,7 @@ export class GeneratorService extends BaseService {
       alert(`Generate finished, write ${result} files.`);
   }
 
-  public developerToolQuestion():void {
+  public developerToolQuestion(): void {
     if (!this.app.services.generator.errorQuestionFlag) {
       if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
         if (confirm(`Generate error occurred. show developper tool?`)) {

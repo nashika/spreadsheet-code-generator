@@ -5,13 +5,12 @@ import {templateLoader} from "./template-loader";
 
 @Component({
   template: templateLoader("search"),
-  components: {
-  },
+  components: {},
   props: [],
 })
 export class SearchComponent extends BaseComponent {
 
-  query:string;
+  query: string;
 
   data() {
     return {

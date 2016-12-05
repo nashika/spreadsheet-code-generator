@@ -1,7 +1,7 @@
 let snippetText = require("./ace-custom-snippets.snippets");
 let snippetManager = ace.require("ace/snippets").snippetManager;
 let config = ace.require("ace/config");
-config.loadModule("ace/snippets/javascript", function (m:any) {
+config.loadModule("ace/snippets/javascript", function (m: any) {
   if (m) {
     //snippetManager.files.php = m;
     m.snippets = snippetManager.parseSnippetFile(m.snippetText + snippetText);

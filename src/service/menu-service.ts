@@ -10,14 +10,14 @@ import {AppComponent} from "../component/app-component";
 
 export class MenuService extends BaseService {
 
-  protected menu:Menu;
+  protected menu: Menu;
 
-  constructor(app:AppComponent) {
+  constructor(app: AppComponent) {
     super(app);
     this.init();
   }
 
-  protected init():void {
+  protected init(): void {
     this.menu = electron.remote.Menu.buildFromTemplate([
       {
         label: "&File",
@@ -137,7 +137,7 @@ export class MenuService extends BaseService {
     this.openRecent();
   }
 
-  protected new = ():void => {
+  protected new = (): void => {
     if (!window.confirm(`All editing data will be erased, Do you really want to new project?`))
       return;
     this.app.saveBaseDir = "";
@@ -145,13 +145,13 @@ export class MenuService extends BaseService {
     this.saveDirInfo(false);
   };
 
-  protected open = ():void => {
+  protected open = (): void => {
     if (!this.openDir()) return;
     if (this.app.services.sheet.loadAll())
       this.saveDirInfo();
   };
 
-  protected openRecent(dir:string = ""):void {
+  protected openRecent(dir: string = ""): void {
     if (dir)
       this.app.saveBaseDir = dir;
     else if (this.app.config.recentSaveBaseDirs.length > 0)
@@ -163,15 +163,15 @@ export class MenuService extends BaseService {
 
   }
 
-  protected saveTo = ():void => {
+  protected saveTo = (): void => {
     this.save(false);
   };
 
-  protected saveAs = ():void => {
+  protected saveAs = (): void => {
     this.save(true);
   };
 
-  protected save(as:boolean = false):void {
+  protected save(as: boolean = false): void {
     if (as || !this.app.saveBaseDir)
       if (!this.openDir())
         return;
@@ -179,8 +179,8 @@ export class MenuService extends BaseService {
       this.saveDirInfo();
   };
 
-  protected openDir():boolean {
-    let dirs:string[] = electron.remote.dialog.showOpenDialog({
+  protected openDir(): boolean {
+    let dirs: string[] = electron.remote.dialog.showOpenDialog({
       defaultPath: this.app.saveBaseDir || this.app.config.recentSaveBaseDirs[0],
       properties: ["openDirectory"],
     });
@@ -189,16 +189,16 @@ export class MenuService extends BaseService {
     return true;
   }
 
-  protected saveDirInfo(save:boolean = true):void {
+  protected saveDirInfo(save: boolean = true): void {
     electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.app.saveBaseDir}]`);
     if (save) {
       this.app.config.recentSaveBaseDirs = this.app.config.recentSaveBaseDirs || [];
       this.app.config.recentSaveBaseDirs = _.filter(this.app.config.recentSaveBaseDirs,
-        (dir:string):boolean => _.toLower(dir) != _.toLower(this.app.saveBaseDir));
+        (dir: string): boolean => _.toLower(dir) != _.toLower(this.app.saveBaseDir));
       this.app.config.recentSaveBaseDirs = _.concat(this.app.saveBaseDir, this.app.config.recentSaveBaseDirs);
       this.app.config.recentSaveBaseDirs = _.take(this.app.config.recentSaveBaseDirs, 5);
       this.app.services.config.save();
-      let submenu:Menu = <Menu>(<Menu>this.menu.items[0].submenu).items[2].submenu;
+      let submenu: Menu = <Menu>(<Menu>this.menu.items[0].submenu).items[2].submenu;
       (<any>submenu).clear();
       for (let dir of this.app.config.recentSaveBaseDirs) {
         submenu.append(new electron.remote.MenuItem({

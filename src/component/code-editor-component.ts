@@ -17,15 +17,15 @@ import {templateLoader} from "./template-loader";
 })
 export class CodeEditorComponent extends BaseComponent {
 
-  currentSheet:ISheet;
-  currentCode:string;
+  currentSheet: ISheet;
+  currentCode: string;
 
-  beforeSheetName:string;
-  beforeCode:string;
-  changeTimer:any;
-  editor:AceAjax.Editor;
+  beforeSheetName: string;
+  beforeCode: string;
+  changeTimer: any;
+  editor: AceAjax.Editor;
 
-  data():any {
+  data(): any {
     return {
       beforeSheetName: "",
       beforeCode: "",
@@ -34,12 +34,12 @@ export class CodeEditorComponent extends BaseComponent {
     };
   }
 
-  onSearch(query:string):void {
+  onSearch(query: string): void {
     this.editor.find(query);
   }
 
   ready() {
-    let container:HTMLElement = <HTMLElement>this.$el.querySelector("#code-editor");
+    let container: HTMLElement = <HTMLElement>this.$el.querySelector("#code-editor");
     this.editor = ace.edit(container);
     //this.editor.setTheme("ace/theme/chrome");
     this.editor.getSession().setMode("ace/mode/javascript");
@@ -65,7 +65,7 @@ export class CodeEditorComponent extends BaseComponent {
   change() {
     clearTimeout(this.changeTimer);
     this.changeTimer = setTimeout(() => {
-      let modifiedCode:string = this.editor.getValue();
+      let modifiedCode: string = this.editor.getValue();
       if (this.beforeCode != modifiedCode)
         this.$root.services.code.edit(this.beforeSheetName, modifiedCode);
     }, 200);

@@ -18,31 +18,31 @@ import {GeneratorService} from "../service/generator-service";
 import {templateLoader} from "./template-loader";
 
 export interface ISheet {
-  name:string;
-  columns:Array<IColumn>;
-  parent:string;
-  freezeColumn:number;
+  name: string;
+  columns: Array<IColumn>;
+  parent: string;
+  freezeColumn: number;
 }
 
 export interface ISheetMeta {
-  modified:boolean;
-  colOffset:number;
-  rowOffset:number;
+  modified: boolean;
+  colOffset: number;
+  rowOffset: number;
 }
 
-export type TSheetData = Array<{[columnName:string]:any}>;
+export type TSheetData = Array<{[columnName: string]: any}>;
 
 export interface IColumn {
-  header:string;
-  data:string;
-  type:string;
-  json?:boolean;
-  options?:string[];
-  width:number;
+  header: string;
+  data: string;
+  type: string;
+  json?: boolean;
+  options?: string[];
+  width: number;
 }
 
 export interface IConfig {
-  recentSaveBaseDirs?:string[];
+  recentSaveBaseDirs?: string[];
 }
 
 @Component({
@@ -67,29 +67,29 @@ export interface IConfig {
 })
 export class AppComponent extends BaseComponent {
 
-  saveBaseDir:string;
-  config:IConfig;
-  mode:string;
-  sheets:{[sheetName:string]:ISheet};
-  sheetMetas:{[sheetName:string]:ISheetMeta};
-  datas:{[sheetName:string]:TSheetData};
-  codes:{[sheetName:string]:string};
-  currentSheet:ISheet;
-  currentSheetMeta:ISheetMeta;
-  currentData:any[];
-  currentCode:string;
-  showMenu:boolean;
-  services:{
-    config:ConfigService;
-    sheet:SheetService;
-    column:ColumnService;
-    data:DataService;
-    code:CodeService;
-    menu:MenuService;
-    generator:GeneratorService;
+  saveBaseDir: string;
+  config: IConfig;
+  mode: string;
+  sheets: {[sheetName: string]: ISheet};
+  sheetMetas: {[sheetName: string]: ISheetMeta};
+  datas: {[sheetName: string]: TSheetData};
+  codes: {[sheetName: string]: string};
+  currentSheet: ISheet;
+  currentSheetMeta: ISheetMeta;
+  currentData: any[];
+  currentCode: string;
+  showMenu: boolean;
+  services: {
+    config: ConfigService;
+    sheet: SheetService;
+    column: ColumnService;
+    data: DataService;
+    code: CodeService;
+    menu: MenuService;
+    generator: GeneratorService;
   };
 
-  data():any {
+  data(): any {
     return {
       saveBaseDir: "",
       config: null,

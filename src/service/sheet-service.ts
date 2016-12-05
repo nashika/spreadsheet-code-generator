@@ -9,19 +9,19 @@ import {IoService} from "./io-service";
 
 export class SheetService extends IoService {
 
-  protected static DIR_NAME:string = "sheet";
+  protected static DIR_NAME: string = "sheet";
 
-  protected load(sheetName:string):ISheet {
+  protected load(sheetName: string): ISheet {
     return super.load(sheetName);
   }
 
-  protected save(sheetName:string, data:ISheet) {
+  protected save(sheetName: string, data: ISheet) {
     if (sheetName != "root")
       super.save(sheetName, data);
     vue.set(this.app.sheetMetas[sheetName], "modified", false);
   }
 
-  public newAll():void {
+  public newAll(): void {
     this.app.sheets = {root: this.rootTemplate};
     this.app.sheetMetas = {
       root: this.sheetMetaTemplate,
@@ -32,7 +32,7 @@ export class SheetService extends IoService {
     this.app.services.code.newAll();
   }
 
-  protected get rootTemplate():ISheet {
+  protected get rootTemplate(): ISheet {
     return {
       name: "root",
       columns: [],
@@ -41,7 +41,7 @@ export class SheetService extends IoService {
     };
   }
 
-  protected get sheetMetaTemplate():ISheetMeta {
+  protected get sheetMetaTemplate(): ISheetMeta {
     return {
       modified: false,
       rowOffset: 0,
@@ -49,10 +49,10 @@ export class SheetService extends IoService {
     };
   }
 
-  public loadAll():boolean {
+  public loadAll(): boolean {
     if (!this.checkDir()) return false;
     this.newAll();
-    let names:string[] = this.list();
+    let names: string[] = this.list();
     for (let name of names) {
       vue.set(this.app.sheets, name, this.load(name));
       vue.set(this.app.sheetMetas, name, this.sheetMetaTemplate);
@@ -62,7 +62,7 @@ export class SheetService extends IoService {
     return true;
   }
 
-  public saveAll():boolean {
+  public saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.app.sheets, (sheet, name) => {
       this.save(name, sheet);
@@ -75,19 +75,19 @@ export class SheetService extends IoService {
     return true;
   }
 
-  public select(sheet:ISheet) {
+  public select(sheet: ISheet) {
     this.app.currentSheet = sheet;
     this.app.currentSheetMeta = this.app.sheetMetas[sheet.name];
     this.app.currentData = this.app.datas[sheet.name];
     this.app.currentCode = this.app.codes[sheet.name];
   }
 
-  public add(sheetName:string, parentSheetName:string):boolean {
+  public add(sheetName: string, parentSheetName: string): boolean {
     if (_.has(this.app.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
     }
-    let emptySheet:ISheet = {
+    let emptySheet: ISheet = {
       name: sheetName,
       columns: this.app.services.column.generateInitialColumns(sheetName, parentSheetName),
       parent: parentSheetName,
@@ -102,7 +102,7 @@ export class SheetService extends IoService {
     return true;
   }
 
-  public edit(oldSheetName:string, newSheetName:string, parentSheetName:string):boolean {
+  public edit(oldSheetName: string, newSheetName: string, parentSheetName: string): boolean {
     if (oldSheetName != newSheetName && _.has(this.app.sheets, newSheetName)) {
       alert(`Sheet "${newSheetName}" already exists.`);
       return false;
@@ -111,7 +111,7 @@ export class SheetService extends IoService {
     this.app.sheets[oldSheetName].parent = parentSheetName;
     this.app.sheetMetas[oldSheetName].modified = true;
     if (newSheetName == oldSheetName) return true;
-    _.forIn(this.app.sheets, (sheet:ISheet) => {
+    _.forIn(this.app.sheets, (sheet: ISheet) => {
       if (sheet.parent == oldSheetName)
         sheet.parent = newSheetName;
     });
@@ -126,19 +126,19 @@ export class SheetService extends IoService {
     return true;
   }
 
-  public remove():void {
+  public remove(): void {
     if (!this.app.currentSheet) {
       alert(`No selected sheet.`);
       return;
     }
-    if (_.some(this.app.sheets, (sheet:ISheet) => this.app.currentSheet.name == sheet.parent)) {
+    if (_.some(this.app.sheets, (sheet: ISheet) => this.app.currentSheet.name == sheet.parent)) {
       alert(`Sheet "${this.app.currentSheet.name}" have child sheet, please move or delete it.`);
       return;
     }
     if (!confirm(`Are you sure to delete sheet:"${this.app.currentSheet.name}"?`)) {
       return;
     }
-    let sheetName:string = this.app.currentSheet.name;
+    let sheetName: string = this.app.currentSheet.name;
     vue.delete(this.app.sheets, sheetName);
     vue.delete(this.app.sheetMetas, sheetName);
     vue.delete(this.app.datas, sheetName);
@@ -149,24 +149,24 @@ export class SheetService extends IoService {
     this.app.currentCode = this.app.codes["root"];
   }
 
-  public isParentRecursive(target:ISheet, parent:ISheet):boolean {
+  public isParentRecursive(target: ISheet, parent: ISheet): boolean {
     if (target.parent == parent.name) return true;
     if (!target.parent) return false;
     return this.isParentRecursive(this.app.sheets[target.parent], parent);
   }
 
-  public loadAllForGenerate():{[sheetName:string]:ISheet} {
-    let names:string[] = this.list();
-    let result:{[sheetName:string]:ISheet} = {root: this.rootTemplate};
+  public loadAllForGenerate(): {[sheetName: string]: ISheet} {
+    let names: string[] = this.list();
+    let result: {[sheetName: string]: ISheet} = {root: this.rootTemplate};
     for (let name of names) {
       result[_.camelCase(name)] = this.load(name);
     }
     return result;
   }
 
-  protected countSheetDepth(sheetName:string):number {
+  protected countSheetDepth(sheetName: string): number {
     if (sheetName == "root") return 0;
-    let sheet:ISheet = this.app.sheets[sheetName];
+    let sheet: ISheet = this.app.sheets[sheetName];
     return this.countSheetDepth(sheet.parent) + 1;
   }
 

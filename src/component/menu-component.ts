@@ -13,11 +13,10 @@ import {templateLoader} from "./template-loader";
 })
 export class MenuComponent extends BaseComponent {
 
-  mode:string;
+  mode: string;
 
   data() {
-    return {
-    };
+    return {};
   }
 
   generate() {
