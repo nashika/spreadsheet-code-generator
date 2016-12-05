@@ -186,6 +186,8 @@ export class SpreadsheetComponent extends BaseComponent {
       afterSelection: this.afterSelection,
       afterScrollHorizontally: this.afterScroll,
       afterScrollVertically: this.afterScroll,
+      autoRowSize: false,
+      autoColumnSize: false,
       cells: (_row: number, _col: number, _prop: any) => {
         let cellProperties: ht.Options = {};
         cellProperties.renderer = this.customRenderer;
