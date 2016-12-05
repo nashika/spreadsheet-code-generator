@@ -135,12 +135,9 @@ export class SpreadsheetComponent extends BaseComponent {
     let sheetName: string = this.currentSheet.name;
     if (!sheetName) return;
     let data: any[] = this.currentData;
-    let colHeaders: string[] = [];
-    let columns: any[] = [];
-    this.columnMap = {};
-    for (let c of this.currentSheet.columns) {
-      colHeaders.push(c.header);
-      this.columnMap[c.data] = c;
+    let colHeaders: string[] = _.map(this.currentSheet.columns, c => c.header);
+    let colWidths: number[] = _.map(this.currentSheet.columns, c => c.width);
+    let columns: any[] = _.map(this.currentSheet.columns, (c: IColumn) => {
       let column: any;
       switch (c.type) {
         case "select":
@@ -162,10 +159,9 @@ export class SpreadsheetComponent extends BaseComponent {
       }
       _.assign(column, {
         data: c.data,
-        width: c.width,
       });
-      columns.push(column);
-    }
+      return column;
+    });
     this.hot = <IMyHandsontable>new Handsontable(container, {
       data: data,
       width: this.$el.offsetWidth - 1,
@@ -173,6 +169,7 @@ export class SpreadsheetComponent extends BaseComponent {
       columns: columns,
       rowHeaders: true,
       colHeaders: colHeaders,
+      colWidths: colWidths,
       contextMenu: true,
       wordWrap: false,
       manualColumnFreeze: true,
