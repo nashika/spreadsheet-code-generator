@@ -18,20 +18,16 @@ export class InheritRecords {
     if (!_.find(columns, (column: IColumn) => column.data == "extends")) return;
     _.each(records, record => {
       if (_.find(this.paths, path => !record[path])) return;
-      let key: string = _(this.paths)
+      let inheritKey: string = _(this.paths)
         .map(path => record[path])
         .join(".");
-      let myClone = (obj: any) => {
-        let result: any = {};
-        _.each(obj, (value, key) => {
-          if (_.isObject(value))
-            result[key] = myClone(value);
-          else if (value)
-            result[key] = value;
-        });
-        return result;
-      };
-      this.records[key] = myClone(record);
+      let result: any = {};
+      for (let column of this.columns) {
+        if (_.has(record, column.data)) {
+          _.set(result, column.data, _.get(record, column.data));
+        }
+      }
+      this.records[inheritKey] = result;
     });
     delete this.records[_(this.paths).map(p => "*").join(".")];
     _.each(this.records, record => this.applyInherit(record));

@@ -195,7 +195,7 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   protected customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
-    if (_.isNull(value) || value == "") {
+    if (_.isNull(value) || value === "") {
       let extendsStr: string = instance.getDataAtRowProp(row, "extends");
       if (extendsStr) {
         let data: any = this.inheritRecords.get(extendsStr, prop);
