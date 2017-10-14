@@ -1,36 +1,36 @@
-import webpack = require("webpack");
+import * as path from "path";
+
+import * as webpack from "webpack";
+
 let CopyWebpackPlugin = require("copy-webpack-plugin");
 let UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 
-let webpackConfig:webpack.Configuration = {
+let webpackConfig: webpack.Configuration = {
   target: "atom",
   entry: {
     app: "./src/app",
   },
   output: {
-    path: "./dist",
-    publicPath: "./dist/",
+    path: path.join(__dirname, "dist"),
+    publicPath: "/dist/",
     filename: "[name].bundle.js",
   },
   resolve: {
-    extensions: ["", ".ts", ".js"],
+    extensions: [".ts", ".js"],
   },
   module: {
-    preLoaders: [
-      {test: /\.jade$/, loader: "jade-html", },
-    ],
-    loaders: [
-      {test: /\.ts$/, loader: "ts", exclude: /node_modules/, },
-      {test: /\.html$/, loader: "html", },
-      {test: /\.jade$/, loader: "raw", },
-      {test: /\.css$/, loaders: ["style", "css"], },
-      {test: /\.scss$/, loaders: ["style", "css", "sass"], },
-      {test: /\.snippets/, loader: "raw", },
-      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
-      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
-      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/octet-stream", },
-      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=vnd.ms-fontobject"},
-      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=image/svg+xml", },
+    rules: [
+      {test: /\.ts$/, loader: "awesome-typescript-loader", exclude: /node_modules/, },
+      {test: /\.html$/, loaders: ["raw-loader", "jade-html-loader"]},
+      {test: /\.css$/, loaders: ["style-loader", "css-loader"], },
+      {test: /\.pug/, loaders: ["raw-loader", "pug-html-loader?doctype=html&pretty"]},
+      {test: /\.scss$/, loaders: ["style-loader", "css-loader", "sass-loader"], },
+      {test: /\.snippets/, loader: "raw-loader", },
+      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
+      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
+      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/octet-stream", },
+      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=vnd.ms-fontobject"},
+      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=image/svg+xml", },
     ],
   },
   plugins: [

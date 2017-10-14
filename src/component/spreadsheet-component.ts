@@ -6,9 +6,13 @@ import {ISheet, ISheetMeta, IColumn} from "./app-component";
 import {templateLoader} from "./template-loader";
 import {InheritRecords} from "../util/inherit-records";
 
+declare global {
+  var Handsontable: any;
+}
+
 type THandsontableChange = [number, string, any, any];
 
-interface IMyHandsontable extends ht.Methods {
+interface IMyHandsontable extends Handsontable.Core {
   search: {
     query(q: string): any;
   };
@@ -180,7 +184,7 @@ export class SpreadsheetComponent extends BaseComponent {
       autoRowSize: false,
       autoColumnSize: false,
       cells: (_row: number, _col: number, _prop: any) => {
-        let cellProperties: ht.Options = {};
+        let cellProperties: Handsontable.Options = {};
         cellProperties.renderer = this.customRenderer;
         return cellProperties;
       },

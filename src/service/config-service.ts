@@ -2,6 +2,7 @@ import fs = require("fs");
 import path = require("path");
 
 import electron = require("electron");
+import * as log from "loglevel";
 
 import {BaseService} from "./base-service";
 import {AppComponent, IConfig} from "../component/app-component";

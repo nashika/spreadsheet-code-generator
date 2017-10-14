@@ -1,5 +1,6 @@
 import electron = require("electron");
 import _ = require("lodash");
+import * as log from "loglevel";
 
 import {BaseService} from "./base-service";
 import {GeneratorProcess} from "../generator/generator-process";

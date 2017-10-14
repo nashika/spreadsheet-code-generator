@@ -1,7 +1,8 @@
 import fs = require("fs");
 import path = require("path");
 
-import _ = require("lodash");
+import * as _ from "lodash";
+import * as log from "loglevel";
 
 import {TGeneratorSheetCode} from "./generator-process";
 import {GeneratorNodeElement} from "./generator-node-element";
