@@ -19,18 +19,23 @@ let webpackConfig: webpack.Configuration = {
     extensions: [".ts", ".js"],
   },
   module: {
-    rules: [
-      {test: /\.ts$/, loader: "awesome-typescript-loader", exclude: /node_modules/, },
+    loaders: [
+      {test: /\.ts$/, loader: "awesome-typescript-loader", exclude: /node_modules/},
       {test: /\.html$/, loaders: ["raw-loader", "jade-html-loader"]},
-      {test: /\.css$/, loaders: ["style-loader", "css-loader"], },
+      {test: /\.css$/, loaders: ["style-loader", "css-loader"]},
       {test: /\.pug/, loaders: ["raw-loader", "pug-html-loader?doctype=html&pretty"]},
-      {test: /\.scss$/, loaders: ["style-loader", "css-loader", "sass-loader"], },
-      {test: /\.snippets/, loader: "raw-loader", },
-      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
-      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/font-woff", },
-      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=application/octet-stream", },
-      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=vnd.ms-fontobject"},
-      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?prefix=dist/font/&name=font/[name].[ext]&limit=10000&mimetype=image/svg+xml", },
+      {test: /\.scss$/, loaders: ["style-loader", "css-loader", "sass-loader"]},
+      {test: /\.snippets/, loader: "raw-loader"},
+      {
+        test: /\.vue$/, loader: "vue-loader", options:
+        {
+          loaders: {
+            ts: "awesome-typescript-loader",
+            pug: "pug-html-loader",
+            scss: "style-loader!css-loader!sass-loader",
+          },
+        }
+      },
     ],
   },
   plugins: [
@@ -45,13 +50,13 @@ let webpackConfig: webpack.Configuration = {
       {from: "node_modules/handsontable/dist/handsontable.full.min.js", to: "handsontable/handsontable.full.min.js"},
     ])
   ].concat(process.env.NODE_ENV == "production" ? [new UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      },
-      mangle: {
-        keep_fnames: true,
-      },
-    }),
+    compress: {
+      warnings: false,
+    },
+    mangle: {
+      keep_fnames: true,
+    },
+  }),
   ] : []),
   devtool: "source-map",
   //watch: true,
