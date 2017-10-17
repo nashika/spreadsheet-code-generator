@@ -1,12 +1,13 @@
 import Component from "vue-class-component";
 
-import {ISheet} from "./app-component";
-import {BaseComponent} from "./base-component";
-import {templateLoader} from "./template-loader";
+import {ISheet} from "./app.component";
+import BaseComponent from "./base-component";
 
 @Component({
-  template: templateLoader("code-editor"),
-  props: ["currentSheet", "currentCode"],
+  props: {
+    currentSheet: Object,
+    currentCode: String,
+  },
   watch: {
     "currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
   },
@@ -15,7 +16,7 @@ import {templateLoader} from "./template-loader";
   },
   beforeDestroy: CodeEditorComponent.prototype.onBeforeDestroy,
 })
-export class CodeEditorComponent extends BaseComponent {
+export default class CodeEditorComponent extends BaseComponent {
 
   currentSheet: ISheet;
   currentCode: string;

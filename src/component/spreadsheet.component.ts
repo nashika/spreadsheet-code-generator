@@ -2,7 +2,7 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {ISheet, ISheetMeta, IColumn} from "./app-component";
+import {ISheet, ISheetMeta, IColumn} from "./app.component";
 import {templateLoader} from "./template-loader";
 import {InheritRecords} from "../util/inherit-records";
 

@@ -2,7 +2,7 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {ISheet, ISheetMeta} from "./app-component";
+import {ISheet, ISheetMeta} from "./app.component";
 import {templateLoader} from "./template-loader";
 
 interface ITreeSheet {

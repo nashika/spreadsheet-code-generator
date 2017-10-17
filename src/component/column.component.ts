@@ -2,7 +2,7 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import {BaseComponent} from "./base-component";
-import {IColumn, ISheet} from "./app-component";
+import {IColumn, ISheet} from "./app.component";
 import {templateLoader} from "./template-loader";
 
 @Component({

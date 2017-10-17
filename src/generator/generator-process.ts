@@ -3,7 +3,7 @@ import path = require("path");
 import _ = require("lodash");
 import * as log from "loglevel";
 
-import {AppComponent, ISheet, TSheetData} from "../component/app-component";
+import {AppComponent, ISheet, TSheetData} from "../component/app.component";
 import {GeneratorAccessor} from "./generator-accessor";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";

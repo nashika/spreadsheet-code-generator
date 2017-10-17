@@ -1,5 +1,5 @@
 import _ = require("lodash");
-import {IColumn} from "../component/app-component";
+import {IColumn} from "../component/app.component";
 
 export class InheritRecords {
 

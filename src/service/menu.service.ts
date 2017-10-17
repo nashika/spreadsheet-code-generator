@@ -5,8 +5,8 @@ import Menu = Electron.Menu;
 import MenuItem = Electron.MenuItem;
 import _ = require("lodash");
 
-import {BaseService} from "./base-service";
-import {AppComponent} from "../component/app-component";
+import {BaseService} from "./base.service";
+import {AppComponent} from "../component/app.component";
 
 export class MenuService extends BaseService {
 

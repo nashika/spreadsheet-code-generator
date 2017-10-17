@@ -1,8 +1,8 @@
 import _ = require("lodash");
 import vue = require("vue");
 
-import {IoService} from "./io-service";
-import {TSheetData} from "../component/app-component";
+import {IoService} from "./io.service";
+import {TSheetData} from "../component/app.component";
 
 export class DataService extends IoService {
 

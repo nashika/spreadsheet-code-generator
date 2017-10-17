@@ -4,8 +4,8 @@ import _ = require("lodash");
 import electron = require("electron");
 import vue = require("vue");
 
-import {ISheet, ISheetMeta} from "../component/app-component";
-import {IoService} from "./io-service";
+import {ISheet, ISheetMeta} from "../component/app.component";
+import {IoService} from "./io.service";
 
 export class SheetService extends IoService {
 

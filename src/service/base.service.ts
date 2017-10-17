@@ -1,4 +1,4 @@
-import {AppComponent} from "../component/app-component";
+import {AppComponent} from "../component/app.component";
 import {IRootVue} from "../component/base-component";
 
 export class BaseService {

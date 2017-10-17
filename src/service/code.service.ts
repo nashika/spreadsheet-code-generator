@@ -1,7 +1,7 @@
 import _ = require("lodash");
 import vue = require("vue");
 
-import {IoService} from "./io-service";
+import {IoService} from "./io.service";
 
 export class CodeService extends IoService {
 

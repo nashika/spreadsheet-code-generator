@@ -1,8 +1,8 @@
 import _ = require("lodash");
 import vue = require("vue");
 
-import {BaseService} from "./base-service";
-import {IColumn} from "../component/app-component";
+import {BaseService} from "./base.service";
+import {IColumn} from "../component/app.component";
 
 export class ColumnService extends BaseService {
 
