@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {Vue} from "vue/types/vue";
+import Vue from "vue";
 import Component from "vue-class-component";
 
 import {BaseService} from "./base.service";
@@ -51,11 +51,6 @@ export class HubServiceEventBus extends Vue {
 @injectable()
 export class HubService extends BaseService {
 
-  $vm: HubServiceEventBus;
-
-  constructor() {
-    super();
-    this.$vm = new HubServiceEventBus();
-  }
+  $vm = new HubServiceEventBus();
 
 }

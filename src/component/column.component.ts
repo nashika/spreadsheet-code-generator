@@ -4,21 +4,16 @@ import _ = require("lodash");
 import BaseComponent from "./base-component";
 import {ColumnService} from "../service/column.service";
 import {container} from "../inversify.config";
-import {IColumn, ISheet} from "../service/hub.service";
+import {IColumn} from "../service/hub.service";
 
 @Component({
-  props: {
-    currentSheet: Object,
-  },
   watch: {
-    "currentSheet": ColumnComponent.prototype.watchCurrentSheet,
+    "$hub.currentSheet": ColumnComponent.prototype.watchCurrentSheet,
   }
 })
 export default class ColumnComponent extends BaseComponent {
 
   columnService: ColumnService = container.get(ColumnService);
-
-  currentSheet: ISheet;
 
   columnIndex: number;
   column: IColumn;
@@ -58,7 +53,7 @@ export default class ColumnComponent extends BaseComponent {
   }
 
   freeze(): void {
-    if (this.columnIndex + 1 == this.currentSheet.freezeColumn)
+    if (this.columnIndex + 1 == this.$hub.currentSheet.freezeColumn)
       this.columnService.freeze(0);
     else
       this.columnService.freeze(this.columnIndex + 1);
@@ -66,7 +61,7 @@ export default class ColumnComponent extends BaseComponent {
 
   onSelectColumn(index: number): void {
     this.columnIndex = index;
-    this.column = _.clone(this.currentSheet.columns[index]);
+    this.column = _.clone(this.$hub.currentSheet.columns[index]);
     this.optionsText = _.join(this.column.options, "\n");
   }
 

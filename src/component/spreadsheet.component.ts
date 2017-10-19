@@ -3,8 +3,7 @@ import _ = require("lodash");
 
 import BaseComponent from "./base-component";
 import {InheritRecords} from "../util/inherit-records";
-import {HubService, IColumn, ISheet, ISheetMeta} from "../service/hub.service";
-import {container} from "../inversify.config";
+import {IColumn} from "../service/hub.service";
 
 declare global {
   var Handsontable: any;
@@ -20,12 +19,6 @@ interface IMyHandsontable extends Handsontable.Core {
 }
 
 @Component({
-  props: {
-    currentSheet: Object,
-    currentSheetMeta: Object,
-    currentData: Array,
-    showMenu: Boolean,
-  },
   watch: {
     "currentSheet": {
       handler: SpreadsheetComponent.prototype.rebuildSpreadsheet,
@@ -36,13 +29,6 @@ interface IMyHandsontable extends Handsontable.Core {
   beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
 })
 export default class SpreadsheetComponent extends BaseComponent {
-
-  hubService: HubService = container.get(HubService);
-
-  currentSheet: ISheet;
-  currentSheetMeta: ISheetMeta;
-  currentData: any[];
-  showMenu: boolean;
 
   columnMap: {[key: string]: IColumn};
   currentRow: number;
@@ -124,13 +110,13 @@ export default class SpreadsheetComponent extends BaseComponent {
 
   afterChange(changes: THandsontableChange[]): void {
     if (changes) {
-      this.currentSheetMeta.modified = true;
+      this.$hub.currentSheetMeta.modified = true;
     }
   }
 
   afterScroll(): void {
-    this.currentSheetMeta.colOffset = this.hot.colOffset();
-    this.currentSheetMeta.rowOffset = this.hot.rowOffset();
+    this.$hub.currentSheetMeta.colOffset = this.hot.colOffset();
+    this.$hub.currentSheetMeta.rowOffset = this.hot.rowOffset();
   }
 
   rebuildSpreadsheet(): void {
@@ -138,15 +124,15 @@ export default class SpreadsheetComponent extends BaseComponent {
       this.hot.destroy();
       this.hot = null;
     }
-    if (this.currentSheet.name == "root") return;
-    this.inheritRecords = new InheritRecords(this.currentData, this.currentSheet.columns);
+    if (this.$hub.currentSheet.name == "root") return;
+    this.inheritRecords = new InheritRecords(this.$hub.currentData, this.$hub.currentSheet.columns);
     let container: Element = this.$el.querySelector("#spreadsheet");
-    let sheetName: string = this.currentSheet.name;
+    let sheetName: string = this.$hub.currentSheet.name;
     if (!sheetName) return;
-    let data: any[] = this.currentData;
-    let colHeaders: string[] = _.map(this.currentSheet.columns, c => c.header);
-    let colWidths: number[] = _.map(this.currentSheet.columns, c => c.width);
-    let columns: any[] = _.map(this.currentSheet.columns, (c: IColumn) => {
+    let data: any[] = this.$hub.currentData;
+    let colHeaders: string[] = _.map(this.$hub.currentSheet.columns, c => c.header);
+    let colWidths: number[] = _.map(this.$hub.currentSheet.columns, c => c.width);
+    let columns: any[] = _.map(this.$hub.currentSheet.columns, (c: IColumn) => {
       let column: any = {};
       switch (c.type) {
         case "select":
@@ -176,7 +162,7 @@ export default class SpreadsheetComponent extends BaseComponent {
       contextMenu: true,
       wordWrap: false,
       manualColumnFreeze: true,
-      fixedColumnsLeft: this.currentSheet.freezeColumn || 0,
+      fixedColumnsLeft: this.$hub.currentSheet.freezeColumn || 0,
       search: <any>{
         searchResultClass: "search-cell",
       },
@@ -194,7 +180,7 @@ export default class SpreadsheetComponent extends BaseComponent {
         return cellProperties;
       },
     });
-    this.hot.scrollViewportTo(this.currentSheetMeta.rowOffset, this.currentSheetMeta.colOffset);
+    this.hot.scrollViewportTo(this.$hub.currentSheetMeta.rowOffset, this.$hub.currentSheetMeta.colOffset);
   }
 
   watchShowMenu(): void {

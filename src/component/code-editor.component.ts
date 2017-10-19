@@ -3,13 +3,8 @@ import Component from "vue-class-component";
 import BaseComponent from "./base-component";
 import {CodeService} from "../service/code.service";
 import {container} from "../inversify.config";
-import {ISheet} from "../service/hub.service";
 
 @Component({
-  props: {
-    currentSheet: Object,
-    currentCode: String,
-  },
   watch: {
     "currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
   },
@@ -17,9 +12,6 @@ import {ISheet} from "../service/hub.service";
 export default class CodeEditorComponent extends BaseComponent {
 
   codeService: CodeService = container.get(CodeService);
-
-  currentSheet: ISheet;
-  currentCode: string;
 
   beforeSheetName: string = "";
   beforeCode: string = "";
@@ -68,9 +60,9 @@ export default class CodeEditorComponent extends BaseComponent {
   }
 
   changeSheet() {
-    this.beforeSheetName = this.currentSheet.name;
-    this.beforeCode = this.currentCode;
-    this.editor.setValue(this.currentCode, -1);
+    this.beforeSheetName = this.$hub.currentSheet.name;
+    this.beforeCode = this.$hub.currentCode;
+    this.editor.setValue(this.$hub.currentCode, -1);
   }
 
 }

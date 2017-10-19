@@ -1,6 +1,15 @@
-import {Vue} from "vue/types/vue";
+import Vue from "vue";
+
+import {HubService, HubServiceEventBus} from "../service/hub.service";
+import {container} from "../inversify.config";
 
 export default abstract class BaseComponent extends Vue {
+
+  hubService: HubService = container.get(HubService);
+
+  get $hub(): HubServiceEventBus {
+    return this.hubService.$vm;
+  }
 
   beforeCreate?(): void;
   created?(): void;

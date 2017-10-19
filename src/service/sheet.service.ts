@@ -1,6 +1,6 @@
 import _ = require("lodash");
 import {injectable} from "inversify";
-import {Vue} from "vue/types/vue";
+import Vue from "vue";
 
 import {IoService} from "./io.service";
 import {HubService, ISheet, ISheetMeta} from "./hub.service";

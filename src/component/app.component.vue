@@ -1,16 +1,15 @@
 <template lang="pug">
   #container.container-fluid
     #row.row
-      #menu-area.col-xs-3(v-if="showMenu")
-        menu-component(:mode.sync="mode")
-        sheets-component(v-if="sheets", :current-sheet="currentSheet", :sheets="sheets", :sheet-metas="sheetMetas")
+      #menu-area.col-xs-3(v-if="$hub.showMenu")
+        menu-component(:mode.sync="$hub.mode")
+        sheets-component(v-if="$hub.sheets")
         search-component()
-        column-component(v-if="mode == 'data' && currentSheet.name != 'root'", :current-sheet="currentSheet")
-      #main-area(:class="{'col-xs-9': showMenu, 'col-xs-12': !showMenu}")
-        #main-message(v-if="currentSheet.name == 'root' && mode == 'data'") root sheet can not have data, please select or create new sheet.
-        spreadsheet-component(v-if="mode == 'data'", :current-sheet="currentSheet", :current-sheet-meta="currentSheetMeta",
-        :current-data="currentData", :show-menu="showMenu")
-        code-editor-component(v-if="mode == 'code'", :current-sheet="currentSheet", :current-code="currentCode")
+        column-component(v-if="$hub.mode == 'data' && $hub.currentSheet.name != 'root'")
+      #main-area(:class="{'col-xs-9': $hub.showMenu, 'col-xs-12': !$hub.showMenu}")
+        #main-message(v-if="$hub.currentSheet.name == 'root' && $hub.mode == 'data'") root sheet can not have data, please select or create new sheet.
+        spreadsheet-component(v-if="$hub.mode == 'data'")
+        code-editor-component(v-if="$hub.mode == 'code'")
 </template>
 
-<script lang="ts" src="app.component.ts"></script>
+<script lang="ts" src="./app.component.ts"></script>

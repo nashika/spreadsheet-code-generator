@@ -4,7 +4,7 @@ import _ = require("lodash");
 import BaseComponent from "./base-component";
 import {SheetService} from "../service/sheet.service";
 import {container} from "../inversify.config";
-import {ISheet, ISheetMeta} from "../service/hub.service";
+import {ISheet} from "../service/hub.service";
 
 interface ITreeSheet {
   sheet: ISheet,
@@ -12,13 +12,8 @@ interface ITreeSheet {
 }
 
 @Component({
-  props: {
-    currentSheet: Object,
-    sheets: Object,
-    sheetMetas: Object,
-  },
   watch: {
-    "sheets": {
+    "$hub.sheets": {
       handler: SheetsComponent.prototype.watchSheets,
       deep: true,
     },
@@ -27,10 +22,6 @@ interface ITreeSheet {
 export default class SheetsComponent extends BaseComponent {
 
   sheetService: SheetService = container.get(SheetService);
-
-  currentSheet: ISheet;
-  sheets: {[sheetName: string]: ISheet};
-  sheetMetas: {[sheetName: string]: ISheetMeta};
 
   treeSheets: ITreeSheet[] = [];
   addModal: boolean = false;
@@ -47,15 +38,15 @@ export default class SheetsComponent extends BaseComponent {
   }
 
   add(): void {
-    if (this.sheetService.add(this.newSheetName, this.currentSheet.name)) {
+    if (this.sheetService.add(this.newSheetName, this.$hub.currentSheet.name)) {
       this.newSheetName = "";
       this.addModal = false;
     }
   }
 
   edit(): void {
-    let newSheetParent: string = this.newSheetParent || this.currentSheet.parent;
-    if (this.sheetService.edit(this.currentSheet.name, this.newSheetName, newSheetParent)) {
+    let newSheetParent: string = this.newSheetParent || this.$hub.currentSheet.parent;
+    if (this.sheetService.edit(this.$hub.currentSheet.name, this.newSheetName, newSheetParent)) {
       this.newSheetName = "";
       this.newSheetParent = "root";
       this.editModal = false;
@@ -69,9 +60,9 @@ export default class SheetsComponent extends BaseComponent {
   notSelfOrChildTreeSheets(treeSheets: ITreeSheet[]): ITreeSheet[] {
     return _.filter(treeSheets, treeSheet => {
       let sheetName = treeSheet.sheet.name;
-      if (sheetName == this.currentSheet.name) return false;
-      if (!this.sheets[sheetName]) return true;
-      return !this.sheetService.isParentRecursive(this.sheets[sheetName], this.currentSheet);
+      if (sheetName == this.$hub.currentSheet.name) return false;
+      if (!this.$hub.sheets[sheetName]) return true;
+      return !this.sheetService.isParentRecursive(this.$hub.sheets[sheetName], this.$hub.currentSheet);
     });
   }
 
@@ -81,7 +72,7 @@ export default class SheetsComponent extends BaseComponent {
 
   treeSheetRecursive(parentSheetName: string, level: number): ITreeSheet[] {
     let result: ITreeSheet[] = [];
-    _.forIn(this.sheets, (sheet: ISheet) => {
+    _.forIn(this.$hub.sheets, (sheet: ISheet) => {
       if (sheet.parent == parentSheetName)
         result.push({sheet: sheet, level: level});
     });
