@@ -1,7 +1,7 @@
 import _ = require("lodash");
 
-import {ISheet, IColumn} from "../component/app.component";
 import {TGeneratorSheetCode} from "./generator-process";
+import {IColumn, ISheet} from "../service/hub.service";
 
 export class GeneratorNodeDefinition {
 

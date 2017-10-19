@@ -2,18 +2,23 @@ import path = require("path");
 
 import electron = require("electron");
 import Menu = Electron.Menu;
-import MenuItem = Electron.MenuItem;
 import _ = require("lodash");
 
 import {BaseService} from "./base.service";
-import {AppComponent} from "../component/app.component";
+import {HubService} from "./hub.service";
+import {GeneratorService} from "./generator.service";
+import {SheetService} from "./sheet.service";
+import {ConfigService} from "./config.service";
 
 export class MenuService extends BaseService {
 
   protected menu: Menu;
 
-  constructor(app: AppComponent) {
-    super(app);
+  constructor(protected hubService: HubService,
+              protected generatorService: GeneratorService,
+              protected sheetService: SheetService,
+              protected configService: ConfigService) {
+    super();
     this.init();
   }
 
@@ -59,7 +64,7 @@ export class MenuService extends BaseService {
           {
             label: "Insert new line",
             accelerator: "Ctrl+I",
-            click: () => this.$root.$broadcast("insert"),
+            click: () => this.hubService.$vm.$emit("insert"),
           }
         ],
       },
@@ -70,7 +75,7 @@ export class MenuService extends BaseService {
             label: "Toggle Side &Menu",
             accelerator: "Ctrl+E",
             click: () => {
-              this.app.showMenu = !this.app.showMenu;
+              this.hubService.$vm.showMenu = !this.hubService.$vm.showMenu;
             },
           },
         ],
@@ -81,27 +86,27 @@ export class MenuService extends BaseService {
           {
             label: "&Data Edit Mode",
             click: () => {
-              this.app.mode = "data";
+              this.hubService.$vm.mode = "data";
             }
           },
           {
             label: "&Code Edit Mode",
             click: () => {
-              this.app.mode = "code";
+              this.hubService.$vm.mode = "code";
             }
           },
           {
             label: "&Toggle Edit Mode",
             accelerator: "Ctrl+T",
             click: () => {
-              this.app.mode = this.app.mode == "data" ? "code" : "data";
+              this.hubService.$vm.mode = this.hubService.$vm.mode == "data" ? "code" : "data";
             }
           },
           {
             label: "&Generate",
             accelerator: "Ctrl+G",
             click: () => {
-              this.app.services.generator.generate();
+              this.generatorService.generate();
             }
           },
         ],
@@ -140,25 +145,25 @@ export class MenuService extends BaseService {
   protected new = (): void => {
     if (!window.confirm(`All editing data will be erased, Do you really want to new project?`))
       return;
-    this.app.saveBaseDir = "";
-    this.app.services.sheet.newAll();
+    this.hubService.$vm.saveBaseDir = "";
+    this.sheetService.newAll();
     this.saveDirInfo(false);
   };
 
   protected open = (): void => {
     if (!this.openDir()) return;
-    if (this.app.services.sheet.loadAll())
+    if (this.sheetService.loadAll())
       this.saveDirInfo();
   };
 
   protected openRecent(dir: string = ""): void {
     if (dir)
-      this.app.saveBaseDir = dir;
-    else if (this.app.config.recentSaveBaseDirs.length > 0)
-      this.app.saveBaseDir = this.app.config.recentSaveBaseDirs[0];
+      this.hubService.$vm.saveBaseDir = dir;
+    else if (this.hubService.$vm.config.recentSaveBaseDirs.length > 0)
+      this.hubService.$vm.saveBaseDir = this.hubService.$vm.config.recentSaveBaseDirs[0];
     else
-      this.app.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
-    if (this.app.services.sheet.loadAll())
+      this.hubService.$vm.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
+    if (this.sheetService.loadAll())
       this.saveDirInfo();
 
   }
@@ -172,35 +177,35 @@ export class MenuService extends BaseService {
   };
 
   protected save(as: boolean = false): void {
-    if (as || !this.app.saveBaseDir)
+    if (as || !this.hubService.$vm.saveBaseDir)
       if (!this.openDir())
         return;
-    if (this.app.services.sheet.saveAll())
+    if (this.sheetService.saveAll())
       this.saveDirInfo();
   };
 
   protected openDir(): boolean {
     let dirs: string[] = electron.remote.dialog.showOpenDialog({
-      defaultPath: this.app.saveBaseDir || this.app.config.recentSaveBaseDirs[0],
+      defaultPath: this.hubService.$vm.saveBaseDir || this.hubService.$vm.config.recentSaveBaseDirs[0],
       properties: ["openDirectory"],
     });
     if (!dirs || dirs.length == 0) return false;
-    this.app.saveBaseDir = dirs[0];
+    this.hubService.$vm.saveBaseDir = dirs[0];
     return true;
   }
 
   protected saveDirInfo(save: boolean = true): void {
-    electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.app.saveBaseDir}]`);
+    electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.hubService.$vm.saveBaseDir}]`);
     if (save) {
-      this.app.config.recentSaveBaseDirs = this.app.config.recentSaveBaseDirs || [];
-      this.app.config.recentSaveBaseDirs = _.filter(this.app.config.recentSaveBaseDirs,
-        (dir: string): boolean => _.toLower(dir) != _.toLower(this.app.saveBaseDir));
-      this.app.config.recentSaveBaseDirs = _.concat(this.app.saveBaseDir, this.app.config.recentSaveBaseDirs);
-      this.app.config.recentSaveBaseDirs = _.take(this.app.config.recentSaveBaseDirs, 5);
-      this.app.services.config.save();
+      this.hubService.$vm.config.recentSaveBaseDirs = this.hubService.$vm.config.recentSaveBaseDirs || [];
+      this.hubService.$vm.config.recentSaveBaseDirs = _.filter(this.hubService.$vm.config.recentSaveBaseDirs,
+        (dir: string): boolean => _.toLower(dir) != _.toLower(this.hubService.$vm.saveBaseDir));
+      this.hubService.$vm.config.recentSaveBaseDirs = _.concat(this.hubService.$vm.saveBaseDir, this.hubService.$vm.config.recentSaveBaseDirs);
+      this.hubService.$vm.config.recentSaveBaseDirs = _.take(this.hubService.$vm.config.recentSaveBaseDirs, 5);
+      this.configService.save();
       let submenu: Menu = <Menu>(<any>(<Menu>(<any>this.menu.items[0]).submenu).items[2]).submenu;
       (<any>submenu).clear();
-      for (let dir of this.app.config.recentSaveBaseDirs) {
+      for (let dir of this.hubService.$vm.config.recentSaveBaseDirs) {
         submenu.append(new electron.remote.MenuItem({
           label: dir,
           click: () => {

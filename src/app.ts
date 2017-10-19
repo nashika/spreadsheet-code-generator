@@ -1,11 +1,15 @@
-import "font-awesome/css/font-awesome.css";
+import "reflect-metadata";
 
 import log = require("loglevel");
 (<any>window).log = log;
 log.setLevel("trace");
 
-import "./scss/style.scss";
 import "./etc/ace-custom-snippets";
-import {AppComponent} from "./component/app.component";
 
-let app: AppComponent = new (<any>AppComponent)({el: "#app"});
+import {Vue} from "vue/types/vue";
+import BootstrapVue from "bootstrap-vue";
+
+Vue.use(BootstrapVue);
+
+let AppComponent = require("./component/app.component.vue").default;
+new AppComponent().$mount("#app");

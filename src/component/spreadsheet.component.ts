@@ -1,10 +1,10 @@
 import Component from "vue-class-component";
 import _ = require("lodash");
 
-import {BaseComponent} from "./base-component";
-import {ISheet, ISheetMeta, IColumn} from "./app.component";
-import {templateLoader} from "./template-loader";
+import BaseComponent from "./base-component";
 import {InheritRecords} from "../util/inherit-records";
+import {HubService, IColumn, ISheet, ISheetMeta} from "../service/hub.service";
+import {container} from "../inversify.config";
 
 declare global {
   var Handsontable: any;
@@ -20,8 +20,12 @@ interface IMyHandsontable extends Handsontable.Core {
 }
 
 @Component({
-  template: templateLoader("spreadsheet"),
-  props: ["currentSheet", "currentSheetMeta", "currentData", "showMenu"],
+  props: {
+    currentSheet: Object,
+    currentSheetMeta: Object,
+    currentData: Array,
+    showMenu: Boolean,
+  },
   watch: {
     "currentSheet": {
       handler: SpreadsheetComponent.prototype.rebuildSpreadsheet,
@@ -29,17 +33,16 @@ interface IMyHandsontable extends Handsontable.Core {
     },
     "showMenu": SpreadsheetComponent.prototype.watchShowMenu,
   },
-  events: {
-    "search": SpreadsheetComponent.prototype.onSearch,
-    "insert": SpreadsheetComponent.prototype.onInsert,
-  },
   beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
 })
-export class SpreadsheetComponent extends BaseComponent {
+export default class SpreadsheetComponent extends BaseComponent {
+
+  hubService: HubService = container.get(HubService);
 
   currentSheet: ISheet;
   currentSheetMeta: ISheetMeta;
   currentData: any[];
+  showMenu: boolean;
 
   columnMap: {[key: string]: IColumn};
   currentRow: number;
@@ -59,6 +62,8 @@ export class SpreadsheetComponent extends BaseComponent {
   }
 
   created() {
+    this.$on("search", this.onSearch);
+    this.$on("insert", this.onInsert);
   }
 
   onSearch(query: string) {
@@ -109,11 +114,11 @@ export class SpreadsheetComponent extends BaseComponent {
     return callback(true);
   }
 
-  afterSelection(r: number, c: number, r2: number, c2: number): void {
+  afterSelection(r: number, c: number, _r2: number, _c2: number): void {
     this.currentRow = r;
     this.currentCol = c;
     setTimeout(() => {
-      this.$root.$broadcast("select-column", c);
+      this.hubService.$vm.$emit("select-column", c);
     }, 0);
   }
 

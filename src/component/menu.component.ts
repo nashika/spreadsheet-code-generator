@@ -1,26 +1,22 @@
 import Component from "vue-class-component";
 
-import {BaseComponent} from "./base-component";
-import {templateLoader} from "./template-loader";
+import BaseComponent from "./base-component";
+import {container} from "../inversify.config";
+import {GeneratorService} from "../service/generator.service";
 
 @Component({
-  template: templateLoader("menu"),
-  components: {
-    "button-group": require("vue-strap").buttonGroup,
-    radio: require("vue-strap").radio,
-  },
-  props: ["mode"],
+  props: {
+    mode: String,
+  }
 })
-export class MenuComponent extends BaseComponent {
+export default class MenuComponent extends BaseComponent {
+
+  generatorService: GeneratorService = container.get(GeneratorService);
 
   mode: string;
 
-  data() {
-    return {};
-  }
-
   generate() {
-    this.$root.services.generator.generate();
+    this.generatorService.generate();
   }
 
 }

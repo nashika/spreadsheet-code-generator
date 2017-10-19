@@ -1,12 +1,5 @@
-import {AppComponent} from "../component/app.component";
-import {IRootVue} from "../component/base-component";
+import {injectable} from "inversify";
 
-export class BaseService {
-
-  $root: IRootVue;
-
-  constructor(protected app: AppComponent) {
-    this.$root = <any>app;
-  }
-
+@injectable()
+export abstract class BaseService {
 }

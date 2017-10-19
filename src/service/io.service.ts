@@ -2,16 +2,23 @@ import * as fs from "fs";
 import * as path from "path";
 
 import * as log from "loglevel";
+import {injectable} from "inversify";
 
 import {BaseService} from "./base.service";
+import {HubService} from "./hub.service";
 
-export class IoService extends BaseService {
+@injectable()
+export abstract class IoService extends BaseService {
 
   protected static DIR_NAME: string = "";
   protected static EXT: string = "json";
 
+  constructor(protected hubService: HubService) {
+    super();
+  }
+
   protected get saveDir(): string {
-    return path.join(this.app.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
+    return path.join(this.hubService.$vm.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
   }
 
   protected filePath(sheetName: string): string {

@@ -1,12 +1,18 @@
 import _ = require("lodash");
-import vue = require("vue");
+import {injectable} from "inversify";
+import {Vue} from "vue/types/vue";
 
 import {IoService} from "./io.service";
-import {TSheetData} from "../component/app.component";
+import {HubService, TSheetData} from "./hub.service";
 
+@injectable()
 export class DataService extends IoService {
 
   protected static DIR_NAME: string = "data";
+
+  constructor(protected hubService: HubService) {
+    super(hubService);
+  }
 
   protected load(sheetName: string): TSheetData {
     let data: any[] = super.load(sheetName);
@@ -18,7 +24,7 @@ export class DataService extends IoService {
 
     data = data.map((record) => {
       let result: any = {};
-      for (let column of this.app.sheets[sheetName].columns) {
+      for (let column of this.hubService.$vm.sheets[sheetName].columns) {
         let columnData: any = _.get(record, column.data);
         if (_.isNull(columnData)) continue;
         if (_.isUndefined(columnData)) continue;
@@ -31,24 +37,24 @@ export class DataService extends IoService {
   }
 
   public newAll(): void {
-    this.app.datas = {};
-    this.app.currentData = null;
+    this.hubService.$vm.datas = {};
+    this.hubService.$vm.currentData = null;
   }
 
   public loadAll(): boolean {
     if (!this.checkDir()) return false;
     let names: string[] = this.list();
     for (let name of names)
-      vue.set(this.app.datas, name, this.load(name));
+      Vue.set(this.hubService.$vm.datas, name, this.load(name));
     return true;
   }
 
   public saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
-    _.forIn(this.app.datas, (data, name) => {
+    _.forIn(this.hubService.$vm.datas, (data, name) => {
       this.save(name, data);
     });
-    _.forEach(_.difference(this.list(), _.keys(this.app.datas)), (name) => {
+    _.forEach(_.difference(this.list(), _.keys(this.hubService.$vm.datas)), (name) => {
       this.unlink(name);
     });
     return true;

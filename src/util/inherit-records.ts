@@ -1,5 +1,6 @@
 import _ = require("lodash");
-import {IColumn} from "../component/app.component";
+
+import {IColumn} from "../service/hub.service";
 
 export class InheritRecords {
 
@@ -29,7 +30,7 @@ export class InheritRecords {
       }
       this.records[inheritKey] = result;
     });
-    delete this.records[_(this.paths).map(p => "*").join(".")];
+    delete this.records[_(this.paths).map(_p => "*").join(".")];
     _.each(this.records, record => this.applyInherit(record));
   }
 

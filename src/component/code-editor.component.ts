@@ -1,7 +1,9 @@
 import Component from "vue-class-component";
 
-import {ISheet} from "./app.component";
 import BaseComponent from "./base-component";
+import {CodeService} from "../service/code.service";
+import {container} from "../inversify.config";
+import {ISheet} from "../service/hub.service";
 
 @Component({
   props: {
@@ -11,28 +13,21 @@ import BaseComponent from "./base-component";
   watch: {
     "currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
   },
-  events: {
-    "search": CodeEditorComponent.prototype.onSearch,
-  },
-  beforeDestroy: CodeEditorComponent.prototype.onBeforeDestroy,
 })
 export default class CodeEditorComponent extends BaseComponent {
+
+  codeService: CodeService = container.get(CodeService);
 
   currentSheet: ISheet;
   currentCode: string;
 
-  beforeSheetName: string;
-  beforeCode: string;
-  changeTimer: any;
-  editor: AceAjax.Editor;
+  beforeSheetName: string = "";
+  beforeCode: string = "";
+  changeTimer: any = null;
+  editor: AceAjax.Editor = null;
 
-  data(): any {
-    return {
-      beforeSheetName: "",
-      beforeCode: "",
-      changeTimer: null,
-      editor: null,
-    };
+  created() {
+    this.$on("search", this.onSearch);
   }
 
   onSearch(query: string): void {
@@ -59,7 +54,7 @@ export default class CodeEditorComponent extends BaseComponent {
     this.changeSheet();
   }
 
-  onBeforeDestroy() {
+  beforeDestroy() {
     this.editor.destroy();
   }
 
@@ -68,7 +63,7 @@ export default class CodeEditorComponent extends BaseComponent {
     this.changeTimer = setTimeout(() => {
       let modifiedCode: string = this.editor.getValue();
       if (this.beforeCode != modifiedCode)
-        this.$root.services.code.edit(this.beforeSheetName, modifiedCode);
+        this.codeService.edit(this.beforeSheetName, modifiedCode);
     }, 200);
   }
 

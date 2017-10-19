@@ -1,26 +1,19 @@
 import Component from "vue-class-component";
 
-import {BaseComponent} from "./base-component";
-import {templateLoader} from "./template-loader";
+import BaseComponent from "./base-component";
+import {HubService} from "../service/hub.service";
+import {container} from "../inversify.config";
 
-@Component({
-  template: templateLoader("search"),
-  components: {},
-  props: [],
-})
-export class SearchComponent extends BaseComponent {
+@Component({})
+export default class SearchComponent extends BaseComponent {
 
-  query: string;
+  hubService: HubService =  container.get(HubService);
 
-  data() {
-    return {
-      query: "",
-    };
-  }
+  query: string = "";
 
   search() {
     if (!this.query) return;
-    this.$root.$broadcast("search", this.query);
+    this.hubService.$vm.$emit("search", this.query);
   }
 
 }

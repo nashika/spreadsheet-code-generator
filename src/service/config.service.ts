@@ -3,14 +3,16 @@ import path = require("path");
 
 import electron = require("electron");
 import * as log from "loglevel";
+import {injectable} from "inversify";
 
 import {BaseService} from "./base.service";
-import {AppComponent, IConfig} from "../component/app.component";
+import {HubService, IConfig} from "./hub.service";
 
+@injectable()
 export class ConfigService extends BaseService {
 
-  constructor(app: AppComponent) {
-    super(app);
+  constructor(protected hubService: HubService) {
+    super();
     this.load();
   }
 
@@ -28,13 +30,13 @@ export class ConfigService extends BaseService {
       result = {};
     }
     if (!result.recentSaveBaseDirs) result.recentSaveBaseDirs = [];
-    this.app.config = result;
+    this.hubService.$vm.config = result;
   }
 
   public save(): void {
     let filePath: string = this.filePath;
     log.debug(`Saving ${filePath}.`);
-    fs.writeFileSync(filePath, JSON.stringify(this.app.config, null, "  "));
+    fs.writeFileSync(filePath, JSON.stringify(this.hubService.$vm.config, null, "  "));
   }
 
 }

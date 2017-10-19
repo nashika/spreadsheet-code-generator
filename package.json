@@ -10,12 +10,12 @@
     "build:copy-font-awesome-fonts": "cpx -C \"node_modules/font-awesome/fonts/*\" \"dist/fonts\"",
     "build:copy-ace-files": "cpx -C \"node_modules/ace-builds/src-min-noconflict/{ace,mode-javascript,worker-javascript,ext-language_tools,snippets/text,snippets/javascript}.js\" \"dist/ace\"",
     "build:copy-handsontable-files": "cpx -C \"node_modules/handsontable/dist/{handsontable.full.min.css,handsontable.full.min.js}\" \"dist/handsontable\"",
-    "build:jade-index": "npm run jade-index",
+    "build:pug-index": "npm run pug-index",
     "build:webpack": "npm run webpack-production",
     "electron": "electron",
     "electron-packager": "electron-packager",
     "electron-packager-dist": "electron-packager . spreadsheet-code-generator --platform=darwin,win32 --arch=x64 --overwrite --ignore=node_modules",
-    "jade-index": "jade index.jade --pretty",
+    "pug-index": "pug index.pug --pretty",
     "ncu": "ncu",
     "npm-check-updates": "npm-check-updates",
     "start": "electron .",
@@ -62,8 +62,10 @@
     "npm-check-updates": "^2.0.0",
     "npm-run-all": "^4.0.0",
     "pug": "^2.0.0-rc.0",
+    "pug-cli": "^1.0.0-alpha6",
     "pug-html-loader": "^1.0.0",
     "raw-loader": "^0.5.0",
+    "reflect-metadata": "^0.1.10",
     "sass-loader": "^6.0.0",
     "style-loader": "^0.19.0",
     "typescript": "^2.0.0",
@@ -71,6 +73,7 @@
     "vue": "^2.0.0",
     "vue-class-component": "^6.0.0",
     "vue-loader": "^13.3.0",
+    "vue-template-compiler": "^2.5.2",
     "webpack": "^3.0.0"
   }
 }

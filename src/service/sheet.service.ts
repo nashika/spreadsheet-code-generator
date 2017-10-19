@@ -1,15 +1,24 @@
-import path = require("path");
-
 import _ = require("lodash");
-import electron = require("electron");
-import vue = require("vue");
+import {injectable} from "inversify";
+import {Vue} from "vue/types/vue";
 
-import {ISheet, ISheetMeta} from "../component/app.component";
 import {IoService} from "./io.service";
+import {HubService, ISheet, ISheetMeta} from "./hub.service";
+import {DataService} from "./data.service";
+import {CodeService} from "./code.service";
+import {ColumnService} from "./column.service";
 
+@injectable()
 export class SheetService extends IoService {
 
   protected static DIR_NAME: string = "sheet";
+
+  constructor(protected hubService: HubService,
+              protected dataService: DataService,
+              protected codeService: CodeService,
+              protected columnService: ColumnService) {
+    super(hubService);
+  }
 
   protected load(sheetName: string): ISheet {
     return super.load(sheetName);
@@ -18,18 +27,18 @@ export class SheetService extends IoService {
   protected save(sheetName: string, data: ISheet) {
     if (sheetName != "root")
       super.save(sheetName, data);
-    vue.set(this.app.sheetMetas[sheetName], "modified", false);
+    Vue.set(this.hubService.$vm.sheetMetas[sheetName], "modified", false);
   }
 
   public newAll(): void {
-    this.app.sheets = {root: this.rootTemplate};
-    this.app.sheetMetas = {
+    this.hubService.$vm.sheets = {root: this.rootTemplate};
+    this.hubService.$vm.sheetMetas = {
       root: this.sheetMetaTemplate,
     };
-    this.app.currentSheet = this.app.sheets["root"];
-    this.app.currentSheetMeta = this.app.sheetMetas["root"];
-    this.app.services.data.newAll();
-    this.app.services.code.newAll();
+    this.hubService.$vm.currentSheet = this.hubService.$vm.sheets["root"];
+    this.hubService.$vm.currentSheetMeta = this.hubService.$vm.sheetMetas["root"];
+    this.dataService.newAll();
+    this.codeService.newAll();
   }
 
   protected get rootTemplate(): ISheet {
@@ -54,105 +63,105 @@ export class SheetService extends IoService {
     this.newAll();
     let names: string[] = this.list();
     for (let name of names) {
-      vue.set(this.app.sheets, name, this.load(name));
-      vue.set(this.app.sheetMetas, name, this.sheetMetaTemplate);
+      Vue.set(this.hubService.$vm.sheets, name, this.load(name));
+      Vue.set(this.hubService.$vm.sheetMetas, name, this.sheetMetaTemplate);
     }
-    if (!this.app.services.data.loadAll()) return false;
-    if (!this.app.services.code.loadAll()) return false;
+    if (!this.dataService.loadAll()) return false;
+    if (!this.codeService.loadAll()) return false;
     return true;
   }
 
   public saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
-    _.forIn(this.app.sheets, (sheet, name) => {
+    _.forIn(this.hubService.$vm.sheets, (sheet, name) => {
       this.save(name, sheet);
     });
-    _.forEach(_.difference(this.list(), _.keys(this.app.sheets)), (name) => {
+    _.forEach(_.difference(this.list(), _.keys(this.hubService.$vm.sheets)), (name) => {
       this.unlink(name);
     });
-    if (!this.app.services.data.saveAll()) return false;
-    if (!this.app.services.code.saveAll()) return false;
+    if (!this.dataService.saveAll()) return false;
+    if (!this.codeService.saveAll()) return false;
     return true;
   }
 
   public select(sheet: ISheet) {
-    this.app.currentSheet = sheet;
-    this.app.currentSheetMeta = this.app.sheetMetas[sheet.name];
-    this.app.currentData = this.app.datas[sheet.name];
-    this.app.currentCode = this.app.codes[sheet.name];
+    this.hubService.$vm.currentSheet = sheet;
+    this.hubService.$vm.currentSheetMeta = this.hubService.$vm.sheetMetas[sheet.name];
+    this.hubService.$vm.currentData = this.hubService.$vm.datas[sheet.name];
+    this.hubService.$vm.currentCode = this.hubService.$vm.codes[sheet.name];
   }
 
   public add(sheetName: string, parentSheetName: string): boolean {
-    if (_.has(this.app.sheets, sheetName)) {
+    if (_.has(this.hubService.$vm.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
     }
     let emptySheet: ISheet = {
       name: sheetName,
-      columns: this.app.services.column.generateInitialColumns(sheetName, parentSheetName),
+      columns: this.columnService.generateInitialColumns(sheetName, parentSheetName),
       parent: parentSheetName,
       freezeColumn: this.countSheetDepth(parentSheetName) + 1,
     };
-    vue.set(this.app.sheets, sheetName, emptySheet);
-    vue.set(this.app.sheetMetas, sheetName, {modified: true});
-    vue.set(this.app.datas, sheetName, _.times(10, () => {
+    Vue.set(this.hubService.$vm.sheets, sheetName, emptySheet);
+    Vue.set(this.hubService.$vm.sheetMetas, sheetName, {modified: true});
+    Vue.set(this.hubService.$vm.datas, sheetName, _.times(10, () => {
       return {}
     }));
-    vue.set(this.app.codes, sheetName, this.app.services.code.defaultCode);
+    Vue.set(this.hubService.$vm.codes, sheetName, this.codeService.defaultCode);
     return true;
   }
 
   public edit(oldSheetName: string, newSheetName: string, parentSheetName: string): boolean {
-    if (oldSheetName != newSheetName && _.has(this.app.sheets, newSheetName)) {
+    if (oldSheetName != newSheetName && _.has(this.hubService.$vm.sheets, newSheetName)) {
       alert(`Sheet "${newSheetName}" already exists.`);
       return false;
     }
-    this.app.sheets[oldSheetName].name = newSheetName;
-    this.app.sheets[oldSheetName].parent = parentSheetName;
-    this.app.sheetMetas[oldSheetName].modified = true;
+    this.hubService.$vm.sheets[oldSheetName].name = newSheetName;
+    this.hubService.$vm.sheets[oldSheetName].parent = parentSheetName;
+    this.hubService.$vm.sheetMetas[oldSheetName].modified = true;
     if (newSheetName == oldSheetName) return true;
-    _.forIn(this.app.sheets, (sheet: ISheet) => {
+    _.forIn(this.hubService.$vm.sheets, (sheet: ISheet) => {
       if (sheet.parent == oldSheetName)
         sheet.parent = newSheetName;
     });
-    vue.set(this.app.sheets, newSheetName, this.app.sheets[oldSheetName]);
-    vue.delete(this.app.sheets, oldSheetName);
-    vue.set(this.app.sheetMetas, newSheetName, this.app.sheetMetas[oldSheetName]);
-    vue.delete(this.app.sheetMetas, oldSheetName);
-    vue.set(this.app.datas, newSheetName, this.app.datas[oldSheetName]);
-    vue.delete(this.app.datas, oldSheetName);
-    vue.set(this.app.codes, newSheetName, this.app.codes[oldSheetName]);
-    vue.delete(this.app.codes, oldSheetName);
+    Vue.set(this.hubService.$vm.sheets, newSheetName, this.hubService.$vm.sheets[oldSheetName]);
+    Vue.delete(this.hubService.$vm.sheets, oldSheetName);
+    Vue.set(this.hubService.$vm.sheetMetas, newSheetName, this.hubService.$vm.sheetMetas[oldSheetName]);
+    Vue.delete(this.hubService.$vm.sheetMetas, oldSheetName);
+    Vue.set(this.hubService.$vm.datas, newSheetName, this.hubService.$vm.datas[oldSheetName]);
+    Vue.delete(this.hubService.$vm.datas, oldSheetName);
+    Vue.set(this.hubService.$vm.codes, newSheetName, this.hubService.$vm.codes[oldSheetName]);
+    Vue.delete(this.hubService.$vm.codes, oldSheetName);
     return true;
   }
 
   public remove(): void {
-    if (!this.app.currentSheet) {
+    if (!this.hubService.$vm.currentSheet) {
       alert(`No selected sheet.`);
       return;
     }
-    if (_.some(this.app.sheets, (sheet: ISheet) => this.app.currentSheet.name == sheet.parent)) {
-      alert(`Sheet "${this.app.currentSheet.name}" have child sheet, please move or delete it.`);
+    if (_.some(this.hubService.$vm.sheets, (sheet: ISheet) => this.hubService.$vm.currentSheet.name == sheet.parent)) {
+      alert(`Sheet "${this.hubService.$vm.currentSheet.name}" have child sheet, please move or delete it.`);
       return;
     }
-    if (!confirm(`Are you sure to delete sheet:"${this.app.currentSheet.name}"?`)) {
+    if (!confirm(`Are you sure to delete sheet:"${this.hubService.$vm.currentSheet.name}"?`)) {
       return;
     }
-    let sheetName: string = this.app.currentSheet.name;
-    vue.delete(this.app.sheets, sheetName);
-    vue.delete(this.app.sheetMetas, sheetName);
-    vue.delete(this.app.datas, sheetName);
-    vue.delete(this.app.codes, sheetName);
-    this.app.sheetMetas["root"].modified = true;
-    this.app.currentSheet = this.app.sheets["root"];
-    this.app.currentData = null;
-    this.app.currentCode = this.app.codes["root"];
+    let sheetName: string = this.hubService.$vm.currentSheet.name;
+    Vue.delete(this.hubService.$vm.sheets, sheetName);
+    Vue.delete(this.hubService.$vm.sheetMetas, sheetName);
+    Vue.delete(this.hubService.$vm.datas, sheetName);
+    Vue.delete(this.hubService.$vm.codes, sheetName);
+    this.hubService.$vm.sheetMetas["root"].modified = true;
+    this.hubService.$vm.currentSheet = this.hubService.$vm.sheets["root"];
+    this.hubService.$vm.currentData = null;
+    this.hubService.$vm.currentCode = this.hubService.$vm.codes["root"];
   }
 
   public isParentRecursive(target: ISheet, parent: ISheet): boolean {
     if (target.parent == parent.name) return true;
     if (!target.parent) return false;
-    return this.isParentRecursive(this.app.sheets[target.parent], parent);
+    return this.isParentRecursive(this.hubService.$vm.sheets[target.parent], parent);
   }
 
   public loadAllForGenerate(): {[sheetName: string]: ISheet} {
@@ -166,7 +175,7 @@ export class SheetService extends IoService {
 
   protected countSheetDepth(sheetName: string): number {
     if (sheetName == "root") return 0;
-    let sheet: ISheet = this.app.sheets[sheetName];
+    let sheet: ISheet = this.hubService.$vm.sheets[sheetName];
     return this.countSheetDepth(sheet.parent) + 1;
   }
 

@@ -3,10 +3,10 @@ import path = require("path");
 import _ = require("lodash");
 import * as log from "loglevel";
 
-import {AppComponent, ISheet, TSheetData} from "../component/app.component";
 import {GeneratorAccessor} from "./generator-accessor";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
+import {ISheet, TSheetData} from "../service/hub.service";
 
 declare function originalRequire(path: string): any;
 declare module originalRequire {
@@ -50,7 +50,7 @@ export class GeneratorProcess {
     let sheetCodes: {[sheetName: string]: TGeneratorSheetCode} = {};
     for (let sheetName of this.codeNames) {
       sheetCodes[sheetName] = this.requireSheetObject(sheetName);
-      if (!sheetCodes[sheetName]) return;
+      if (!sheetCodes[sheetName]) return 0;
     }
     accessor._sheetCodes = sheetCodes;
     log.debug(`Initialize sheet code was finished.`);

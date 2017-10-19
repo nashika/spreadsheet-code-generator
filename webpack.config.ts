@@ -2,7 +2,6 @@ import * as path from "path";
 
 import * as webpack from "webpack";
 
-let CopyWebpackPlugin = require("copy-webpack-plugin");
 let UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 
 let webpackConfig: webpack.Configuration = {
@@ -27,7 +26,7 @@ let webpackConfig: webpack.Configuration = {
       {test: /\.scss$/, loaders: ["style-loader", "css-loader", "sass-loader"]},
       {test: /\.snippets/, loader: "raw-loader"},
       {
-        test: /\.vue$/, loader: "vue-loader", options:
+        test: /\.vue$/, loader: "Vue-loader", options:
         {
           loaders: {
             ts: "awesome-typescript-loader",

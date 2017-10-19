@@ -1,9 +1,10 @@
 import Component from "vue-class-component";
 import _ = require("lodash");
 
-import {BaseComponent} from "./base-component";
-import {ISheet, ISheetMeta} from "./app.component";
-import {templateLoader} from "./template-loader";
+import BaseComponent from "./base-component";
+import {SheetService} from "../service/sheet.service";
+import {container} from "../inversify.config";
+import {ISheet, ISheetMeta} from "../service/hub.service";
 
 interface ITreeSheet {
   sheet: ISheet,
@@ -11,12 +12,11 @@ interface ITreeSheet {
 }
 
 @Component({
-  template: templateLoader("sheets"),
-  components: {
-    dropdown: require("vue-strap").dropdown,
-    modal: require("vue-strap").modal,
+  props: {
+    currentSheet: Object,
+    sheets: Object,
+    sheetMetas: Object,
   },
-  props: ["currentSheet", "sheets", "sheetMetas"],
   watch: {
     "sheets": {
       handler: SheetsComponent.prototype.watchSheets,
@@ -24,38 +24,30 @@ interface ITreeSheet {
     },
   },
 })
-export class SheetsComponent extends BaseComponent {
+export default class SheetsComponent extends BaseComponent {
+
+  sheetService: SheetService = container.get(SheetService);
 
   currentSheet: ISheet;
   sheets: {[sheetName: string]: ISheet};
   sheetMetas: {[sheetName: string]: ISheetMeta};
 
-  treeSheets: ITreeSheet[];
-  addModal: boolean;
-  editModal: boolean;
-  newSheetParent: string;
-  newSheetName: string;
-
-  data(): any {
-    return {
-      treeSheets: [],
-      addModal: false,
-      editModal: false,
-      newSheetParent: "",
-      newSheetName: "",
-    }
-  }
+  treeSheets: ITreeSheet[] = [];
+  addModal: boolean = false;
+  editModal: boolean = false;
+  newSheetParent: string = "";
+  newSheetName: string = "";
 
   ready() {
     this.watchSheets();
   }
 
   select(sheet: ISheet): void {
-    this.$root.services.sheet.select(sheet);
+    this.sheetService.select(sheet);
   }
 
   add(): void {
-    if (this.$root.services.sheet.add(this.newSheetName, this.currentSheet.name)) {
+    if (this.sheetService.add(this.newSheetName, this.currentSheet.name)) {
       this.newSheetName = "";
       this.addModal = false;
     }
@@ -63,7 +55,7 @@ export class SheetsComponent extends BaseComponent {
 
   edit(): void {
     let newSheetParent: string = this.newSheetParent || this.currentSheet.parent;
-    if (this.$root.services.sheet.edit(this.currentSheet.name, this.newSheetName, newSheetParent)) {
+    if (this.sheetService.edit(this.currentSheet.name, this.newSheetName, newSheetParent)) {
       this.newSheetName = "";
       this.newSheetParent = "root";
       this.editModal = false;
@@ -71,7 +63,7 @@ export class SheetsComponent extends BaseComponent {
   }
 
   remove(): void {
-    this.$root.services.sheet.remove();
+    this.sheetService.remove();
   }
 
   notSelfOrChildTreeSheets(treeSheets: ITreeSheet[]): ITreeSheet[] {
@@ -79,7 +71,7 @@ export class SheetsComponent extends BaseComponent {
       let sheetName = treeSheet.sheet.name;
       if (sheetName == this.currentSheet.name) return false;
       if (!this.sheets[sheetName]) return true;
-      return !this.$root.services.sheet.isParentRecursive(this.sheets[sheetName], this.currentSheet);
+      return !this.sheetService.isParentRecursive(this.sheets[sheetName], this.currentSheet);
     });
   }
 
