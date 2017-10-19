@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(style="height:100%")
+  .code-editor-component(style="height:100%")
     div#code-editor(style="height:100%")
 </template>
 

@@ -1,13 +1,14 @@
 <template lang="pug">
-  div.panel.panel-default
-    div.panel-heading #[i.fa.fa-search] Search
-    ul.list-group
-      li.list-group-item
-        form.form-horizontal(@submit.prevent="search")
-          div.input-group
-            input.form-control(type="text", v-model="query", placeholder="Search for...")
-            span.input-group-btn
-              button.btn.btn-primary(type="submit") #[i.fa.fa-search]
+  .search-component
+    b-card(no-body)
+      .h6(slot="header") #[i.fa.fa-search] Search
+      b-list-group(flush)
+        b-list-group-item
+          form(@submit.prevent="search")
+            b-input-group
+              b-form-input(type="text", v-model="query", placeholder="Search for...")
+              b-input-group-button
+                b-button(type="submit", variant="primary") #[i.fa.fa-search]
 </template>
 
 <script lang="ts" src="./search.component.ts"></script>

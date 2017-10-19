@@ -3,21 +3,6 @@ html, body {
   overflow: hidden;
 }
 
-#container, #row {
-  height: 100%;
-}
-
-#menu-area {
-  height: 100%;
-  padding: 5px;
-  overflow-y: auto;
-}
-
-#main-area {
-  padding: 0px;
-  height: 100%;
-}
-
 spreadsheet-component {
   position: absolute;
   width: 100%;

@@ -15,20 +15,12 @@ export default class ColumnComponent extends BaseComponent {
 
   columnService: ColumnService = container.get(ColumnService);
 
-  columnIndex: number;
-  column: IColumn;
-  optionsText: string;
+  columnIndex: number = 0;
+  column: IColumn = null;
+  optionsText: string = "";
 
   created() {
     this.$on("select-column", this.onSelectColumn);
-  }
-
-  data(): any {
-    return {
-      columnIndex: 0,
-      column: null,
-      optionsText: "",
-    }
   }
 
   add(): void {
