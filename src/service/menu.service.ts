@@ -3,6 +3,7 @@ import path = require("path");
 import electron = require("electron");
 import Menu = Electron.Menu;
 import _ = require("lodash");
+import {injectable} from "inversify";
 
 import {BaseService} from "./base.service";
 import {HubService} from "./hub.service";
@@ -10,6 +11,7 @@ import {GeneratorService} from "./generator.service";
 import {SheetService} from "./sheet.service";
 import {ConfigService} from "./config.service";
 
+@injectable()
 export class MenuService extends BaseService {
 
   protected menu: Menu;

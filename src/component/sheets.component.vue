@@ -1,19 +1,12 @@
 <template lang="pug">
-  div
-    .panel.panel-default
-      .panel-heading #[i.fa.fa-table] Sheets
-        dropdown.pull-right
-          button.btn.btn-primary.dropdown-toggle.btn-xs(slot="button", type="button", data-toggle="dropdown")
-            i.fa.fa-bars
-            | &nbsp;
-            i.fa.fa-caret-down
-          ul.dropdown-menu(slot="dropdown-menu")
-            li
-              a(@click="addModal = true") #[i.fa.fa-fw.fa-plus] Add
-            li(v-if="$hub.currentSheet.name != 'root'")
-              a(@click="editModal = true") #[i.fa.fa-fw.fa-pencil] Edit
-            li(v-if="$hub.currentSheet.name != 'root'")
-              a(@click="remove") #[i.fa.fa-fw.fa-trash] Delete
+  .sheets-component
+    b-card(no-body)
+      h6(slot="header") #[i.fa.fa-table] Sheets
+        b-dropdown(variant="primary", size="xs")
+          template(slot="button-content") #[i.fa.fa-bars]
+          b-dropdown-item(@click="addModal = true") #[i.fa.fa-fw.fa-plus] Add
+          b-dropdown-item(v-if="$hub.currentSheet.name != 'root'", @click="editModal = true") #[i.fa.fa-fw.fa-pencil] Edit
+          b-dropdown-item(v-if="$hub.currentSheet.name != 'root'", @click="remove") #[i.fa.fa-fw.fa-trash] Delete
       ul.list-group
         li.list-group-item(v-for="treeSheet in treeSheets", @click="select(treeSheet.sheet)",
         :class="{'list-group-item-info': treeSheet.sheet == $hub.currentSheet}",

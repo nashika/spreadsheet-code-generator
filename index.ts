@@ -1,6 +1,6 @@
 import electron = require("electron");
 
-let win:Electron.BrowserWindow;
+let win: Electron.BrowserWindow;
 
 function createWindow() {
   win = new electron.BrowserWindow({width: 1200, height: 800});

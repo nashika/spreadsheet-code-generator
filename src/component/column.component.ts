@@ -1,7 +1,7 @@
 import Component from "vue-class-component";
 import _ = require("lodash");
 
-import BaseComponent from "./base-component";
+import BaseComponent from "./base.component";
 import {ColumnService} from "../service/column.service";
 import {container} from "../inversify.config";
 import {IColumn} from "../service/hub.service";

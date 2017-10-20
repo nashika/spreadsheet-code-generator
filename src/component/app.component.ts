@@ -1,6 +1,8 @@
 import Component from "vue-class-component";
 
-import BaseComponent from "./base-component";
+import BaseComponent from "./base.component";
+import {MenuService} from "../service/menu.service";
+import {container} from "../inversify.config";
 
 @Component({
   components: {
@@ -13,4 +15,7 @@ import BaseComponent from "./base-component";
   },
 })
 export default class AppComponent extends BaseComponent {
+
+  menuService: MenuService = container.get(MenuService);
+
 }

@@ -1,7 +1,7 @@
 import Component from "vue-class-component";
 import _ = require("lodash");
 
-import BaseComponent from "./base-component";
+import BaseComponent from "./base.component";
 import {InheritRecords} from "../util/inherit-records";
 import {IColumn} from "../service/hub.service";
 

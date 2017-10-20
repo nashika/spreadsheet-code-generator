@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(style="height:100%")
+  .spreadsheet-component(style="height:100%")
     div#spreadsheet(style="height:100%")
 </template>
 

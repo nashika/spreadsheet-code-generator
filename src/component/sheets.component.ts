@@ -1,7 +1,7 @@
 import Component from "vue-class-component";
 import _ = require("lodash");
 
-import BaseComponent from "./base-component";
+import BaseComponent from "./base.component";
 import {SheetService} from "../service/sheet.service";
 import {container} from "../inversify.config";
 import {ISheet} from "../service/hub.service";
