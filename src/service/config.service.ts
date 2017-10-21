@@ -5,14 +5,14 @@ import electron = require("electron");
 import * as log from "loglevel";
 import {injectable} from "inversify";
 
-import {BaseService} from "./base.service";
 import {HubService, IConfig} from "./hub.service";
+import {BaseHubService} from "./base-hub.service";
 
 @injectable()
-export class ConfigService extends BaseService {
+export class ConfigService extends BaseHubService {
 
   constructor(protected hubService: HubService) {
-    super();
+    super(hubService);
     this.load();
   }
 
@@ -30,13 +30,13 @@ export class ConfigService extends BaseService {
       result = {};
     }
     if (!result.recentSaveBaseDirs) result.recentSaveBaseDirs = [];
-    this.hubService.$vm.config = result;
+    this.$hub.config = result;
   }
 
   public save(): void {
     let filePath: string = this.filePath;
     log.debug(`Saving ${filePath}.`);
-    fs.writeFileSync(filePath, JSON.stringify(this.hubService.$vm.config, null, "  "));
+    fs.writeFileSync(filePath, JSON.stringify(this.$hub.config, null, "  "));
   }
 
 }

@@ -2,61 +2,61 @@ import _ = require("lodash");
 import {injectable} from "inversify";
 import Vue from "vue";
 
-import {BaseService} from "./base.service";
 import {HubService, IColumn} from "./hub.service";
+import {BaseHubService} from "./base-hub.service";
 
 @injectable()
-export class ColumnService extends BaseService {
+export class ColumnService extends BaseHubService {
 
   constructor(protected hubService: HubService) {
-    super();
+    super(hubService);
   }
 
   public add(index: number): void {
-    let columns = this.hubService.$vm.currentSheet.columns;
-    this.hubService.$vm.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialEmptyColumn()], _.slice(columns, index));
-    this.hubService.$vm.currentSheetMeta.modified = true;
+    let columns = this.$hub.currentSheet.columns;
+    this.$hub.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialEmptyColumn()], _.slice(columns, index));
+    this.$hub.currentSheetMeta.modified = true;
   }
 
   public modify(index: number, column: IColumn): void {
-    if (this.hubService.$vm.currentSheet.columns[index].data != column.data
-      && _.find(this.hubService.$vm.currentSheet.columns, {"data": column.data})) {
+    if (this.$hub.currentSheet.columns[index].data != column.data
+      && _.find(this.$hub.currentSheet.columns, {"data": column.data})) {
       alert(`data="${column.data}" is already exists.`);
       return;
     }
-    let oldColumn: IColumn = this.hubService.$vm.currentSheet.columns[index];
+    let oldColumn: IColumn = this.$hub.currentSheet.columns[index];
     if (column.data != oldColumn.data) {
-      for (let record of this.hubService.$vm.currentData) {
+      for (let record of this.$hub.currentData) {
         Vue.set(record, column.data, record[oldColumn.data]);
         Vue.delete(record, oldColumn.data);
       }
     }
     if (column.type != "select") Vue.delete(column, "options");
     if (!_.includes(["text", "select"], column.type)) Vue.delete(column, "json");
-    Vue.set(this.hubService.$vm.currentSheet.columns, index, column);
-    this.hubService.$vm.currentSheetMeta.modified = true;
+    Vue.set(this.$hub.currentSheet.columns, index, column);
+    this.$hub.currentSheetMeta.modified = true;
   }
 
   public move(index: number, right: boolean): void {
-    let columns: IColumn[] = this.hubService.$vm.currentSheet.columns;
+    let columns: IColumn[] = this.$hub.currentSheet.columns;
     if (right) {
-      this.hubService.$vm.currentSheet.columns = _.concat(
+      this.$hub.currentSheet.columns = _.concat(
         _.take(columns, index), [columns[index + 1], columns[index]], _.takeRight(columns, columns.length - index - 2));
     } else {
-      this.hubService.$vm.currentSheet.columns = _.concat(
+      this.$hub.currentSheet.columns = _.concat(
         _.take(columns, index - 1), [columns[index], columns[index - 1]], _.takeRight(columns, columns.length - index - 1));
     }
-    this.hubService.$vm.currentSheetMeta.modified = true;
+    this.$hub.currentSheetMeta.modified = true;
   }
 
   public remove(index: number): void {
-    Vue.delete(this.hubService.$vm.currentSheet.columns, index);
-    this.hubService.$vm.sheetMetas[this.hubService.$vm.currentSheet.name].modified = true;
+    Vue.delete(this.$hub.currentSheet.columns, index);
+    this.$hub.sheetMetas[this.$hub.currentSheet.name].modified = true;
   }
 
   public freeze(index: number): void {
-    this.hubService.$vm.currentSheet.freezeColumn = index;
-    this.hubService.$vm.currentSheetMeta.modified = true;
+    this.$hub.currentSheet.freezeColumn = index;
+    this.$hub.currentSheetMeta.modified = true;
   }
 
   public generateInitialColumns(sheetName: string, parentSheetName: string): IColumn[] {
@@ -73,7 +73,7 @@ export class ColumnService extends BaseService {
 
   protected generateInitialTreeColumns(sheetName: string, parentSheetName: string): IColumn[] {
     if (sheetName == "root") return [];
-    let parentSheet = this.hubService.$vm.sheets[parentSheetName];
+    let parentSheet = this.$hub.sheets[parentSheetName];
     let sheetColumn: IColumn = {
       header: _.startCase(sheetName),
       data: _.camelCase(sheetName),
@@ -84,7 +84,7 @@ export class ColumnService extends BaseService {
   }
 
   protected generateInitialEmptyColumn(no: number = undefined): IColumn {
-    no = _.isUndefined(no) ? this.hubService.$vm.currentSheet.columns.length : no;
+    no = _.isUndefined(no) ? this.$hub.currentSheet.columns.length : no;
     return {
       header: `Col${no}`,
       data: `data${no}`,

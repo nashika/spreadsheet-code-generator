@@ -5,14 +5,14 @@ import Menu = Electron.Menu;
 import _ = require("lodash");
 import {injectable} from "inversify";
 
-import {BaseService} from "./base.service";
 import {HubService} from "./hub.service";
 import {GeneratorService} from "./generator.service";
 import {SheetService} from "./sheet.service";
 import {ConfigService} from "./config.service";
+import {BaseHubService} from "./base-hub.service";
 
 @injectable()
-export class MenuService extends BaseService {
+export class MenuService extends BaseHubService {
 
   protected menu: Menu;
 
@@ -20,7 +20,7 @@ export class MenuService extends BaseService {
               protected generatorService: GeneratorService,
               protected sheetService: SheetService,
               protected configService: ConfigService) {
-    super();
+    super(hubService);
     this.init();
   }
 
@@ -66,7 +66,7 @@ export class MenuService extends BaseService {
           {
             label: "Insert new line",
             accelerator: "Ctrl+I",
-            click: () => this.hubService.$vm.$emit("insert"),
+            click: () => this.$hub.$emit("insert"),
           }
         ],
       },
@@ -77,7 +77,7 @@ export class MenuService extends BaseService {
             label: "Toggle Side &Menu",
             accelerator: "Ctrl+E",
             click: () => {
-              this.hubService.$vm.showMenu = !this.hubService.$vm.showMenu;
+              this.$hub.showMenu = !this.$hub.showMenu;
             },
           },
         ],
@@ -88,20 +88,20 @@ export class MenuService extends BaseService {
           {
             label: "&Data Edit Mode",
             click: () => {
-              this.hubService.$vm.mode = "data";
+              this.$hub.mode = "data";
             }
           },
           {
             label: "&Code Edit Mode",
             click: () => {
-              this.hubService.$vm.mode = "code";
+              this.$hub.mode = "code";
             }
           },
           {
             label: "&Toggle Edit Mode",
             accelerator: "Ctrl+T",
             click: () => {
-              this.hubService.$vm.mode = this.hubService.$vm.mode == "data" ? "code" : "data";
+              this.$hub.mode = this.$hub.mode == "data" ? "code" : "data";
             }
           },
           {
@@ -147,7 +147,7 @@ export class MenuService extends BaseService {
   protected new = (): void => {
     if (!window.confirm(`All editing data will be erased, Do you really want to new project?`))
       return;
-    this.hubService.$vm.saveBaseDir = "";
+    this.$hub.saveBaseDir = "";
     this.sheetService.newAll();
     this.saveDirInfo(false);
   };
@@ -160,11 +160,11 @@ export class MenuService extends BaseService {
 
   protected openRecent(dir: string = ""): void {
     if (dir)
-      this.hubService.$vm.saveBaseDir = dir;
-    else if (this.hubService.$vm.config.recentSaveBaseDirs.length > 0)
-      this.hubService.$vm.saveBaseDir = this.hubService.$vm.config.recentSaveBaseDirs[0];
+      this.$hub.saveBaseDir = dir;
+    else if (this.$hub.config.recentSaveBaseDirs.length > 0)
+      this.$hub.saveBaseDir = this.$hub.config.recentSaveBaseDirs[0];
     else
-      this.hubService.$vm.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
+      this.$hub.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
     if (this.sheetService.loadAll())
       this.saveDirInfo();
 
@@ -179,7 +179,7 @@ export class MenuService extends BaseService {
   };
 
   protected save(as: boolean = false): void {
-    if (as || !this.hubService.$vm.saveBaseDir)
+    if (as || !this.$hub.saveBaseDir)
       if (!this.openDir())
         return;
     if (this.sheetService.saveAll())
@@ -188,26 +188,26 @@ export class MenuService extends BaseService {
 
   protected openDir(): boolean {
     let dirs: string[] = electron.remote.dialog.showOpenDialog({
-      defaultPath: this.hubService.$vm.saveBaseDir || this.hubService.$vm.config.recentSaveBaseDirs[0],
+      defaultPath: this.$hub.saveBaseDir || this.$hub.config.recentSaveBaseDirs[0],
       properties: ["openDirectory"],
     });
     if (!dirs || dirs.length == 0) return false;
-    this.hubService.$vm.saveBaseDir = dirs[0];
+    this.$hub.saveBaseDir = dirs[0];
     return true;
   }
 
   protected saveDirInfo(save: boolean = true): void {
-    electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.hubService.$vm.saveBaseDir}]`);
+    electron.remote.getCurrentWindow().setTitle(`spreadsheet-code-generator [${this.$hub.saveBaseDir}]`);
     if (save) {
-      this.hubService.$vm.config.recentSaveBaseDirs = this.hubService.$vm.config.recentSaveBaseDirs || [];
-      this.hubService.$vm.config.recentSaveBaseDirs = _.filter(this.hubService.$vm.config.recentSaveBaseDirs,
-        (dir: string): boolean => _.toLower(dir) != _.toLower(this.hubService.$vm.saveBaseDir));
-      this.hubService.$vm.config.recentSaveBaseDirs = _.concat(this.hubService.$vm.saveBaseDir, this.hubService.$vm.config.recentSaveBaseDirs);
-      this.hubService.$vm.config.recentSaveBaseDirs = _.take(this.hubService.$vm.config.recentSaveBaseDirs, 5);
+      this.$hub.config.recentSaveBaseDirs = this.$hub.config.recentSaveBaseDirs || [];
+      this.$hub.config.recentSaveBaseDirs = _.filter(this.$hub.config.recentSaveBaseDirs,
+        (dir: string): boolean => _.toLower(dir) != _.toLower(this.$hub.saveBaseDir));
+      this.$hub.config.recentSaveBaseDirs = _.concat(this.$hub.saveBaseDir, this.$hub.config.recentSaveBaseDirs);
+      this.$hub.config.recentSaveBaseDirs = _.take(this.$hub.config.recentSaveBaseDirs, 5);
       this.configService.save();
       let submenu: Menu = <Menu>(<any>(<Menu>(<any>this.menu.items[0]).submenu).items[2]).submenu;
       (<any>submenu).clear();
-      for (let dir of this.hubService.$vm.config.recentSaveBaseDirs) {
+      for (let dir of this.$hub.config.recentSaveBaseDirs) {
         submenu.append(new electron.remote.MenuItem({
           label: dir,
           click: () => {

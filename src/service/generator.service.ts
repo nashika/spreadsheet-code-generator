@@ -3,15 +3,15 @@ import _ = require("lodash");
 import * as log from "loglevel";
 import {injectable} from "inversify";
 
-import {BaseService} from "./base.service";
 import {GeneratorProcess} from "../generator/generator-process";
 import {HubService, ISheet, ISheetMeta, TSheetData} from "./hub.service";
 import {CodeService} from "./code.service";
 import {SheetService} from "./sheet.service";
 import {DataService} from "./data.service";
+import {BaseHubService} from "./base-hub.service";
 
 @injectable()
-export class GeneratorService extends BaseService {
+export class GeneratorService extends BaseHubService {
 
   public errorQuestionFlag: boolean = false;
 
@@ -19,11 +19,11 @@ export class GeneratorService extends BaseService {
               protected sheetService: SheetService,
               protected dataService: DataService,
               protected codeService: CodeService) {
-    super();
+    super(hubService);
   }
 
   public generate(): void {
-    if (!this.hubService.$vm.saveBaseDir || _.some(this.hubService.$vm.sheetMetas,
+    if (!this.$hub.saveBaseDir || _.some(this.$hub.sheetMetas,
         (sheetMeta: ISheetMeta) => {
           return sheetMeta.modified;
         })) {
@@ -48,7 +48,7 @@ export class GeneratorService extends BaseService {
     log.debug(`Load sheet data was finished.`);
 
     let codeNames: string[] = this.codeService.list();
-    let process: GeneratorProcess = new GeneratorProcess(this.hubService.$vm.saveBaseDir, sheets, sheetDatas, codeNames);
+    let process: GeneratorProcess = new GeneratorProcess(this.$hub.saveBaseDir, sheets, sheetDatas, codeNames);
     let result: number;
     try {
       result = process.main();

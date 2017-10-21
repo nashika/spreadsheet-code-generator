@@ -20,7 +20,7 @@ export default class ColumnComponent extends BaseComponent {
   optionsText: string = "";
 
   created() {
-    this.$on("select-column", this.onSelectColumn);
+    this.$hub.$on("select-column", this.onSelectColumn);
   }
 
   add(): void {

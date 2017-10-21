@@ -29,7 +29,7 @@ export default class SheetsComponent extends BaseComponent {
   newSheetParent: string = "";
   newSheetName: string = "";
 
-  ready() {
+  mounted() {
     this.watchSheets();
   }
 

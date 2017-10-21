@@ -6,7 +6,7 @@ import {container} from "../inversify.config";
 
 @Component({
   watch: {
-    "currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
+    "$hub.currentSheet": CodeEditorComponent.prototype.onChangeCurrentSheet,
   },
 })
 export default class CodeEditorComponent extends BaseComponent {
@@ -26,7 +26,7 @@ export default class CodeEditorComponent extends BaseComponent {
     this.editor.find(query);
   }
 
-  ready() {
+  mounted() {
     let container: HTMLElement = <HTMLElement>this.$el.querySelector("#code-editor");
     this.editor = ace.edit(container);
     //this.editor.setTheme("ace/theme/chrome");

@@ -4,25 +4,25 @@ import * as path from "path";
 import * as log from "loglevel";
 import {injectable} from "inversify";
 
-import {BaseService} from "./base.service";
 import {HubService} from "./hub.service";
+import {BaseHubService} from "./base-hub.service";
 
 @injectable()
-export abstract class IoService extends BaseService {
+export abstract class BaseIoService extends BaseHubService {
 
   protected static DIR_NAME: string = "";
   protected static EXT: string = "json";
 
   constructor(protected hubService: HubService) {
-    super();
+    super(hubService);
   }
 
   protected get saveDir(): string {
-    return path.join(this.hubService.$vm.saveBaseDir, (<typeof IoService>this.constructor).DIR_NAME);
+    return path.join(this.$hub.saveBaseDir, (<typeof BaseIoService>this.constructor).DIR_NAME);
   }
 
   protected filePath(sheetName: string): string {
-    return path.join(this.saveDir, `${sheetName}.${(<typeof IoService>this.constructor).EXT}`);
+    return path.join(this.saveDir, `${sheetName}.${(<typeof BaseIoService>this.constructor).EXT}`);
   }
 
   protected checkDir(): boolean {
@@ -51,7 +51,7 @@ export abstract class IoService extends BaseService {
   }
 
   public list(): string[] {
-    let regexp = new RegExp(`\\.${(<typeof IoService>this.constructor).EXT}$`);
+    let regexp = new RegExp(`\\.${(<typeof BaseIoService>this.constructor).EXT}$`);
     return fs.readdirSync(this.saveDir)
       .filter((f) => f.match(regexp) ? true : false)
       .map((f) => f.replace(regexp, ""));
@@ -62,7 +62,7 @@ export abstract class IoService extends BaseService {
     log.debug(`Loadig ${filePath}.`);
     if (fs.existsSync(filePath)) {
       let data: string = fs.readFileSync(filePath).toString();
-      if ((<typeof IoService>this.constructor).EXT == "json")
+      if ((<typeof BaseIoService>this.constructor).EXT == "json")
         return JSON.parse(data);
       else
         return data;
@@ -75,7 +75,7 @@ export abstract class IoService extends BaseService {
     let filePath: string = this.filePath(sheetName);
     log.debug(`Saving ${filePath}.`);
     let writeData: string;
-    if ((<typeof IoService>this.constructor).EXT == "json")
+    if ((<typeof BaseIoService>this.constructor).EXT == "json")
       writeData = JSON.stringify(data, null, "  ");
     else
       writeData = data;

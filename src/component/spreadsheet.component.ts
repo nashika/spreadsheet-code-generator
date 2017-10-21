@@ -20,7 +20,7 @@ interface IMyHandsontable extends Handsontable.Core {
 
 @Component({
   watch: {
-    "currentSheet": {
+    "$hub.currentSheet": {
       handler: SpreadsheetComponent.prototype.rebuildSpreadsheet,
       deep: true,
     },
@@ -74,7 +74,7 @@ export default class SpreadsheetComponent extends BaseComponent {
     this.hot.alter("insert_row", this.currentRow);
   }
 
-  ready() {
+  mounted() {
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
   }
@@ -104,7 +104,7 @@ export default class SpreadsheetComponent extends BaseComponent {
     this.currentRow = r;
     this.currentCol = c;
     setTimeout(() => {
-      this.hubService.$vm.$emit("select-column", c);
+      this.$hub.$emit("select-column", c);
     }, 0);
   }
 
