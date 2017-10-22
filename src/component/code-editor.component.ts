@@ -19,7 +19,7 @@ export default class CodeEditorComponent extends BaseComponent {
   editor: AceAjax.Editor = null;
 
   created() {
-    this.$on("search", this.onSearch);
+    this.$hub.$on("search", this.onSearch);
   }
 
   onSearch(query: string): void {

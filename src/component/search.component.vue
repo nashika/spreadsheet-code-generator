@@ -4,7 +4,7 @@
       .h6(slot="header") #[i.fa.fa-search] Search
       b-list-group(flush)
         b-list-group-item
-          form(@submit.prevent="search")
+          b-form(@submit.prevent="search")
             b-input-group
               b-form-input(type="text", v-model="query", placeholder="Search for...")
               b-input-group-button

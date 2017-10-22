@@ -24,8 +24,6 @@ export default class SheetsComponent extends BaseComponent {
   sheetService: SheetService = container.get(SheetService);
 
   treeSheets: ITreeSheet[] = [];
-  addModal: boolean = false;
-  editModal: boolean = false;
   newSheetParent: string = "";
   newSheetName: string = "";
 
@@ -37,19 +35,25 @@ export default class SheetsComponent extends BaseComponent {
     this.sheetService.select(sheet);
   }
 
-  add(): void {
-    if (this.sheetService.add(this.newSheetName, this.$hub.currentSheet.name)) {
-      this.newSheetName = "";
-      this.addModal = false;
+  showAddModal(): void {
+    this.newSheetParent = this.$hub.currentSheet.name;
+    this.newSheetName = "";
+  }
+
+  okAddModal(e: Event): void {
+    if (!this.sheetService.add(this.newSheetName, this.$hub.currentSheet.name)) {
+      e.preventDefault();
     }
   }
 
-  edit(): void {
-    let newSheetParent: string = this.newSheetParent || this.$hub.currentSheet.parent;
-    if (this.sheetService.edit(this.$hub.currentSheet.name, this.newSheetName, newSheetParent)) {
-      this.newSheetName = "";
-      this.newSheetParent = "root";
-      this.editModal = false;
+  showEditModal(): void {
+    this.newSheetParent = this.$hub.currentSheet.parent;
+    this.newSheetName = this.$hub.currentSheet.name;
+  }
+
+  okEditModal(e: Event): void {
+    if (!this.sheetService.edit(this.$hub.currentSheet.name, this.newSheetName, this.newSheetParent)) {
+      e.preventDefault();
     }
   }
 

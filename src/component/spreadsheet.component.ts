@@ -30,26 +30,22 @@ interface IMyHandsontable extends Handsontable.Core {
 })
 export default class SpreadsheetComponent extends BaseComponent {
 
-  columnMap: {[key: string]: IColumn};
-  currentRow: number;
-  currentCol: number;
-  resizeTimer: any;
+  columnMap: {[key: string]: IColumn} = null;
+  currentRow: number = 0;
+  currentCol: number = 0;
+  resizeTimer: any = null;
 
   hot: IMyHandsontable;
   inheritRecords: InheritRecords;
 
-  data(): any {
-    return {
-      columnMap: null,
-      currentRow: 0,
-      currentCol: 0,
-      resizeTimer: null,
-    };
+  created() {
+    this.$hub.$on("search", this.onSearch);
+    this.$hub.$on("insert", this.onInsert);
   }
 
-  created() {
-    this.$on("search", this.onSearch);
-    this.$on("insert", this.onInsert);
+  mounted() {
+    window.addEventListener("resize", this.resize);
+    this.rebuildSpreadsheet();
   }
 
   onSearch(query: string) {
@@ -72,11 +68,6 @@ export default class SpreadsheetComponent extends BaseComponent {
 
   onInsert() {
     this.hot.alter("insert_row", this.currentRow);
-  }
-
-  mounted() {
-    window.addEventListener("resize", this.resize);
-    this.rebuildSpreadsheet();
   }
 
   onBeforeDestroy() {

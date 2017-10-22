@@ -37,12 +37,6 @@ let webpackConfig: webpack.Configuration = {
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.ProgressPlugin(),
   ].concat(process.env.NODE_ENV == "production" ? [new UglifyJsPlugin({
-    compress: {
-      warnings: false,
-    },
-    mangle: {
-      keep_fnames: true,
-    },
     sourceMap: true,
   }),
   ] : []),
