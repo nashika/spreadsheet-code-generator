@@ -6,7 +6,7 @@
         b-list-group-item
           b-button(variant="success", block, @click="add") #[i.fa.fa-plus] Add
         b-list-group-item(v-if="column")
-          b-form(@submit="modify")
+          b-form(@submit.prevent="modify")
             b-form-group(label="Header")
               b-form-input(type="text", v-model="column.header", required)
             b-form-group(label="Data")
