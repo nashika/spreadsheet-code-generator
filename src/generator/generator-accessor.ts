@@ -16,47 +16,58 @@ type TSortDataType = {child: GeneratorNodeElement, result: any};
 
 export class GeneratorAccessor {
 
-  public _sheetCodes: {[sheetName: string]: TGeneratorSheetCode};
-  public _currentNode: GeneratorNodeElement;
-  public _unitIndent: number = 4;
-  public _writeCount: number = 0;
+  static unitIndent: number;
+  static writeCount: number;
+  static saveBaseDir: string;
+  static sheetCodes: {[sheetName: string]: TGeneratorSheetCode};
 
-  protected _childrenCache: {[sheetName: string]: {[nodeName: string]: any}};
-  protected _childrenCachedNode: GeneratorNodeElement;
+  protected __childrenCache: {[sheetName: string]: {[nodeName: string]: any}};
+  protected __childrenCachedNode: GeneratorNodeElement;
 
-  constructor(protected saveBaseDir: string) {
+  constructor(protected __currentNode: GeneratorNodeElement) {
   }
 
-  public get name(): string {
-    return this._currentNode.name;
+  get Class(): typeof GeneratorAccessor {
+    return <typeof GeneratorAccessor>this.constructor;
   }
 
-  public get data(): any {
-    return this._currentNode.data;
+  get name(): string {
+    return this.__currentNode.name;
   }
 
-  public get parent(): any {
-    return this._currentNode.parent.data;
+  get data(): any {
+    return this.__currentNode.data;
   }
 
-  public get columns(): string[] {
-    return _.map(this._currentNode.definition.columns, column => column.data);
+  get parent(): GeneratorAccessor {
+    return new GeneratorAccessor(this.__currentNode.parent);
+  }
+
+  get siblings(): {[nodeName: string]: GeneratorAccessor} {
+    return _(this.__currentNode.parent.getChildren(this.__currentNode.definition.name))
+      .omit(["*", this.__currentNode.name])
+      .mapValues(childNode => new GeneratorAccessor(childNode))
+      .value();
+  }
+
+  get columns(): string[] {
+    return _.map(this.__currentNode.definition.columns, column => column.data);
   }
 
   public get children(): {[sheetName: string]: {[nodeName: string]: any}} {
-    if (this._currentNode == this._childrenCachedNode && this._childrenCache)
-      return this._childrenCache;
+    if (this.__currentNode == this.__childrenCachedNode && this.__childrenCache)
+      return this.__childrenCache;
     let result: {[sheetName: string]: {[nodeName: string]: any}} = {};
-    _.forIn(this._currentNode.definition.children, (def: GeneratorNodeDefinition): void => {
+    _.forIn(this.__currentNode.definition.children, (def: GeneratorNodeDefinition): void => {
       let sheetName: string = _.camelCase(def.name);
       result[sheetName] = {};
-      _.forIn(this._currentNode.getChildren(sheetName), (node: GeneratorNodeElement): void => {
+      _.forIn(this.__currentNode.getChildren(sheetName), (node: GeneratorNodeElement): void => {
         if (node.name == "*") return;
         result[sheetName][node.name] = node.data;
       });
     });
-    this._childrenCache = result;
-    this._childrenCachedNode = this._currentNode;
+    this.__childrenCache = result;
+    this.__childrenCachedNode = this.__currentNode;
     return result;
   }
 
@@ -69,17 +80,17 @@ export class GeneratorAccessor {
   }
 
   public call(funcName: string = "main", ...args: any[]): any {
-    return this._currentNode.call(this, funcName, args);
+    return this.__currentNode.call(funcName, args);
   }
 
   public callChildren(childSheetName: string, funcName: string = "main", joinType = "void", options: IGenerateChildrenOption = {},
                       ...args: any[]): any {
     let sortDatas: TSortDataType[] = [];
-    let backupNode: GeneratorNodeElement = this._currentNode;
-    _.forIn(this._currentNode.getChildren(childSheetName), (childNode: GeneratorNodeElement) => {
+    let backupNode: GeneratorNodeElement = this.__currentNode;
+    _.forIn(this.__currentNode.getChildren(childSheetName), (childNode: GeneratorNodeElement) => {
       if (childNode.name == "*") return;
-      this._currentNode = childNode;
-      let childResult: any = childNode.call(this, funcName, args);
+      this.__currentNode = childNode;
+      let childResult: any = childNode.call(funcName, args);
       // type check from join type
       switch (joinType) {
         case "void":
@@ -105,7 +116,7 @@ export class GeneratorAccessor {
         result: childResult,
       });
     });
-    this._currentNode = backupNode;
+    this.__currentNode = backupNode;
     if (options.sort)
       sortDatas.sort((a: TSortDataType, b: TSortDataType) => {
         return options.sort(a.child.data, b.child.data);
@@ -147,8 +158,8 @@ export class GeneratorAccessor {
   protected _throwErrorCallChildren(funcName: string, argJoinType: string, childResult: any, message: string) {
     throw new Error(`callChildren error.
 ${message}
-sheetName=${this._currentNode.definition.name}
-nodeName=${this._currentNode.name}
+sheetName=${this.__currentNode.definition.name}
+nodeName=${this.__currentNode.name}
 funcName=${funcName}
 argJoinType=${argJoinType}
 result=${childResult}
@@ -163,7 +174,7 @@ resultType="${typeof childResult} is invalid return data.`);
     if (!_.isObject(option))
       throw `Error in $.write(path, data, option). arg "option" must be string, but it is type="${typeof option}"`;
     let writePath: string = path.isAbsolute(argPath) ? argPath
-      : path.join(this.saveBaseDir, argPath);
+      : path.join(this.Class.saveBaseDir, argPath);
     if (!_.isUndefined(option.override) && !option.override) {
       if (fs.existsSync(writePath)) {
         log.debug(`Skip ${writePath}. File exists.`);
@@ -177,7 +188,7 @@ destinationDir="${path.dirname(writePath)}`;
     }
     log.debug(`Writing ${writePath} ...`);
     fs.writeFileSync(writePath, data);
-    this._writeCount++;
+    this.Class.writeCount++;
   };
 
   public source(argSource: any): string {
@@ -205,7 +216,7 @@ destinationDir="${path.dirname(writePath)}`;
     lines.forEach((line: string, index: number) => {
       let newLine: string = (index < lines.length - 1) ? "\n" : "";
       if (line && (index > 0 || indentFirstLine))
-        result += _.repeat(" ", this._unitIndent * numIndent) + line + newLine;
+        result += _.repeat(" ", this.Class.unitIndent * numIndent) + line + newLine;
       else
         result += line + newLine;
     });
@@ -213,7 +224,7 @@ destinationDir="${path.dirname(writePath)}`;
   }
 
   public setIndent(arg: number): void {
-    this._unitIndent = arg;
+    this.Class.unitIndent = arg;
   }
 
 }

@@ -144,13 +144,13 @@ export class GeneratorNodeElement {
     this.data = newData;
   }
 
-  public call(accessor: GeneratorAccessor, funcName: string = "main", args: any[] = []): any {
+  public call(funcName: string = "main", args: any[] = []): any {
     let generateFunc: Function = this.definition.getCode(funcName);
     if (funcName == "data" && !generateFunc) {
       return _.cloneDeep(this.data);
     }
     if (typeof generateFunc == "function") {
-      return generateFunc.apply(accessor, args);
+      return generateFunc.apply(new GeneratorAccessor(this), args);
     } else if (generateFunc === undefined) {
       this.throwError(`Generate function ${this.definition.name}.${funcName} is undefined.`);
     } else {

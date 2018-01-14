@@ -46,13 +46,11 @@ export class GeneratorProcess {
     log.debug(`Parse sheet data was finished.`);
 
     log.debug(`Initialize sheet code was started.`);
-    let accessor: GeneratorAccessor = new GeneratorAccessor(this.saveBaseDir);
     let sheetCodes: {[sheetName: string]: TGeneratorSheetCode} = {};
     for (let sheetName of this.codeNames) {
       sheetCodes[sheetName] = this.requireSheetObject(sheetName);
       if (!sheetCodes[sheetName]) return 0;
     }
-    accessor._sheetCodes = sheetCodes;
     log.debug(`Initialize sheet code was finished.`);
 
     log.debug(`Create node definition tree was started.`);
@@ -89,13 +87,15 @@ export class GeneratorProcess {
     log.debug(`Apply inherits was finished.`);
 
     log.debug(`Generate process was started.`);
-    accessor._currentNode = rootNodeElement;
-    accessor._writeCount = 0;
-    rootNodeElement.call(accessor);
+    GeneratorAccessor.saveBaseDir = this.saveBaseDir;
+    GeneratorAccessor.sheetCodes = sheetCodes;
+    GeneratorAccessor.unitIndent = 4;
+    GeneratorAccessor.writeCount = 0;
+    rootNodeElement.call();
     log.debug(`Generate process was finished.`);
 
-    log.debug(`Generate process was done. Write ${accessor._writeCount} files.`);
-    return accessor._writeCount;
+    log.debug(`Generate process was done. Write ${GeneratorAccessor.writeCount} files.`);
+    return GeneratorAccessor.writeCount;
   }
 
   protected requireSheetObject(sheetName: string): TGeneratorSheetCode {
