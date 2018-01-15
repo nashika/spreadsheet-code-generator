@@ -138,7 +138,7 @@ export class GeneratorAccessor {
       case "object":
         let resultObject: any = {};
         for (let sortData of sortDatas)
-          resultObject = _.set(resultObject, sortData.child.name, <any>sortData.result);
+          resultObject[sortData.child.name] = <any>sortData.result;
         return resultObject;
       case "concat":
         let resultConcat: any[] = [];
