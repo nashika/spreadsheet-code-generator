@@ -5,11 +5,13 @@ import {IColumn, ISheet} from "../service/hub.service";
 
 export class InheritRecords {
 
-  private records: {[key: string]: any};
+  private records: {[pathStr: string]: any};
+  private pathStrMeta: {[pathStr: string]: {isTemplate?: boolean}};
   private paths: string[];
 
   constructor(data: any[], private sheet: ISheet) {
     this.records = {};
+    this.pathStrMeta = {};
     let flag = true;
     this.paths = _(this.sheet.columns)
       .filter((column: IColumn) => (column.data == "extends") ? flag = false : flag)
@@ -35,17 +37,17 @@ export class InheritRecords {
 
   get(pathStr: string, fieldName: string): any {
     if (!pathStr) return undefined;
-    pathStr = this.padPathStr(pathStr);
-    let inheritRecord = this.records[pathStr];
-    if (inheritRecord) {
-      return _.get(inheritRecord, fieldName);
+    if (this.records[pathStr]) {
+      return this.records[pathStr][fieldName];
     } else {
       return false;
     }
   }
 
   getRecords(): any[] {
-    return _(this.records).filter((_value, key) => !key.match(/\*/)).map(record => {
+    return _(this.records)
+      .filter((_record, pathStr) => !this.pathStrMeta[pathStr].isTemplate)
+      .map(record => {
       let result: any = {};
       for (let column of this.sheet.columns) {
         if (!_.has(record, column.data)) continue;
@@ -57,20 +59,21 @@ export class InheritRecords {
 
   private makePathStr(record: any): string {
     if (_.find(this.paths, path => !record[path])) return "";
-    return _(this.paths).map(path => record[path]).join(".");
-  }
-
-  private padPathStr(pathStr: string): string {
-    let wildcardCount: number = this.paths.length - _.split(pathStr, ".").length;
-    if (wildcardCount)
-      pathStr = _.times(wildcardCount, _.constant("*")).join(".") + "." + pathStr;
+    let keys: string[] = _(this.paths).map(path => record[path]).value();
+    let pathStr: string = _(keys)
+      .filter(key => key != "*")
+      .map(key => key.replace(/^\*/, ""))
+      .join(".");
+    if (!this.pathStrMeta[pathStr]) this.pathStrMeta[pathStr] = {};
+    if (pathStr != keys.join(".")) {
+      this.pathStrMeta[pathStr].isTemplate = true;
+    }
     return pathStr;
   }
 
   private applyInherit(record: any): any {
-    let extendsStr: string = record["extends"];
-    if (!extendsStr) return record;
-    let parentPathStr = this.padPathStr(extendsStr);
+    let parentPathStr: string = record["extends"];
+    if (!parentPathStr) return record;
     if (this.records[parentPathStr]) {
       let parentRecord = this.applyInherit(this.records[parentPathStr]);
       for (let column of this.sheet.columns) {
