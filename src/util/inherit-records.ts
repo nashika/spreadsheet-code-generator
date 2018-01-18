@@ -36,11 +36,20 @@ export class InheritRecords {
   }
 
   get(pathStr: string, fieldName: string): any {
-    if (!pathStr) return undefined;
-    if (this.records[pathStr]) {
-      return this.records[pathStr][fieldName];
+    let record = this.getRecord(pathStr);
+    if (record) {
+      return record[fieldName];
     } else {
       return false;
+    }
+  }
+
+  getRecord(pathStr: string): any {
+    if (!pathStr) return undefined;
+    if (this.records[pathStr]) {
+      return this.records[pathStr];
+    } else {
+      return undefined;
     }
   }
 
@@ -74,8 +83,9 @@ export class InheritRecords {
   private applyInherit(record: any): any {
     let parentPathStr: string = record["extends"];
     if (!parentPathStr) return record;
-    if (this.records[parentPathStr]) {
-      let parentRecord = this.applyInherit(this.records[parentPathStr]);
+    let parentRecord = this.getRecord(parentPathStr);
+    if (parentRecord) {
+      this.applyInherit(parentRecord);
       for (let column of this.sheet.columns) {
         let key: string = column.data;
         if (!_.has(record, key) && _.has(parentRecord, key)) {
