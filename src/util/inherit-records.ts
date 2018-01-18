@@ -45,6 +45,17 @@ export class InheritRecords {
     }
   }
 
+  getRecords(): any[] {
+    return _(this.records).filter((_value, key) => !key.match(/\*/)).map(record => {
+      let result: any = {};
+      for (let column of this.columns) {
+        if (!_.has(record, column.data)) continue;
+        _.set(result, column.data, _.get(record, column.data));
+      }
+      return result;
+    }).value();
+  }
+
   private padInheritKey(inheritKey: string): string {
     let wildcardCount: number = this.paths.length - _.split(inheritKey, ".").length;
     if (wildcardCount)

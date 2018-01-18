@@ -7,6 +7,7 @@ import {GeneratorAccessor} from "./generator-accessor";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 import {ISheet, TSheetData} from "../service/hub.service";
+import {InheritRecords} from "../util/inherit-records";
 
 declare function originalRequire(path: string): any;
 declare module originalRequire {
@@ -70,7 +71,8 @@ export class GeneratorProcess {
     let rootNodeElement: GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition: GeneratorNodeDefinition) => {
       log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
-      let currentData: TSheetData = this.datas[currentNodeDefinition.name] || [];
+      let inheritRecords = new InheritRecords(this.datas[currentNodeDefinition.name], this.sheets[currentNodeDefinition.name].columns);
+      let currentData: TSheetData = inheritRecords.getRecords() || [];
       _.forEach(currentData, (record: {[columnName: string]: any}) => {
         let childNodeElement: GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
         rootNodeElement.add(childNodeElement);
@@ -81,10 +83,6 @@ export class GeneratorProcess {
     };
     createNodeElementRecursive(rootNodeDefinition);
     log.debug(`Create node element tree was finished.`);
-
-    log.debug(`Apply inherits was started.`);
-    rootNodeElement.applyInheritsRecursive();
-    log.debug(`Apply inherits was finished.`);
 
     log.debug(`Generate process was started.`);
     GeneratorAccessor.saveBaseDir = this.saveBaseDir;
