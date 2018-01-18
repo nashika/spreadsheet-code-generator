@@ -18,12 +18,6 @@ export class GeneratorNodeElement {
     _.forIn(definition.children, (childDefinition: GeneratorNodeDefinition) => {
       let childSheetName: string = _.camelCase(childDefinition.name);
       this._childrenMap[childSheetName] = {};
-      let wildcardData: {[columnName: string]: any} = {};
-      _.forEach(_.drop(childDefinition.path), (pathSheetName: string) => {
-        wildcardData[pathSheetName] = "*";
-      });
-      let wildcardNode: GeneratorNodeElement = new GeneratorNodeElement(childDefinition, wildcardData);
-      this.addChild(wildcardNode);
     });
   }
 
@@ -70,7 +64,7 @@ export class GeneratorNodeElement {
   public add(node: GeneratorNodeElement): void {
     if (_.isEmpty(node.data)) return;
     if (this.definition == node.definition.parent) {
-      if (this.definition.name == "root" || _.includes([this.name, "*"], node.data[this.definition.name]))
+      if (this.definition.name == "root" || this.name == node.data[this.definition.name])
         this.addChild(node);
     } else {
       if (_.includes(this.definition.descendants, node.definition)) {
