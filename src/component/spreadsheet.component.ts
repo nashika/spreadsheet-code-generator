@@ -116,7 +116,7 @@ export default class SpreadsheetComponent extends BaseComponent {
       this.hot = null;
     }
     if (this.$hub.currentSheet.name == "root") return;
-    this.inheritRecords = new InheritRecords(this.$hub.currentData, this.$hub.currentSheet.columns);
+    this.inheritRecords = new InheritRecords(this.$hub.currentData, this.$hub.currentSheet);
     let container: Element = this.$el.querySelector("#spreadsheet");
     let sheetName: string = this.$hub.currentSheet.name;
     if (!sheetName) return;

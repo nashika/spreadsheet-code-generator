@@ -36,12 +36,12 @@ export class DataService extends BaseIoService {
     super.save(sheetName, data);
   }
 
-  public newAll(): void {
+  newAll(): void {
     this.$hub.datas = {};
     this.$hub.currentData = null;
   }
 
-  public loadAll(): boolean {
+  loadAll(): boolean {
     if (!this.checkDir()) return false;
     let names: string[] = this.list();
     for (let name of names)
@@ -49,7 +49,7 @@ export class DataService extends BaseIoService {
     return true;
   }
 
-  public saveAll(): boolean {
+  saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.$hub.datas, (data, name) => {
       this.save(name, data);
@@ -60,10 +60,11 @@ export class DataService extends BaseIoService {
     return true;
   }
 
-  public loadAllForGenerate(): {[sheetName: string]: TSheetData} {
+  loadAllForGenerate(): {[sheetName: string]: TSheetData} {
     if (!this.checkDir()) return null;
     let names: string[] = this.list();
     let result: {[sheetName: string]: TSheetData} = {};
+    result["root"] = [];
     for (let name of names)
       result[_.camelCase(name)] = this.load(name);
     return result;

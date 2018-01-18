@@ -1,37 +1,36 @@
 import _ = require("lodash");
+import * as log from "loglevel";
 
-import {IColumn} from "../service/hub.service";
+import {IColumn, ISheet} from "../service/hub.service";
 
 export class InheritRecords {
 
-  paths: string[];
-  records: {[key: string]: any};
-  columns: IColumn[];
+  private records: {[key: string]: any};
+  private paths: string[];
 
-  constructor(records: any[], columns: IColumn[]) {
+  constructor(data: any[], private sheet: ISheet) {
     this.records = {};
-    this.columns = columns;
     let flag = true;
-    this.paths = _(columns)
+    this.paths = _(this.sheet.columns)
       .filter((column: IColumn) => (column.data == "extends") ? flag = false : flag)
       .map(column => column.data)
       .value();
-    if (!_.find(columns, (column: IColumn) => column.data == "extends")) return;
-    _.each(records, record => {
-      if (_.find(this.paths, path => !record[path])) return;
-      let inheritKey: string = _(this.paths)
-        .map(path => record[path])
-        .join(".");
+    if (this.sheet.name != "root" && !_.find(this.sheet.columns, (column: IColumn) => column.data == "extends"))
+      throw new Error(`${this.sheet.name} sheet has no "extends" column.`);
+    for (let dataRecord of data) {
+      let inheritKey = this.makeInheritKey(dataRecord);
+      if (!inheritKey) continue;
       let result: any = {};
-      for (let column of this.columns) {
-        if (_.has(record, column.data)) {
-          _.set(result, column.data, _.get(record, column.data));
+      for (let column of this.sheet.columns) {
+        if (_.has(dataRecord, column.data)) {
+          _.set(result, column.data, _.get(dataRecord, column.data));
         }
       }
       this.records[inheritKey] = result;
-    });
-    delete this.records[_(this.paths).map(_p => "*").join(".")];
-    _.each(this.records, record => this.applyInherit(record));
+    }
+    for (let record of _.values(this.records)) {
+      this.applyInherit(record);
+    }
   }
 
   get(extendsStr: string, fieldName: string): any {
@@ -48,12 +47,17 @@ export class InheritRecords {
   getRecords(): any[] {
     return _(this.records).filter((_value, key) => !key.match(/\*/)).map(record => {
       let result: any = {};
-      for (let column of this.columns) {
+      for (let column of this.sheet.columns) {
         if (!_.has(record, column.data)) continue;
         _.set(result, column.data, _.get(record, column.data));
       }
       return result;
     }).value();
+  }
+
+  private makeInheritKey(record: any): string {
+    if (_.find(this.paths, path => !record[path])) return "";
+    return _(this.paths).map(path => record[path]).join(".");
   }
 
   private padInheritKey(inheritKey: string): string {
@@ -69,7 +73,7 @@ export class InheritRecords {
     let parentInheritKey = this.padInheritKey(extendsStr);
     if (this.records[parentInheritKey]) {
       let parentRecord = this.applyInherit(this.records[parentInheritKey]);
-      for (let column of this.columns) {
+      for (let column of this.sheet.columns) {
         let key: string = column.data;
         if (!_.has(record, key) && _.has(parentRecord, key)) {
           _.set(record, key, _.get(parentRecord, key));
@@ -78,7 +82,7 @@ export class InheritRecords {
       delete record["extends"];
       return record;
     } else {
-      //throw new Error();
+      log.warn(`Parent record key="${parentInheritKey}" not found. sheet="${this.sheet.name}", path="${this.makeInheritKey(record)}"`);
     }
   }
 

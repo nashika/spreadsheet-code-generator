@@ -71,7 +71,7 @@ export class GeneratorProcess {
     let rootNodeElement: GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition: GeneratorNodeDefinition) => {
       log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
-      let inheritRecords = new InheritRecords(this.datas[currentNodeDefinition.name], this.sheets[currentNodeDefinition.name].columns);
+      let inheritRecords = new InheritRecords(this.datas[currentNodeDefinition.name], this.sheets[currentNodeDefinition.name]);
       let currentData: TSheetData = inheritRecords.getRecords() || [];
       _.forEach(currentData, (record: {[columnName: string]: any}) => {
         let childNodeElement: GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
