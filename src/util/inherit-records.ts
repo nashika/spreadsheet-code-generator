@@ -18,25 +18,25 @@ export class InheritRecords {
     if (this.sheet.name != "root" && !_.find(this.sheet.columns, (column: IColumn) => column.data == "extends"))
       throw new Error(`${this.sheet.name} sheet has no "extends" column.`);
     for (let dataRecord of data) {
-      let inheritKey = this.makeInheritKey(dataRecord);
-      if (!inheritKey) continue;
+      let pathStr = this.makePathStr(dataRecord);
+      if (!pathStr) continue;
       let result: any = {};
       for (let column of this.sheet.columns) {
         if (_.has(dataRecord, column.data)) {
           _.set(result, column.data, _.get(dataRecord, column.data));
         }
       }
-      this.records[inheritKey] = result;
+      this.records[pathStr] = result;
     }
     for (let record of _.values(this.records)) {
       this.applyInherit(record);
     }
   }
 
-  get(extendsStr: string, fieldName: string): any {
-    if (!extendsStr) return undefined;
-    let inheritKey: string = this.padInheritKey(extendsStr);
-    let inheritRecord = this.records[inheritKey];
+  get(pathStr: string, fieldName: string): any {
+    if (!pathStr) return undefined;
+    pathStr = this.padPathStr(pathStr);
+    let inheritRecord = this.records[pathStr];
     if (inheritRecord) {
       return _.get(inheritRecord, fieldName);
     } else {
@@ -55,24 +55,24 @@ export class InheritRecords {
     }).value();
   }
 
-  private makeInheritKey(record: any): string {
+  private makePathStr(record: any): string {
     if (_.find(this.paths, path => !record[path])) return "";
     return _(this.paths).map(path => record[path]).join(".");
   }
 
-  private padInheritKey(inheritKey: string): string {
-    let wildcardCount: number = this.paths.length - _.split(inheritKey, ".").length;
+  private padPathStr(pathStr: string): string {
+    let wildcardCount: number = this.paths.length - _.split(pathStr, ".").length;
     if (wildcardCount)
-      inheritKey = _.times(wildcardCount, _.constant("*")).join(".") + "." + inheritKey;
-    return inheritKey;
+      pathStr = _.times(wildcardCount, _.constant("*")).join(".") + "." + pathStr;
+    return pathStr;
   }
 
   private applyInherit(record: any): any {
     let extendsStr: string = record["extends"];
     if (!extendsStr) return record;
-    let parentInheritKey = this.padInheritKey(extendsStr);
-    if (this.records[parentInheritKey]) {
-      let parentRecord = this.applyInherit(this.records[parentInheritKey]);
+    let parentPathStr = this.padPathStr(extendsStr);
+    if (this.records[parentPathStr]) {
+      let parentRecord = this.applyInherit(this.records[parentPathStr]);
       for (let column of this.sheet.columns) {
         let key: string = column.data;
         if (!_.has(record, key) && _.has(parentRecord, key)) {
@@ -82,7 +82,7 @@ export class InheritRecords {
       delete record["extends"];
       return record;
     } else {
-      log.warn(`Parent record key="${parentInheritKey}" not found. sheet="${this.sheet.name}", path="${this.makeInheritKey(record)}"`);
+      log.warn(`Parent record key="${parentPathStr}" not found. sheet="${this.sheet.name}", path="${this.makePathStr(record)}"`);
     }
   }
 
