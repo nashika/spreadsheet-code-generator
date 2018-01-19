@@ -30,13 +30,12 @@ interface IMyHandsontable extends Handsontable.Core {
 })
 export default class SpreadsheetComponent extends BaseComponent {
 
-  columnMap: {[key: string]: IColumn} = null;
-  currentRow: number = 0;
-  currentCol: number = 0;
-  resizeTimer: any = null;
+  private currentRow: number = 0;
+  private currentCol: number = 0;
+  private resizeTimer: any = null;
 
-  hot: IMyHandsontable;
-  recordExtender: RecordExtender;
+  private hot: IMyHandsontable;
+  private recordExtender: RecordExtender;
 
   created() {
     this.$hub.$on("search", this.onSearch);
@@ -102,6 +101,10 @@ export default class SpreadsheetComponent extends BaseComponent {
   afterChange(changes: THandsontableChange[]): void {
     if (changes) {
       this.$hub.currentSheetMeta.modified = true;
+    }
+    let changedRecord: any[];
+    for (let change of changes) {
+      
     }
   }
 
