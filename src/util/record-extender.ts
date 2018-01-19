@@ -41,7 +41,7 @@ export class RecordExtender {
   get(pathStr: string, fieldName: string): any {
     let record = this.getRecord(pathStr);
     if (record) {
-      return record[fieldName];
+      return _.get(record, fieldName);
     } else {
       return false;
     }
