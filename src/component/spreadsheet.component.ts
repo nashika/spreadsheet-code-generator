@@ -182,9 +182,10 @@ export default class SpreadsheetComponent extends BaseComponent {
 
   protected customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
     if (_.isNull(value) || value === "") {
-      let extendsStr: string = instance.getDataAtRowProp(row, "extends");
-      if (extendsStr) {
-        let data: any = this.recordExtender.get(extendsStr, prop);
+      let parentPathStr: string = instance.getDataAtRowProp(row, "extends");
+      if (parentPathStr) {
+        let data: any = this.recordExtender.get(parentPathStr, prop);
+        if (data === false) data = this.recordExtender.get(parentPathStr + "." + instance.getDataAtRowProp(row, this.recordExtender.lastPathField), prop);
         if (data === false) {
           td.style.backgroundColor = "#fbb";
         } else if (!_.isUndefined(data)) {

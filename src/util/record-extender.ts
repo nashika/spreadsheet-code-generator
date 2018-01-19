@@ -5,18 +5,21 @@ import {IColumn, ISheet} from "../service/hub.service";
 
 export class RecordExtender {
 
+  lastPathField: string;
+
   private records: {[pathStr: string]: any};
   private pathStrMeta: {[pathStr: string]: {isTemplate?: boolean}};
-  private paths: string[];
+  private pathFields: string[];
 
   constructor(data: any[], private sheet: ISheet) {
     this.records = {};
     this.pathStrMeta = {};
     let flag = true;
-    this.paths = _(this.sheet.columns)
+    this.pathFields = _(this.sheet.columns)
       .filter((column: IColumn) => (column.data == "extends") ? flag = false : flag)
       .map(column => column.data)
       .value();
+    this.lastPathField = this.pathFields[this.pathFields.length - 1];
     if (this.sheet.name != "root" && !_.find(this.sheet.columns, (column: IColumn) => column.data == "extends"))
       throw new Error(`${this.sheet.name} sheet has no "extends" column.`);
     for (let dataRecord of data) {
@@ -67,8 +70,8 @@ export class RecordExtender {
   }
 
   private makePathStr(record: any): string {
-    if (_.find(this.paths, path => !record[path])) return "";
-    let keys: string[] = _(this.paths).map(path => record[path]).value();
+    if (_.find(this.pathFields, path => !record[path])) return "";
+    let keys: string[] = _(this.pathFields).map(path => record[path]).value();
     let pathStr: string = _(keys)
       .filter(key => key != "*")
       .map(key => key.replace(/^\*/, ""))
@@ -84,6 +87,7 @@ export class RecordExtender {
     let parentPathStr: string = record["extends"];
     if (!parentPathStr) return record;
     let parentRecord = this.getRecord(parentPathStr);
+    if (!parentRecord) parentRecord = this.getRecord(parentPathStr + "." + record[this.lastPathField]);
     if (parentRecord) {
       this.extendRecord(parentRecord);
       for (let column of this.sheet.columns) {
