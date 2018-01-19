@@ -102,9 +102,10 @@ export default class SpreadsheetComponent extends BaseComponent {
     if (changes) {
       this.$hub.currentSheetMeta.modified = true;
     }
-    let changedRecord: any[];
-    for (let change of changes) {
-      
+    let rows: number[] = _(changes).map(change => change[0]).sort().sortedUniq().value();
+    let records: any[] = _(rows).map(row => this.$hub.currentData[row]).value();
+    for (let record of records) {
+      this.recordExtender.extendRecord(record, true);
     }
   }
 

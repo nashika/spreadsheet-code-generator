@@ -7,8 +7,8 @@ export class RecordExtender {
 
   lastPathField: string;
 
-  private records: {[pathStr: string]: any};
-  private pathStrMeta: {[pathStr: string]: {isTemplate?: boolean}};
+  private records: { [pathStr: string]: any };
+  private pathStrMeta: { [pathStr: string]: { isTemplate?: boolean, isExtended?: boolean } };
   private pathFields: string[];
 
   constructor(data: any[], private sheet: ISheet) {
@@ -60,13 +60,14 @@ export class RecordExtender {
     return _(this.records)
       .filter((_record, pathStr) => !this.pathStrMeta[pathStr].isTemplate)
       .map(record => {
-      let result: any = {};
-      for (let column of this.sheet.columns) {
-        if (!_.has(record, column.data)) continue;
-        _.set(result, column.data, _.get(record, column.data));
-      }
-      return result;
-    }).value();
+        let result: any = {};
+        for (let column of this.sheet.columns) {
+          if (!_.has(record, column.data)) continue;
+          _.set(result, column.data, _.get(record, column.data));
+        }
+        delete result["extends"];
+        return result;
+      }).value();
   }
 
   private makePathStr(record: any): string {
@@ -83,24 +84,29 @@ export class RecordExtender {
     return pathStr;
   }
 
-  private extendRecord(record: any): any {
+  extendRecord(record: any, reload: boolean = false): any {
+    let pathStr: string = this.makePathStr(record);
+    if (!pathStr) return record;
+    if (!reload && this.pathStrMeta[pathStr].isExtended) return record;
     let parentPathStr: string = record["extends"];
-    if (!parentPathStr) return record;
-    let parentRecord = this.getRecord(parentPathStr);
-    if (!parentRecord) parentRecord = this.getRecord(parentPathStr + "." + record[this.lastPathField]);
-    if (parentRecord) {
-      this.extendRecord(parentRecord);
-      for (let column of this.sheet.columns) {
-        let key: string = column.data;
-        if (!_.has(record, key) && _.has(parentRecord, key)) {
-          _.set(record, key, _.get(parentRecord, key));
+    if (parentPathStr) {
+      let parentRecord = this.getRecord(parentPathStr);
+      if (!parentRecord) parentRecord = this.getRecord(parentPathStr + "." + record[this.lastPathField]);
+      if (parentRecord) {
+        this.extendRecord(parentRecord, reload);
+        for (let column of this.sheet.columns) {
+          let key: string = column.data;
+          if (!_.has(record, key) && _.has(parentRecord, key)) {
+            _.set(record, key, _.get(parentRecord, key));
+          }
         }
+      } else {
+        log.warn(`Parent record key="${parentPathStr}" not found. sheet="${this.sheet.name}", path="${this.makePathStr(record)}"`);
       }
-      delete record["extends"];
-      return record;
-    } else {
-      log.warn(`Parent record key="${parentPathStr}" not found. sheet="${this.sheet.name}", path="${this.makePathStr(record)}"`);
     }
+    this.records[pathStr] = record;
+    this.pathStrMeta[pathStr].isExtended = true;
+    return record;
   }
 
 }
