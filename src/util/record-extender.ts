@@ -3,7 +3,7 @@ import * as log from "loglevel";
 
 import {IColumn, ISheet} from "../service/hub.service";
 
-export class InheritRecords {
+export class RecordExtender {
 
   private records: {[pathStr: string]: any};
   private pathStrMeta: {[pathStr: string]: {isTemplate?: boolean}};
@@ -31,7 +31,7 @@ export class InheritRecords {
       this.records[pathStr] = result;
     }
     for (let record of _.values(this.records)) {
-      this.applyInherit(record);
+      this.extendRecord(record);
     }
   }
 
@@ -80,12 +80,12 @@ export class InheritRecords {
     return pathStr;
   }
 
-  private applyInherit(record: any): any {
+  private extendRecord(record: any): any {
     let parentPathStr: string = record["extends"];
     if (!parentPathStr) return record;
     let parentRecord = this.getRecord(parentPathStr);
     if (parentRecord) {
-      this.applyInherit(parentRecord);
+      this.extendRecord(parentRecord);
       for (let column of this.sheet.columns) {
         let key: string = column.data;
         if (!_.has(record, key) && _.has(parentRecord, key)) {

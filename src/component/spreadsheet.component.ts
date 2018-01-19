@@ -2,7 +2,7 @@ import Component from "vue-class-component";
 import _ = require("lodash");
 
 import BaseComponent from "./base.component";
-import {InheritRecords} from "../util/inherit-records";
+import {RecordExtender} from "../util/record-extender";
 import {IColumn} from "../service/hub.service";
 
 declare global {
@@ -36,7 +36,7 @@ export default class SpreadsheetComponent extends BaseComponent {
   resizeTimer: any = null;
 
   hot: IMyHandsontable;
-  inheritRecords: InheritRecords;
+  recordExtender: RecordExtender;
 
   created() {
     this.$hub.$on("search", this.onSearch);
@@ -116,7 +116,7 @@ export default class SpreadsheetComponent extends BaseComponent {
       this.hot = null;
     }
     if (this.$hub.currentSheet.name == "root") return;
-    this.inheritRecords = new InheritRecords(this.$hub.currentData, this.$hub.currentSheet);
+    this.recordExtender = new RecordExtender(this.$hub.currentData, this.$hub.currentSheet);
     let container: Element = this.$el.querySelector("#spreadsheet");
     let sheetName: string = this.$hub.currentSheet.name;
     if (!sheetName) return;
@@ -184,7 +184,7 @@ export default class SpreadsheetComponent extends BaseComponent {
     if (_.isNull(value) || value === "") {
       let extendsStr: string = instance.getDataAtRowProp(row, "extends");
       if (extendsStr) {
-        let data: any = this.inheritRecords.get(extendsStr, prop);
+        let data: any = this.recordExtender.get(extendsStr, prop);
         if (data === false) {
           td.style.backgroundColor = "#fbb";
         } else if (!_.isUndefined(data)) {
