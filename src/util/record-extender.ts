@@ -84,16 +84,16 @@ export class RecordExtender {
     return pathStr;
   }
 
-  extendRecord(record: any, reload: boolean = false): any {
+  extendRecord(record: any): void {
     let pathStr: string = this.makePathStr(record);
-    if (!pathStr) return record;
-    if (!reload && this.pathStrMeta[pathStr].isExtended) return record;
+    if (!pathStr) return;
+    if (this.pathStrMeta[pathStr].isExtended) return;
     let parentPathStr: string = record["extends"];
     if (parentPathStr) {
       let parentRecord = this.getRecord(parentPathStr);
       if (!parentRecord) parentRecord = this.getRecord(parentPathStr + "." + record[this.lastPathField]);
       if (parentRecord) {
-        this.extendRecord(parentRecord, reload);
+        this.extendRecord(parentRecord);
         for (let column of this.sheet.columns) {
           let key: string = column.data;
           if (!_.has(record, key) && _.has(parentRecord, key)) {
@@ -104,9 +104,7 @@ export class RecordExtender {
         log.warn(`Parent record key="${parentPathStr}" not found. sheet="${this.sheet.name}", path="${this.makePathStr(record)}"`);
       }
     }
-    this.records[pathStr] = record;
     this.pathStrMeta[pathStr].isExtended = true;
-    return record;
   }
 
 }

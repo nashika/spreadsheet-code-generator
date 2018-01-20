@@ -90,7 +90,7 @@ export default class SpreadsheetComponent extends BaseComponent {
     return callback(true);
   }
 
-  afterSelection(r: number, c: number, _r2: number, _c2: number): void {
+  private afterSelection(r: number, c: number, _r2: number, _c2: number): void {
     this.currentRow = r;
     this.currentCol = c;
     setTimeout(() => {
@@ -98,23 +98,30 @@ export default class SpreadsheetComponent extends BaseComponent {
     }, 0);
   }
 
-  afterChange(changes: THandsontableChange[]): void {
+  private afterChange(changes: THandsontableChange[]): void {
     if (changes) {
       this.$hub.currentSheetMeta.modified = true;
     }
-    let rows: number[] = _(changes).map(change => change[0]).sort().sortedUniq().value();
-    let records: any[] = _(rows).map(row => this.$hub.currentData[row]).value();
-    for (let record of records) {
-      this.recordExtender.extendRecord(record, true);
+    if (changes && changes.length > 0) {
+      this.setReloadRecordExtenderTimer();
     }
   }
 
-  afterScroll(): void {
+  private reloadRecordExtenderTimer: any;
+  private setReloadRecordExtenderTimer(): void {
+    if (this.reloadRecordExtenderTimer) clearTimeout(this.reloadRecordExtenderTimer);
+    this.reloadRecordExtenderTimer = setTimeout(() => {
+      this.recordExtender = new RecordExtender(this.$hub.currentData, this.$hub.currentSheet);
+      this.hot.render();
+    }, 1000);
+  }
+
+  private afterScroll(): void {
     this.$hub.currentSheetMeta.colOffset = this.hot.colOffset();
     this.$hub.currentSheetMeta.rowOffset = this.hot.rowOffset();
   }
 
-  rebuildSpreadsheet(): void {
+  private rebuildSpreadsheet(): void {
     if (this.hot) {
       this.hot.destroy();
       this.hot = null;
@@ -178,13 +185,13 @@ export default class SpreadsheetComponent extends BaseComponent {
     this.hot.scrollViewportTo(this.$hub.currentSheetMeta.rowOffset, this.$hub.currentSheetMeta.colOffset);
   }
 
-  watchShowMenu(): void {
+  private watchShowMenu(): void {
     if (this.hot) {
       this.rebuildSpreadsheet();
     }
   }
 
-  protected customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
+  private customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
     if (_.isNull(value) || value === "") {
       let parentPathStr: string = instance.getDataAtRowProp(row, "extends");
       if (parentPathStr) {
