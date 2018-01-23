@@ -22,7 +22,7 @@ export type TSheetData = Array<{[columnName: string]: any}>;
 export interface IColumn {
   header: string;
   data: string;
-  type: string;
+  type: "text" | "select" | "numeric";
   json?: boolean;
   options?: string[];
   width: number;

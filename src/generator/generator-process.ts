@@ -33,7 +33,7 @@ export class GeneratorProcess {
       for (let record of data) {
         for (let column of sheet.columns) {
           if (!_.has(record, column.data)) continue;
-          if (column.json) {
+          if (column.json || column.type == "numeric") {
             let jsonData: string = _.get(record, column.data, "");
             try {
               _.set(record, column.data, JSON.parse(jsonData));

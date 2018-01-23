@@ -29,6 +29,15 @@ export class DataService extends BaseIoService {
         if (_.isNull(columnData)) continue;
         if (_.isUndefined(columnData)) continue;
         if (columnData === "") continue;
+        switch (column.type) {
+          case "text":
+          case "select":
+            if (!_.isString(columnData)) columnData = _.toString(columnData);
+            break;
+          case "numeric":
+            if (!_.isNumber(columnData)) columnData = _.toNumber(columnData);
+            break;
+        }
         _.set(result, column.data, columnData);
       }
       return result;

@@ -137,12 +137,15 @@ export default class SpreadsheetComponent extends BaseComponent {
     let columns: any[] = _.map(this.$hub.currentSheet.columns, (c: IColumn) => {
       let column: any = {};
       switch (c.type) {
+        case "text":
+          column.type = "text";
+          break;
         case "select":
           column.editor = "select";
           column.selectOptions = c.options;
           break;
-        default:
-          column.type = c.type;
+        case "numeric":
+          column.type = "numeric";
           break;
       }
       if (c.json) {
