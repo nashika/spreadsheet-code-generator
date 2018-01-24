@@ -96,7 +96,7 @@ export class RecordExtender {
         this.extendRecord(parentRecord);
         for (let column of this.sheet.columns) {
           let key: string = column.data;
-          if (!_.has(record, key) && _.has(parentRecord, key)) {
+          if ((!_.has(record, key) || _.get(record, key) === "") && _.has(parentRecord, key)) {
             _.set(record, key, _.get(parentRecord, key));
           }
         }
