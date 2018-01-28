@@ -27,8 +27,9 @@ export class ColumnService extends BaseHubService {
     let oldColumn: IColumn = this.$hub.currentSheet.columns[index];
     if (column.data != oldColumn.data) {
       for (let record of this.$hub.currentData) {
-        Vue.set(record, column.data, record[oldColumn.data]);
-        Vue.delete(record, oldColumn.data);
+        let data = _.get(record, oldColumn.data);
+        if (!_.isUndefined(data)) _.set(record, column.data, data);
+        _.unset(record, oldColumn.data);
       }
     }
     if (column.type != "select") Vue.delete(column, "options");
