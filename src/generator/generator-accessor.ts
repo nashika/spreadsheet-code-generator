@@ -54,7 +54,7 @@ export class GeneratorAccessor {
     return _.map(this.__currentNode.definition.columns, column => column.data);
   }
 
-  public get children(): {[sheetName: string]: {[nodeName: string]: any}} {
+  get children(): {[sheetName: string]: {[nodeName: string]: any}} {
     if (this.__currentNode == this.__childrenCachedNode && this.__childrenCache)
       return this.__childrenCache;
     let result: {[sheetName: string]: {[nodeName: string]: any}} = {};
@@ -71,19 +71,19 @@ export class GeneratorAccessor {
     return result;
   }
 
-  public get deleteLine(): string {
+  get deleteLine(): string {
     return "###DeleteLine###";
   }
 
-  public get noNewLine(): string {
+  get noNewLine(): string {
     return "###NoNewLine###";
   }
 
-  public call(funcName: string = "main", ...args: any[]): any {
+  call(funcName: string = "main", ...args: any[]): any {
     return this.__currentNode.call(funcName, args);
   }
 
-  public callChildren(childSheetName: string, funcName: string = "main", joinType = "void", options: IGenerateChildrenOption = {},
+  callChildren(childSheetName: string, funcName: string = "main", joinType = "void", options: IGenerateChildrenOption = {},
                       ...args: any[]): any {
     let sortDatas: TSortDataType[] = [];
     let backupNode: GeneratorNodeElement = this.__currentNode;
@@ -166,13 +166,13 @@ result=${childResult}
 resultType="${typeof childResult} is invalid return data.`);
   }
 
-  public write = (argPath: string, data: string, option: {override?: boolean} = {}): void => {
+  write = (argPath: string, data: string, option: {override?: boolean} = {}): void => {
     if (!_.isString(argPath))
-      throw `Error in $.write(path, data, option). arg "path" must be string, but it is type="${typeof argPath}"`;
+      throw `Error in this.write(path, data, option). arg "path" must be string, but it is type="${typeof argPath}"`;
     if (!_.isString(data))
-      throw `Error in $.write(path, data, option). arg "data" must be string, but it is type="${typeof data}"`;
+      throw `Error in this.write(path, data, option). arg "data" must be string, but it is type="${typeof data}"`;
     if (!_.isObject(option))
-      throw `Error in $.write(path, data, option). arg "option" must be string, but it is type="${typeof option}"`;
+      throw `Error in this.write(path, data, option). arg "option" must be object, but it is type="${typeof option}"`;
     let writePath: string = path.isAbsolute(argPath) ? argPath
       : path.join(this.Class.saveBaseDir, argPath);
     if (!_.isUndefined(option.override) && !option.override) {
@@ -181,17 +181,18 @@ resultType="${typeof childResult} is invalid return data.`);
         return;
       }
     }
-    if (!fs.existsSync(path.dirname(writePath))) {
-      throw `Error. Destination directory not found.
-destinationPath="${writePath}"
-destinationDir="${path.dirname(writePath)}`;
-    }
+    let recursiveCreateDir = (dir: string) => {
+      if (fs.existsSync(dir)) return;
+      recursiveCreateDir(path.join(dir, ".."));
+      fs.mkdirSync(dir);
+    };
+    recursiveCreateDir(path.dirname(writePath));
     log.debug(`Writing ${writePath} ...`);
     fs.writeFileSync(writePath, data);
     this.Class.writeCount++;
   };
 
-  public source(argSource: any): string {
+  source(argSource: any): string {
     let result: string = "";
     let source: string = _.isString(argSource) ? argSource : _.toString(argSource);
     let lines: Array<string> = source.toString().split(/\n/g);
@@ -208,7 +209,7 @@ destinationDir="${path.dirname(writePath)}`;
     return result;
   }
 
-  public indent(numIndent: number, argSource: any, indentFirstLine: boolean = true): string {
+  indent(numIndent: number, argSource: any, indentFirstLine: boolean = true): string {
     let result: string = "";
     let source: string = _.isString(argSource) ? argSource : _.toString(argSource);
     let lines: Array<string> = source.split(/\n/g);
@@ -223,7 +224,7 @@ destinationDir="${path.dirname(writePath)}`;
     return result;
   }
 
-  public setIndent(arg: number): void {
+  setIndent(arg: number): void {
     this.Class.unitIndent = arg;
   }
 
