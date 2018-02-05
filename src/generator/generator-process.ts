@@ -4,7 +4,6 @@ import _ = require("lodash");
 import * as log from "loglevel";
 
 import {GeneratorNode} from "./generator-node";
-import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 import {ISheet, TSheetData} from "../service/hub.service";
 import {RecordExtender} from "../util/record-extender";
@@ -67,8 +66,8 @@ export class GeneratorProcess {
     createNodeDefinitionRecursive(rootNodeDefinition);
     log.debug(`Create node definition tree was finished.`);
 
-    log.debug('Create node element tree was started.');
-    let rootNodeElement: GeneratorNodeElement = new GeneratorNodeElement(rootNodeDefinition, {root: "root"});
+    log.debug('Create node tree was started.');
+    let rootNode: GeneratorNode = new GeneratorNode(rootNodeDefinition, {root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition: GeneratorNodeDefinition) => {
       log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
       let recordExtender = new RecordExtender(this.datas[currentNodeDefinition.name], this.sheets[currentNodeDefinition.name]);
