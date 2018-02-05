@@ -3,7 +3,7 @@ import path = require("path");
 import _ = require("lodash");
 import * as log from "loglevel";
 
-import {GeneratorAccessor} from "./generator-accessor";
+import {GeneratorNode} from "./generator-node";
 import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 import {ISheet, TSheetData} from "../service/hub.service";
@@ -85,15 +85,15 @@ export class GeneratorProcess {
     log.debug(`Create node element tree was finished.`);
 
     log.debug(`Generate process was started.`);
-    GeneratorAccessor.saveBaseDir = this.saveBaseDir;
-    GeneratorAccessor.sheetCodes = sheetCodes;
-    GeneratorAccessor.unitIndent = 4;
-    GeneratorAccessor.writeCount = 0;
+    GeneratorNode.saveBaseDir = this.saveBaseDir;
+    GeneratorNode.sheetCodes = sheetCodes;
+    GeneratorNode.unitIndent = 4;
+    GeneratorNode.writeCount = 0;
     rootNodeElement.call();
     log.debug(`Generate process was finished.`);
 
-    log.debug(`Generate process was done. Write ${GeneratorAccessor.writeCount} files.`);
-    return GeneratorAccessor.writeCount;
+    log.debug(`Generate process was done. Write ${GeneratorNode.writeCount} files.`);
+    return GeneratorNode.writeCount;
   }
 
   protected requireSheetObject(sheetName: string): TGeneratorSheetCode {

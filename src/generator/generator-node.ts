@@ -5,69 +5,74 @@ import * as _ from "lodash";
 import * as log from "loglevel";
 
 import {TGeneratorSheetCode} from "./generator-process";
-import {GeneratorNodeElement} from "./generator-node-element";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 
 interface IGenerateChildrenOption {
   sort?: (childA: any, childB: any) => number;
 }
 
-type TSortDataType = {child: GeneratorNodeElement, result: any};
+type TSortDataType = {child: GeneratorNode, result: any};
 
-export class GeneratorAccessor {
+export class GeneratorNode {
 
   static unitIndent: number;
   static writeCount: number;
   static saveBaseDir: string;
   static sheetCodes: {[sheetName: string]: TGeneratorSheetCode};
 
-  protected __childrenCache: {[sheetName: string]: {[nodeName: string]: any}};
-  protected __childrenCachedNode: GeneratorNodeElement;
+  parent: GeneratorNode;
+  data: {[columnName: string]: any};
 
-  constructor(protected __currentNode: GeneratorNodeElement) {
+  private __childrenMap: {[sheetName: string]: {[nodeName: string]: GeneratorNode}};
+  private __childrenCache: {[sheetName: string]: {[nodeName: string]: any}};
+
+  constructor(public definition: GeneratorNodeDefinition,
+              _dataRecord: {[columnName: string]: any}) {
+    this.data = _.cloneDeep(_dataRecord);
+    this.parent = null;
+    this.__childrenMap = {};
+    _.forIn(definition.children, (childDefinition: GeneratorNodeDefinition) => {
+      let childSheetName: string = _.camelCase(childDefinition.name);
+      this.__childrenMap[childSheetName] = {};
+    });
   }
 
-  get Class(): typeof GeneratorAccessor {
-    return <typeof GeneratorAccessor>this.constructor;
+  get Class(): typeof GeneratorNode {
+    return <typeof GeneratorNode>this.constructor;
   }
 
   get name(): string {
-    return this.__currentNode.name;
+    return this.data[this.definition.name];
   }
 
-  get data(): any {
-    return this.__currentNode.data;
+  get siblings(): {[nodeName: string]: GeneratorNode} {
+    return _(this.parent.getChildren(this.definition.name)).omit(["*", this.name]).value();
   }
 
-  get parent(): GeneratorAccessor {
-    return new GeneratorAccessor(this.__currentNode.parent);
+  get root(): GeneratorNode {
+    return this.parent ? this.parent.root : this;
   }
 
-  get siblings(): {[nodeName: string]: GeneratorAccessor} {
-    return _(this.__currentNode.parent.getChildren(this.__currentNode.definition.name))
-      .omit(["*", this.__currentNode.name])
-      .mapValues(childNode => new GeneratorAccessor(childNode))
-      .value();
+  get path(): Array<[string, string]> {
+    return <any>_.concat(this.parent ? this.parent.path : [], [[this.definition.name, this.name]])
   }
 
   get columns(): string[] {
-    return _.map(this.__currentNode.definition.columns, column => column.data);
+    return _.map(this.definition.columns, column => column.data);
   }
 
   get children(): {[sheetName: string]: {[nodeName: string]: any}} {
-    if (this.__currentNode == this.__childrenCachedNode && this.__childrenCache)
-      return this.__childrenCache;
+    if (this.__childrenCache) return this.__childrenCache;
     let result: {[sheetName: string]: {[nodeName: string]: any}} = {};
-    _.forIn(this.__currentNode.definition.children, (def: GeneratorNodeDefinition): void => {
+    _.forIn(this.definition.children, def => {
       let sheetName: string = _.camelCase(def.name);
       result[sheetName] = {};
-      _.forIn(this.__currentNode.getChildren(sheetName), (node: GeneratorNodeElement): void => {
+      _.forIn(this.getChildren(sheetName), node => {
         if (node.name == "*") return;
         result[sheetName][node.name] = node.data;
       });
     });
     this.__childrenCache = result;
-    this.__childrenCachedNode = this.__currentNode;
     return result;
   }
 
@@ -227,5 +232,74 @@ resultType="${typeof childResult} is invalid return data.`);
   setIndent(arg: number): void {
     this.Class.unitIndent = arg;
   }
+
+  public getChild(sheetName: string, nodeName: string): GeneratorNodeElement {
+    sheetName = _.camelCase(sheetName);
+    return this.__childrenMap[sheetName] && this.__childrenMap[sheetName][nodeName];
+  }
+
+  protected addChild(node: GeneratorNodeElement): void {
+    let sheetName = _.camelCase(node.definition.name);
+    if (node.name) {
+      this.__childrenMap[sheetName][node.name] = node;
+      node.parent = this;
+    }
+  }
+  /*public setChild(sheetName:string, nodeName:string, node:GeneratorNodeElement):void {
+ this._childrenMap[sheetName][nodeName] = node;
+ };*/
+
+  public getChildren(sheetName: string): {[nodeName: string]: GeneratorNode} {
+    sheetName = _.camelCase(sheetName);
+    if (!_.has(this.__childrenMap, sheetName))
+      throw new Error(`Can not find child node. sheetName="${sheetName}".`);
+    return this.__childrenMap[sheetName];
+  }
+
+  /*public setChildren(sheetName:string, nodes:{[nodeName:string]:GeneratorNodeElement}) {
+   this._childrenMap[sheetName] = nodes;
+   }*/
+
+  public add(node: GeneratorNodeElement): void {
+    if (_.isEmpty(node.data)) return;
+    if (this.definition == node.definition.parent) {
+      if (this.definition.name == "root" || this.name == node.data[this.definition.name])
+        this.addChild(node);
+    } else {
+      if (_.includes(this.definition.descendants, node.definition)) {
+        _.forEach(this.definition.children, (childDefinition: GeneratorNodeDefinition) => {
+          if (_.includes(childDefinition.descendants, node.definition)) {
+            let childNode: GeneratorNodeElement = this.getChild(childDefinition.name, node.data[childDefinition.name]);
+            if (childNode)
+              childNode.add(node);
+          }
+        });
+      }
+    }
+  }
+
+  public call(funcName: string = "main", args: any[] = []): any {
+    let generateFunc: Function = this.definition.getCode(funcName);
+    if (funcName == "data" && !generateFunc) {
+      return _.cloneDeep(this.data);
+    }
+    if (typeof generateFunc == "function") {
+      return generateFunc.apply(new GeneratorNode(this), args);
+    } else if (generateFunc === undefined) {
+      this.throwError(`Generate function ${this.definition.name}.${funcName} is undefined.`);
+    } else {
+      this.throwError(`Generate function ${this.definition.name}${funcName} is not function.`);
+    }
+  }
+
+  protected throwError(msg: string, showStack: boolean = true): void {
+    let text: string = `path="${JSON.stringify(this.path)}"`;
+    if (showStack) {
+      throw new Error(`Node element error. ${msg}\n${text}`);
+    } else {
+      throw `Error. ${msg}\n${text}`;
+    }
+  }
+
 
 }
