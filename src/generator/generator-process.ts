@@ -1,5 +1,3 @@
-import path = require("path");
-
 import _ = require("lodash");
 import * as log from "loglevel";
 
@@ -8,22 +6,17 @@ import {GeneratorNodeDefinition} from "./generator-node-definition";
 import {ISheet, TSheetData} from "../service/hub.service";
 import {RecordExtender} from "../util/record-extender";
 
-declare function originalRequire(path: string): any;
-declare module originalRequire {
-  var cache: {[path: string]: any};
-}
-
-export type TGeneratorSheetCode = {[name: string]: (...args: any[]) => any};
-
 export class GeneratorProcess {
 
-  constructor(protected saveBaseDir: string,
+  unitIndent = 4;
+  writeCount = 0;
+
+  constructor(public saveBaseDir: string,
               protected sheets: {[sheetName: string]: ISheet},
-              protected datas: {[sheetName: string]: TSheetData},
-              protected codeNames: string[]) {
+              protected datas: {[sheetName: string]: TSheetData}) {
   }
 
-  public main(): number {
+  main(): number {
     log.debug(`Parse sheet data was started.`);
     for (let sheetName in this.sheets) {
       if (sheetName == "root") continue;
@@ -45,20 +38,12 @@ export class GeneratorProcess {
     }
     log.debug(`Parse sheet data was finished.`);
 
-    log.debug(`Initialize sheet code was started.`);
-    let sheetCodes: {[sheetName: string]: TGeneratorSheetCode} = {};
-    for (let sheetName of this.codeNames) {
-      sheetCodes[sheetName] = this.requireSheetObject(sheetName);
-      if (!sheetCodes[sheetName]) return 0;
-    }
-    log.debug(`Initialize sheet code was finished.`);
-
     log.debug(`Create node definition tree was started.`);
-    let rootNodeDefinition: GeneratorNodeDefinition = new GeneratorNodeDefinition(this.sheets["root"], sheetCodes["root"], null);
+    let rootNodeDefinition: GeneratorNodeDefinition = new GeneratorNodeDefinition(this, this.sheets["root"], null);
     let createNodeDefinitionRecursive = (currentNodeDefinition: GeneratorNodeDefinition) => {
       _.forIn(this.sheets, (sheet: ISheet) => {
         if (_.camelCase(sheet.parent) != currentNodeDefinition.name) return;
-        let childNodeDefinition = new GeneratorNodeDefinition(sheet, sheetCodes[sheet.name], currentNodeDefinition);
+        let childNodeDefinition = new GeneratorNodeDefinition(this, sheet, currentNodeDefinition);
         currentNodeDefinition.addChild(childNodeDefinition);
         createNodeDefinitionRecursive(childNodeDefinition);
       });
@@ -67,14 +52,14 @@ export class GeneratorProcess {
     log.debug(`Create node definition tree was finished.`);
 
     log.debug('Create node tree was started.');
-    let rootNode: GeneratorNode = new GeneratorNode(rootNodeDefinition, {root: "root"});
+    let rootNode: GeneratorNode = new rootNodeDefinition.GeneratorNodeClass({root: "root"});
     let createNodeElementRecursive = (currentNodeDefinition: GeneratorNodeDefinition) => {
       log.debug(`Create ${_.join(currentNodeDefinition.path, ".")} records...`);
       let recordExtender = new RecordExtender(this.datas[currentNodeDefinition.name], this.sheets[currentNodeDefinition.name]);
       let currentData: TSheetData = recordExtender.getRecords() || [];
       _.forEach(currentData, (record: {[columnName: string]: any}) => {
-        let childNodeElement: GeneratorNodeElement = new GeneratorNodeElement(currentNodeDefinition, record);
-        rootNodeElement.add(childNodeElement);
+        let childNodeElement: GeneratorNode = new currentNodeDefinition.GeneratorNodeClass(record);
+        rootNode.__add(childNodeElement);
       });
       _.forIn(currentNodeDefinition.children, (childNodeDefinition: GeneratorNodeDefinition) => {
         createNodeElementRecursive(childNodeDefinition);
@@ -83,45 +68,16 @@ export class GeneratorProcess {
     createNodeElementRecursive(rootNodeDefinition);
     log.debug(`Create node element tree was finished.`);
 
+    this.unitIndent = 4;
+    this.writeCount = 0;
     log.debug(`Generate process was started.`);
-    GeneratorNode.saveBaseDir = this.saveBaseDir;
-    GeneratorNode.sheetCodes = sheetCodes;
-    GeneratorNode.unitIndent = 4;
-    GeneratorNode.writeCount = 0;
-    rootNodeElement.call();
+    rootNode.call();
     log.debug(`Generate process was finished.`);
 
-    log.debug(`Generate process was done. Write ${GeneratorNode.writeCount} files.`);
-    return GeneratorNode.writeCount;
+    log.debug(`Generate process was done. Write ${this.writeCount} files.`);
+    return this.writeCount;
   }
-
-  protected requireSheetObject(sheetName: string): TGeneratorSheetCode {
-    let codeDir: string = path.join(this.saveBaseDir, "./code/");
-    let sheetCodePath: string = path.join(codeDir, `./${sheetName}.js`);
-    if (originalRequire.cache[sheetCodePath])
-      delete originalRequire.cache[sheetCodePath];
-    let sheetCode: TGeneratorSheetCode;
-    sheetCode = originalRequire(sheetCodePath);
-    if (!_.isObject(sheetCode)) {
-      throw `Sheet code "${sheetName}.js" exports type="${typeof sheetCode}" data.
-Sheet code expects export type="object".\n\n${this.exampleCode}}`;
-    }
-    _.forEach(sheetCode, (prop: any, key: string) => {
-      if (_.isFunction(prop)) {
-        if (prop.toString().match(/^ *\(\) *=> *\{/)) {
-          throw `Sheet code "${sheetName}.js" property "${key}" is maybe arrow function.
-Please use normal function for custom "this".\n\n${this.exampleCode}`;
-        }
-      }
-    });
-    return sheetCode;
-  }
-
-  protected exampleCode = `[Example]
-module.exports = {
-  main: function () => { ... }
-  funcA: function () => { ... }
-  funcB: function () => { ... }
-}`;
 
 }
+
+(<any>window).GeneratorNode = GeneratorNode;

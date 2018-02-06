@@ -4,7 +4,6 @@ import path = require("path");
 import * as _ from "lodash";
 import * as log from "loglevel";
 
-import {TGeneratorSheetCode} from "./generator-process";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 
 interface IGenerateChildrenOption {
@@ -16,10 +15,7 @@ type TCallChildrenJoinType = "void" | "string" | "array" | "object" | "concat" |
 
 export class GeneratorNode {
 
-  static unitIndent: number;
-  static writeCount: number;
-  static saveBaseDir: string;
-  static sheetCodes: { [sheetName: string]: TGeneratorSheetCode };
+  static definition: GeneratorNodeDefinition;
 
   parent: GeneratorNode;
   data: { [columnName: string]: any };
@@ -27,12 +23,11 @@ export class GeneratorNode {
   private __childrenMap: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
   private __childrenCache: { [sheetName: string]: { [nodeName: string]: any } };
 
-  constructor(public definition: GeneratorNodeDefinition,
-              _dataRecord: { [columnName: string]: any }) {
+  constructor(_dataRecord: { [columnName: string]: any }) {
     this.data = _.cloneDeep(_dataRecord);
     this.parent = null;
     this.__childrenMap = {};
-    _.forIn(definition.children, (childDefinition: GeneratorNodeDefinition) => {
+    _.forIn(this.Class.definition.children, (childDefinition: GeneratorNodeDefinition) => {
       let childSheetName: string = _.camelCase(childDefinition.name);
       this.__childrenMap[childSheetName] = {};
     });
@@ -43,11 +38,11 @@ export class GeneratorNode {
   }
 
   get name(): string {
-    return this.data[this.definition.name];
+    return this.data[this.Class.definition.name];
   }
 
   get siblings(): { [nodeName: string]: GeneratorNode } {
-    return _(this.parent.getChildren(this.definition.name)).omit(["*", this.name]).value();
+    return _(this.parent.getChildren(this.Class.definition.name)).omit(["*", this.name]).value();
   }
 
   get root(): GeneratorNode {
@@ -55,17 +50,17 @@ export class GeneratorNode {
   }
 
   get path(): Array<[string, string]> {
-    return <any>_.concat(this.parent ? this.parent.path : [], [[this.definition.name, this.name]])
+    return <any>_.concat(this.parent ? this.parent.path : [], [[this.Class.definition.name, this.name]])
   }
 
   get columns(): string[] {
-    return _.map(this.definition.columns, column => column.data);
+    return _.map(this.Class.definition.columns, column => column.data);
   }
 
   get children(): { [sheetName: string]: { [nodeName: string]: any } } {
     if (this.__childrenCache) return this.__childrenCache;
     let result: { [sheetName: string]: { [nodeName: string]: any } } = {};
-    _.forIn(this.definition.children, def => {
+    _.forIn(this.Class.definition.children, def => {
       let sheetName: string = _.camelCase(def.name);
       result[sheetName] = {};
       _.forIn(this.getChildren(sheetName), node => {
@@ -158,7 +153,7 @@ export class GeneratorNode {
   protected _throwErrorCallChildren(funcName: string, argJoinType: string, childResult: any, message: string) {
     throw new Error(`callChildren error.
 ${message}
-sheetName=${this.definition.name}
+sheetName=${this.Class.definition.name}
 nodeName=${this.name}
 funcName=${funcName}
 argJoinType=${argJoinType}
@@ -174,7 +169,7 @@ resultType="${typeof childResult} is invalid return data.`);
     if (!_.isObject(option))
       throw `Error in this.write(path, data, option). arg "option" must be object, but it is type="${typeof option}"`;
     let writePath: string = path.isAbsolute(argPath) ? argPath
-      : path.join(this.Class.saveBaseDir, argPath);
+      : path.join(this.Class.definition.process.saveBaseDir, argPath);
     if (!_.isUndefined(option.override) && !option.override) {
       if (fs.existsSync(writePath)) {
         log.debug(`Skip ${writePath}. File exists.`);
@@ -189,7 +184,7 @@ resultType="${typeof childResult} is invalid return data.`);
     recursiveCreateDir(path.dirname(writePath));
     log.debug(`Writing ${writePath} ...`);
     fs.writeFileSync(writePath, data);
-    this.Class.writeCount++;
+    this.Class.definition.process.writeCount++;
   }
 
   source(argSource: any): string {
@@ -217,7 +212,7 @@ resultType="${typeof childResult} is invalid return data.`);
     lines.forEach((line: string, index: number) => {
       let newLine: string = (index < lines.length - 1) ? "\n" : "";
       if (line && (index > 0 || indentFirstLine))
-        result += _.repeat(" ", this.Class.unitIndent * numIndent) + line + newLine;
+        result += _.repeat(" ", this.Class.definition.process.unitIndent * numIndent) + line + newLine;
       else
         result += line + newLine;
     });
@@ -225,20 +220,12 @@ resultType="${typeof childResult} is invalid return data.`);
   }
 
   setIndent(arg: number): void {
-    this.Class.unitIndent = arg;
+    this.Class.definition.process.unitIndent = arg;
   }
 
   getChild(sheetName: string, nodeName: string): GeneratorNode {
     sheetName = _.camelCase(sheetName);
     return this.__childrenMap[sheetName] && this.__childrenMap[sheetName][nodeName];
-  }
-
-  addChild(childNode: GeneratorNode): void {
-    let sheetName = _.camelCase(childNode.definition.name);
-    if (childNode.name) {
-      this.__childrenMap[sheetName][childNode.name] = childNode;
-      childNode.parent = this;
-    }
   }
 
   getChildren(sheetName: string): { [nodeName: string]: GeneratorNode } {
@@ -248,21 +235,33 @@ resultType="${typeof childResult} is invalid return data.`);
     return this.__childrenMap[sheetName];
   }
 
-  add(node: GeneratorNode): void {
+  toObject(): {[columnName: string]: any} {
+    return _.cloneDeep(this.data);
+  }
+
+  __add(node: GeneratorNode): void {
     if (_.isEmpty(node.data)) return;
-    if (this.definition == node.definition.parent) {
-      if (this.definition.name == "root" || this.name == node.data[this.definition.name])
-        this.addChild(node);
+    if (this.Class.definition == node.Class.definition.parent) {
+      if (this.Class.definition.name == "root" || this.name == node.data[this.Class.definition.name])
+        this.__addChild(node);
     } else {
-      if (_.includes(this.definition.descendants, node.definition)) {
-        for (let childDefinition of _.values(this.definition.children)) {
-          if (_.includes(childDefinition.descendants, node.definition)) {
+      if (_.includes(this.Class.definition.descendants, node.Class.definition)) {
+        for (let childDefinition of _.values(this.Class.definition.children)) {
+          if (_.includes(childDefinition.descendants, node.Class.definition)) {
             let childNode = this.getChild(childDefinition.name, node.data[childDefinition.name]);
             if (childNode)
-              childNode.add(node);
+              childNode.__add(node);
           }
         }
       }
+    }
+  }
+
+  private __addChild(childNode: GeneratorNode): void {
+    let sheetName = _.camelCase(childNode.Class.definition.name);
+    if (childNode.name) {
+      this.__childrenMap[sheetName][childNode.name] = childNode;
+      childNode.parent = this;
     }
   }
 

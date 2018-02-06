@@ -47,8 +47,7 @@ export class GeneratorService extends BaseHubService {
     }
     log.debug(`Load sheet data was finished.`);
 
-    let codeNames: string[] = this.codeService.list();
-    let process: GeneratorProcess = new GeneratorProcess(this.$hub.saveBaseDir, sheets, sheetDatas, codeNames);
+    let process: GeneratorProcess = new GeneratorProcess(this.$hub.saveBaseDir, sheets, sheetDatas);
     let result: number;
     try {
       result = process.main();

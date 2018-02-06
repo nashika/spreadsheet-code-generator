@@ -1,6 +1,6 @@
-module.exports = {
+module.exports = class AssociationGeneratorNode extends GeneratorNode {
 
-  main: function () {
+  main() {
     return this.source(`
 this.setAssociation("${this.data.association}", {
   type: "${this.data.type}",
@@ -8,6 +8,6 @@ this.setAssociation("${this.data.association}", {
   foreignKey: "${this.data.foreignKey}",
 });
 `);
-  },
+  }
 
-};
+}

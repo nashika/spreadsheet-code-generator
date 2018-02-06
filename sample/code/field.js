@@ -1,9 +1,9 @@
-module.exports = {
+module.exports = class FieldGeneratorNode extends GeneratorNode {
 
-  definition: function() {
+  definition() {
     return this.source(`
 ${this.data.field};
 `);
-  },
+  }
 
-};
+}
