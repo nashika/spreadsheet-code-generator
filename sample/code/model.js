@@ -1,4 +1,4 @@
-module.exports = class ModelGeneratorNode extends GeneratorNode {
+module.exports = class ModelGeneratorNode extends scg.GeneratorNode {
 
   main() {
     let source = this.source(`

@@ -80,4 +80,6 @@ export class GeneratorProcess {
 
 }
 
-(<any>window).GeneratorNode = GeneratorNode;
+(<any>window).scg = {
+  GeneratorNode: GeneratorNode,
+}
