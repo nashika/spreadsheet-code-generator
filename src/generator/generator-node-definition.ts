@@ -85,8 +85,8 @@ export class GeneratorNodeDefinition {
     let sheetCodePath: string = path.join(codeDir, `./${sheetName}.js`);
     if (originalRequire.cache[sheetCodePath])
       delete originalRequire.cache[sheetCodePath];
-    let sheetCode: typeof GeneratorNode;
-    sheetCode = originalRequire(sheetCodePath);
+    let sheetCode: any = originalRequire(sheetCodePath);
+    if (sheetCode.hasOwnProperty("default")) sheetCode = sheetCode.default;
     if (!GeneratorNode.isPrototypeOf(sheetCode)) {
       throw `Sheet code "${sheetName}.js" exports type="${typeof sheetCode}" data.
 Sheet code expects export Class that extends GeneratorNode.`;
