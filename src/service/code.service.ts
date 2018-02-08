@@ -39,12 +39,8 @@ export class CodeService extends BaseIoService {
 
   saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
-    _.forIn(this.$hub.codes, (data, name) => {
-      this.save(name, data);
-    });
-    _.forEach(_.difference(this.list(), _.keys(this.$hub.codes)), (name) => {
-      this.unlink(name);
-    });
+    _.each(this.$hub.codes, (data, name) => this.save(name, data));
+    _.each(_.difference(this.list(), _.keys(this.$hub.codes)), name => this.unlink(name));
     return true;
   }
 

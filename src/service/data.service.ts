@@ -21,7 +21,7 @@ export class DataService extends BaseIoService {
   protected save(sheetName: string, data: TSheetData) {
     if (name == "root") return;
 
-    data = data.map((record) => {
+    data = data.map(record => {
       let result: any = {};
       for (let column of this.$hub.sheets[sheetName].columns) {
         let columnData: any = _.get(record, column.data);
@@ -52,28 +52,22 @@ export class DataService extends BaseIoService {
   loadAll(): boolean {
     if (!this.checkDir()) return false;
     let names: string[] = this.list();
-    this.$hub.datas = _.zipObject(names, names.map(name => this.load(name)));;
+    this.$hub.datas = _.zipObject(names, names.map(name => this.load(name)));
     return true;
   }
 
   saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
-    _.forIn(this.$hub.datas, (data, name) => {
-      this.save(name, data);
-    });
-    _.forEach(_.difference(this.list(), _.keys(this.$hub.datas)), (name) => {
-      this.unlink(name);
-    });
+    _.each(this.$hub.datas, (data, name) => this.save(name, data));
+    _.each(_.difference(this.list(), _.keys(this.$hub.datas)), (name) => this.unlink(name));
     return true;
   }
 
   loadAllForGenerate(): {[sheetName: string]: TSheetData} {
     if (!this.checkDir()) return null;
-    let names: string[] = this.list();
-    let result: {[sheetName: string]: TSheetData} = {};
+    let names= this.list();
+    let result: {[sheetName: string]: TSheetData} = _.zipObject(names, _.map(names, name => this.load(name)));
     result["root"] = [];
-    for (let name of names)
-      result[_.camelCase(name)] = this.load(name);
     return result;
   }
 
