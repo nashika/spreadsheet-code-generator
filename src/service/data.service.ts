@@ -1,6 +1,5 @@
 import _ = require("lodash");
 import {injectable} from "inversify";
-import Vue from "vue";
 
 import {BaseIoService} from "./base-io.service";
 import {HubService, TSheetData} from "./hub.service";
@@ -53,8 +52,7 @@ export class DataService extends BaseIoService {
   loadAll(): boolean {
     if (!this.checkDir()) return false;
     let names: string[] = this.list();
-    for (let name of names)
-      Vue.set(this.$hub.datas, name, this.load(name));
+    this.$hub.datas = _.zipObject(names, names.map(name => this.load(name)));;
     return true;
   }
 

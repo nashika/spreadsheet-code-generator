@@ -17,12 +17,16 @@ export abstract class BaseIoService extends BaseHubService {
     super(hubService);
   }
 
+  get Class(): typeof BaseIoService {
+    return <typeof BaseIoService>this.constructor;
+  }
+
   protected get saveDir(): string {
-    return path.join(this.$hub.saveBaseDir, (<typeof BaseIoService>this.constructor).DIR_NAME);
+    return path.join(this.$hub.saveBaseDir, this.Class.DIR_NAME);
   }
 
   protected filePath(sheetName: string): string {
-    return path.join(this.saveDir, `${sheetName}.${(<typeof BaseIoService>this.constructor).EXT}`);
+    return path.join(this.saveDir, `${sheetName}.${this.Class.EXT}`);
   }
 
   protected checkDir(): boolean {
@@ -35,7 +39,6 @@ export abstract class BaseIoService extends BaseHubService {
       alert(`"${this.saveDir}" is not directory, please remove it.`);
       return false;
     }
-
   }
 
   protected checkAndCreateDir(): boolean {
@@ -50,19 +53,23 @@ export abstract class BaseIoService extends BaseHubService {
     }
   }
 
-  public list(): string[] {
-    let regexp = new RegExp(`\\.${(<typeof BaseIoService>this.constructor).EXT}$`);
+  list(): string[] {
+    let regexp = new RegExp(`\\.${this.Class.EXT}$`);
     return fs.readdirSync(this.saveDir)
       .filter((f) => f.match(regexp) ? true : false)
       .map((f) => f.replace(regexp, ""));
   }
+
+  abstract newAll(): void;
+
+  abstract loadAll(): void;
 
   protected load(sheetName: string): any {
     let filePath: string = this.filePath(sheetName);
     log.debug(`Loadig ${filePath}.`);
     if (fs.existsSync(filePath)) {
       let data: string = fs.readFileSync(filePath).toString();
-      if ((<typeof BaseIoService>this.constructor).EXT == "json")
+      if (this.Class.EXT == "json")
         return JSON.parse(data);
       else
         return data;
@@ -71,11 +78,13 @@ export abstract class BaseIoService extends BaseHubService {
     }
   }
 
+  abstract saveAll(): void;
+
   protected save(sheetName: string, data: any): void {
     let filePath: string = this.filePath(sheetName);
     log.debug(`Saving ${filePath}.`);
     let writeData: string;
-    if ((<typeof BaseIoService>this.constructor).EXT == "json")
+    if (this.Class.EXT == "json")
       writeData = JSON.stringify(data, null, "  ");
     else
       writeData = data;

@@ -30,15 +30,13 @@ export class SheetService extends BaseIoService {
     Vue.set(this.$hub.sheetMetas[sheetName], "modified", false);
   }
 
-  public newAll(): void {
+  newAll(): void {
     this.$hub.sheets = {root: this.rootTemplate};
     this.$hub.sheetMetas = {
       root: this.sheetMetaTemplate,
     };
     this.$hub.currentSheet = this.$hub.sheets["root"];
     this.$hub.currentSheetMeta = this.$hub.sheetMetas["root"];
-    this.dataService.newAll();
-    this.codeService.newAll();
   }
 
   protected get rootTemplate(): ISheet {
@@ -58,20 +56,16 @@ export class SheetService extends BaseIoService {
     };
   }
 
-  public loadAll(): boolean {
+  loadAll(): boolean {
     if (!this.checkDir()) return false;
     this.newAll();
     let names: string[] = this.list();
-    for (let name of names) {
-      Vue.set(this.$hub.sheets, name, this.load(name));
-      Vue.set(this.$hub.sheetMetas, name, this.sheetMetaTemplate);
-    }
-    if (!this.dataService.loadAll()) return false;
-    if (!this.codeService.loadAll()) return false;
+    this.$hub.sheets = _.zipObject(names, names.map(name => this.load(name)));
+    this.$hub.sheetMetas = _.zipObject(names, names.map(() => this.sheetMetaTemplate));
     return true;
   }
 
-  public saveAll(): boolean {
+  saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.$hub.sheets, (sheet, name) => {
       this.save(name, sheet);
@@ -79,19 +73,17 @@ export class SheetService extends BaseIoService {
     _.forEach(_.difference(this.list(), _.keys(this.$hub.sheets)), (name) => {
       this.unlink(name);
     });
-    if (!this.dataService.saveAll()) return false;
-    if (!this.codeService.saveAll()) return false;
     return true;
   }
 
-  public select(sheet: ISheet) {
+  select(sheet: ISheet) {
     this.$hub.currentSheet = sheet;
     this.$hub.currentSheetMeta = this.$hub.sheetMetas[sheet.name];
     this.$hub.currentData = this.$hub.datas[sheet.name];
     this.$hub.currentCode = this.$hub.codes[sheet.name];
   }
 
-  public add(sheetName: string, parentSheetName: string): boolean {
+  add(sheetName: string, parentSheetName: string): boolean {
     if (_.has(this.$hub.sheets, sheetName)) {
       alert(`Sheet "${sheetName}" already exists.`);
       return false;
@@ -111,7 +103,7 @@ export class SheetService extends BaseIoService {
     return true;
   }
 
-  public edit(oldSheetName: string, newSheetName: string, parentSheetName: string): boolean {
+  edit(oldSheetName: string, newSheetName: string, parentSheetName: string): boolean {
     if (oldSheetName != newSheetName && _.has(this.$hub.sheets, newSheetName)) {
       alert(`Sheet "${newSheetName}" already exists.`);
       return false;
@@ -135,7 +127,7 @@ export class SheetService extends BaseIoService {
     return true;
   }
 
-  public remove(): void {
+  remove(): void {
     if (!this.$hub.currentSheet) {
       alert(`No selected sheet.`);
       return;
@@ -158,13 +150,13 @@ export class SheetService extends BaseIoService {
     this.$hub.currentCode = this.$hub.codes["root"];
   }
 
-  public isParentRecursive(target: ISheet, parent: ISheet): boolean {
+  isParentRecursive(target: ISheet, parent: ISheet): boolean {
     if (target.parent == parent.name) return true;
     if (!target.parent) return false;
     return this.isParentRecursive(this.$hub.sheets[target.parent], parent);
   }
 
-  public loadAllForGenerate(): {[sheetName: string]: ISheet} {
+  loadAllForGenerate(): {[sheetName: string]: ISheet} {
     let names: string[] = this.list();
     let result: {[sheetName: string]: ISheet} = {root: this.rootTemplate};
     for (let name of names) {

@@ -24,21 +24,20 @@ export class CodeService extends BaseIoService {
     super.save(sheetName, data);
   }
 
-  public newAll(): void {
+  newAll(): void {
     this.$hub.codes = {root: ""};
     this.$hub.currentCode = "";
   }
 
-  public loadAll(): boolean {
+  loadAll(): boolean {
     if (!this.checkDir()) return false;
     let names: string[] = this.list();
-    for (let name of names)
-      Vue.set(this.$hub.codes, name, this.load(name));
+    this.$hub.codes = _.zipObject(names, names.map(name => this.load(name)));
     this.$hub.currentCode = this.$hub.codes["root"];
     return true;
   }
 
-  public saveAll(): boolean {
+  saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
     _.forIn(this.$hub.codes, (data, name) => {
       this.save(name, data);
@@ -49,13 +48,13 @@ export class CodeService extends BaseIoService {
     return true;
   }
 
-  public edit(sheetName: string, value: string) {
+  edit(sheetName: string, value: string) {
     Vue.set(this.$hub.codes, sheetName, value);
     this.$hub.currentCode = value;
     this.$hub.sheetMetas[sheetName].modified = true;
   }
 
-  public get defaultCode(): string {
+  get defaultCode(): string {
     return `module.exports = {
 
   main: function() {

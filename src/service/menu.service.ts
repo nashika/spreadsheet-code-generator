@@ -10,17 +10,24 @@ import {GeneratorService} from "./generator.service";
 import {SheetService} from "./sheet.service";
 import {ConfigService} from "./config.service";
 import {BaseHubService} from "./base-hub.service";
+import {CodeService} from "./code.service";
+import {DataService} from "./data.service";
+import {BaseIoService} from "./base-io.service";
 
 @injectable()
 export class MenuService extends BaseHubService {
 
-  protected menu: Menu;
+  private menu: Menu;
+  private ioServices: BaseIoService[];
 
-  constructor(protected hubService: HubService,
-              protected generatorService: GeneratorService,
-              protected sheetService: SheetService,
-              protected configService: ConfigService) {
+  constructor(hubService: HubService,
+              private generatorService: GeneratorService,
+              sheetService: SheetService,
+              dataService: DataService,
+              codeService: CodeService,
+              private configService: ConfigService) {
     super(hubService);
+    this.ioServices = [sheetService, dataService, codeService];
     this.init();
   }
 
@@ -148,13 +155,13 @@ export class MenuService extends BaseHubService {
     if (!window.confirm(`All editing data will be erased, Do you really want to new project?`))
       return;
     this.$hub.saveBaseDir = "";
-    this.sheetService.newAll();
-    this.saveDirInfo(false);
+    if (_.every(this.ioServices, ioService => ioService.newAll()))
+      this.saveDirInfo(false);
   };
 
   protected open = (): void => {
     if (!this.openDir()) return;
-    if (this.sheetService.loadAll())
+    if (_.every(this.ioServices, ioService => ioService.loadAll()))
       this.saveDirInfo();
   };
 
@@ -165,9 +172,8 @@ export class MenuService extends BaseHubService {
       this.$hub.saveBaseDir = this.$hub.config.recentSaveBaseDirs[0];
     else
       this.$hub.saveBaseDir = path.join(electron.remote.app.getAppPath(), "sample");
-    if (this.sheetService.loadAll())
+    if (_.every(this.ioServices, ioService => ioService.loadAll()))
       this.saveDirInfo();
-
   }
 
   protected saveTo = (): void => {
@@ -182,7 +188,7 @@ export class MenuService extends BaseHubService {
     if (as || !this.$hub.saveBaseDir)
       if (!this.openDir())
         return;
-    if (this.sheetService.saveAll())
+    if (_.every(this.ioServices, ioService => ioService.saveAll()))
       this.saveDirInfo();
   };
 
