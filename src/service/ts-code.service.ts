@@ -38,7 +38,7 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
   saveAll(): boolean {
     if (!this.checkAndCreateDir()) return false;
     _.each(this.$hub.sheets, sheet => this.saveTsCode(sheet));
-    _.each(_.difference(this.list(), _.keys(this.$hub.codes)), name => this.unlink(name));
+    _.each(_.difference(this.list(), _.keys(this.$hub.sheets)), name => this.unlink(name));
     return true;
   }
 

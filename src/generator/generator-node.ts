@@ -22,7 +22,6 @@ export class GeneratorNode {
   data: { [columnName: string]: any };
 
   private __childrenMap: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
-  private __childrenCache: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
 
   constructor(_dataRecord: { [columnName: string]: any }) {
     this.data = _.cloneDeep(_dataRecord);
@@ -59,18 +58,7 @@ export class GeneratorNode {
   }
 
   get children(): { [sheetName: string]: { [nodeName: string]: GeneratorNode } } {
-    if (this.__childrenCache) return this.__childrenCache;
-    let result: { [sheetName: string]: { [nodeName: string]: any } } = {};
-    _.forIn(this.Class.definition.children, def => {
-      let sheetName: string = _.camelCase(def.name);
-      result[sheetName] = {};
-      _.forIn(this.getChildren(sheetName), node => {
-        if (node.name == "*") return;
-        result[sheetName][node.name] = node.data;
-      });
-    });
-    this.__childrenCache = result;
-    return result;
+    return this.__childrenMap;
   }
 
   get deleteLine(): string {
