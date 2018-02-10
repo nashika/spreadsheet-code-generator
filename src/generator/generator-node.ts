@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import * as log from "loglevel";
 
 import {GeneratorNodeDefinition} from "./generator-node-definition";
+import {SourceUtils} from "../util/source-utils";
 
 interface IGenerateChildrenOption {
   sort?: (childA: any, childB: any) => number;
@@ -21,16 +22,16 @@ export class GeneratorNode {
   data: { [columnName: string]: any };
 
   private __childrenMap: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
-  private __childrenCache: { [sheetName: string]: { [nodeName: string]: any } };
+  private __childrenCache: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
 
   constructor(_dataRecord: { [columnName: string]: any }) {
     this.data = _.cloneDeep(_dataRecord);
     this.parent = null;
     this.__childrenMap = {};
-    _.forIn(this.Class.definition.children, (childDefinition: GeneratorNodeDefinition) => {
+    for (let childDefinition of _.values(this.Class.definition.children)) {
       let childSheetName: string = _.camelCase(childDefinition.name);
       this.__childrenMap[childSheetName] = {};
-    });
+    }
   }
 
   get Class(): typeof GeneratorNode {
@@ -57,7 +58,7 @@ export class GeneratorNode {
     return _.map(this.Class.definition.columns, column => column.data);
   }
 
-  get children(): { [sheetName: string]: { [nodeName: string]: any } } {
+  get children(): { [sheetName: string]: { [nodeName: string]: GeneratorNode } } {
     if (this.__childrenCache) return this.__childrenCache;
     let result: { [sheetName: string]: { [nodeName: string]: any } } = {};
     _.forIn(this.Class.definition.children, def => {
@@ -73,11 +74,11 @@ export class GeneratorNode {
   }
 
   get deleteLine(): string {
-    return "###DeleteLine###";
+    return SourceUtils.deleteLine;
   }
 
   get noNewLine(): string {
-    return "###NoNewLine###";
+    return SourceUtils.noNewLine;
   }
 
   call(funcName: string = "main", ...args: any[]): any {
@@ -188,35 +189,11 @@ resultType="${typeof childResult} is invalid return data.`);
   }
 
   source(argSource: any): string {
-    let result: string = "";
-    let source: string = _.isString(argSource) ? argSource : _.toString(argSource);
-    let lines: Array<string> = source.toString().split(/\n/g);
-    if (lines[0] == "") lines.shift();
-    if (lines[lines.length - 1] == "") lines.pop();
-    lines.forEach((line: string) => {
-      if (line.match(/###DeleteLine###/)) return;
-      if (line.match(/###NoNewLine###/)) {
-        line = line.replace(/###NoNewLine###/, "");
-        result = result.replace(/\n$/m, "");
-      }
-      result += line + "\n";
-    });
-    return result;
+    return SourceUtils.source(argSource);
   }
 
   indent(numIndent: number, argSource: any, indentFirstLine: boolean = true): string {
-    let result: string = "";
-    let source: string = _.isString(argSource) ? argSource : _.toString(argSource);
-    let lines: Array<string> = source.split(/\n/g);
-    if (lines[lines.length - 1] == "") lines.pop();
-    lines.forEach((line: string, index: number) => {
-      let newLine: string = (index < lines.length - 1) ? "\n" : "";
-      if (line && (index > 0 || indentFirstLine))
-        result += _.repeat(" ", this.Class.definition.process.unitIndent * numIndent) + line + newLine;
-      else
-        result += line + newLine;
-    });
-    return result;
+    return SourceUtils.indent(numIndent, argSource, this.Class.definition.process.unitIndent, indentFirstLine);
   }
 
   setIndent(arg: number): void {
@@ -235,7 +212,7 @@ resultType="${typeof childResult} is invalid return data.`);
     return this.__childrenMap[sheetName];
   }
 
-  toObject(): {[columnName: string]: any} {
+  toObject(): { [columnName: string]: any } {
     return _.cloneDeep(this.data);
   }
 

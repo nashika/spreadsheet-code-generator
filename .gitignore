@@ -7,6 +7,8 @@
 /*.js
 /*.js.map
 /*.html
+/sample/ts-code/*.js
+/sample/ts-code/*.js.map
 /src/**/*.js
 /src/**/*.js.map
 /src/**/*.html

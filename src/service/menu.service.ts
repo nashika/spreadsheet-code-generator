@@ -13,21 +13,25 @@ import {BaseHubService} from "./base-hub.service";
 import {CodeService} from "./code.service";
 import {DataService} from "./data.service";
 import {BaseIoService} from "./base-io.service";
+import {TsCodeService} from "./ts-code.service";
 
 @injectable()
 export class MenuService extends BaseHubService {
 
   private menu: Menu;
   private ioServices: BaseIoService[];
+  private saveIoServices: BaseIoService[];
 
   constructor(hubService: HubService,
               private generatorService: GeneratorService,
               sheetService: SheetService,
               dataService: DataService,
               codeService: CodeService,
+              tsCodeService: TsCodeService,
               private configService: ConfigService) {
     super(hubService);
     this.ioServices = [sheetService, dataService, codeService];
+    this.saveIoServices = [sheetService, dataService, codeService, tsCodeService];
     this.init();
   }
 
@@ -188,7 +192,7 @@ export class MenuService extends BaseHubService {
     if (as || !this.$hub.saveBaseDir)
       if (!this.openDir())
         return;
-    if (_.every(this.ioServices, ioService => ioService.saveAll()))
+    if (_.every(this.saveIoServices, ioService => ioService.saveAll()))
       this.saveDirInfo();
   };
 

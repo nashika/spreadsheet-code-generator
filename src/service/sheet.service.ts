@@ -60,8 +60,8 @@ export class SheetService extends BaseIoService {
     if (!this.checkDir()) return false;
     this.newAll();
     let names: string[] = this.list();
-    this.$hub.sheets = _.zipObject(names, names.map(name => this.load(name)));
-    this.$hub.sheetMetas = _.zipObject(names, names.map(() => this.sheetMetaTemplate));
+    this.$hub.sheets = _.merge(this.$hub.sheets, _.zipObject(names, names.map(name => this.load(name))));
+    this.$hub.sheetMetas = _.merge(this.$hub.sheetMetas, _.zipObject(names, names.map(() => this.sheetMetaTemplate)));
     return true;
   }
 

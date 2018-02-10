@@ -75,12 +75,11 @@ export default class SheetsComponent extends BaseComponent {
   }
 
   treeSheetRecursive(parentSheetName: string, level: number): ITreeSheet[] {
-    let result: ITreeSheet[] = [];
-    _.forIn(this.$hub.sheets, (sheet: ISheet) => {
-      if (sheet.parent == parentSheetName)
-        result.push({sheet: sheet, level: level});
-    });
-    result = _.sortBy(result, "sheet.name");
+    let result: ITreeSheet[] = _(this.$hub.sheets)
+      .filter(sheet => sheet.parent == parentSheetName)
+      .map(sheet => ({sheet: sheet, level: level}))
+      .sortBy("sheet.name")
+      .value();
     return _.flatMap(result, (treeSheet: ITreeSheet) => {
       return _.concat([treeSheet], this.treeSheetRecursive(treeSheet.sheet.name, level + 1));
     });
