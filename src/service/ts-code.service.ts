@@ -20,8 +20,23 @@ export class TsCodeService extends BaseIoService {
   }
 
   private saveTsCode(sheet: ISheet) {
+    let parentSheet = _(this.$hub.sheets).find(sh => sh.name == sheet.parent);
+    let childSheets = _(this.$hub.sheets).filter(sh => sh.parent == sheet.name).value();
     let source = SourceUtils.source(`
+import ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode from "../code/${sheet.name}";
+${parentSheet ? `import ${_.upperFirst(_.camelCase(parentSheet.name))}GeneratorNode from "../code/${parentSheet.name}";` : SourceUtils.deleteLine}
+${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFirst(_.camelCase(childSheet.name))}Node from "../code/${childSheet.name}";`).join("\n") : SourceUtils.deleteLine}
+
+type T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren = {
+  ${childSheets.length > 0 ? _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node};`).join("\n") : SourceUtils.deleteLine}
+}
+
 export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenerated extends scg.GeneratorNode {
+
+  readonly parent: ${parentSheet ? `${_.upperFirst(_.camelCase(parentSheet.name))}GeneratorNode` : "null"};
+  readonly siblings: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode };
+  readonly children: T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren;
+
 }
 `);
     super.save(sheet.name, source);

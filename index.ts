@@ -1,9 +1,7 @@
-import {GeneratorNode as GeneratorNode_} from "./src/generator/generator-node";
+import gn = require("./src/generator/generator-node");
 
 declare global {
   export namespace scg {
-    export var GeneratorNode: typeof GeneratorNode_;
+    export import GeneratorNode = gn.GeneratorNode;
   }
 }
-
-import "./src/main";

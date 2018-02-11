@@ -49,10 +49,6 @@ export class GeneratorNode {
     return this.parent ? this.parent.root : this;
   }
 
-  get path(): Array<[string, string]> {
-    return <any>_.concat(this.parent ? this.parent.path : [], [[this.Class.definition.name, this.name]])
-  }
-
   get columns(): string[] {
     return _.map(this.Class.definition.columns, column => column.data);
   }
