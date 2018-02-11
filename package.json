@@ -18,7 +18,7 @@
     "pug-index": "pug index.pug --pretty",
     "ncu": "ncu",
     "npm-check-updates": "npm-check-updates",
-    "start": "electron ./src/main.js",
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc",
     "webpack": "webpack",

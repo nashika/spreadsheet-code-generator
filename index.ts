@@ -5,3 +5,5 @@ declare global {
     export import GeneratorNode = gn.GeneratorNode;
   }
 }
+
+import "./src/main";

@@ -4,14 +4,11 @@ import _ = require("lodash");
 import BaseComponent from "./base.component";
 import {RecordExtender} from "../util/record-extender";
 import {IColumn} from "../service/hub.service";
-
-declare global {
-  var Handsontable: any;
-}
+import * as Handsontable from "handsontable";
 
 type THandsontableChange = [number, string, any, any];
 
-interface IMyHandsontable extends Handsontable.Core {
+interface IMyHandsontable extends Handsontable {
   search: {
     query(q: string): any;
   };
@@ -180,8 +177,8 @@ export default class SpreadsheetComponent extends BaseComponent {
       autoRowSize: false,
       autoColumnSize: false,
       cells: (_row: number, _col: number, _prop: any) => {
-        let cellProperties: Handsontable.Options = {};
-        cellProperties.renderer = this.customRenderer;
+        let cellProperties: Handsontable.DefaultSettings = {};
+        cellProperties.renderer = <any>this.customRenderer;
         return cellProperties;
       },
     });
