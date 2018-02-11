@@ -7,13 +7,6 @@ import * as log from "loglevel";
 import {GeneratorNodeDefinition} from "./generator-node-definition";
 import {SourceUtils} from "../util/source-utils";
 
-interface IGenerateChildrenOption {
-  sort?: (childA: any, childB: any) => number;
-}
-
-type TSortDataType = { child: GeneratorNode, result: any };
-type TCallChildrenJoinType = "void" | "string" | "array" | "object" | "concat" | "merge";
-
 export class GeneratorNode {
 
   static definition: GeneratorNodeDefinition;
@@ -21,15 +14,15 @@ export class GeneratorNode {
   parent: GeneratorNode;
   data: { [columnName: string]: any };
 
-  private __childrenMap: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
+  private __children: { [sheetName: string]: { [nodeName: string]: GeneratorNode } };
 
   constructor(_dataRecord: { [columnName: string]: any }) {
     this.data = _.cloneDeep(_dataRecord);
     this.parent = null;
-    this.__childrenMap = {};
+    this.__children = {};
     for (let childDefinition of _.values(this.Class.definition.children)) {
       let childSheetName: string = _.camelCase(childDefinition.name);
-      this.__childrenMap[childSheetName] = {};
+      this.__children[childSheetName] = {};
     }
   }
 
@@ -42,7 +35,7 @@ export class GeneratorNode {
   }
 
   get siblings(): { [nodeName: string]: GeneratorNode } {
-    return _(this.parent.getChildren(this.Class.definition.name)).omit(["*", this.name]).value();
+    return _(this.parent.__getChildren(this.Class.definition.name)).omit(["*", this.name]).value();
   }
 
   get root(): GeneratorNode {
@@ -54,7 +47,7 @@ export class GeneratorNode {
   }
 
   get children(): { [sheetName: string]: { [nodeName: string]: GeneratorNode } } {
-    return this.__childrenMap;
+    return this.__children;
   }
 
   get deleteLine(): string {
@@ -65,85 +58,7 @@ export class GeneratorNode {
     return SourceUtils.noNewLine;
   }
 
-  call(funcName: string = "main", ...args: any[]): any {
-    return (<any>this)[funcName](...args);
-  }
-
-  callChildren(childSheetName: string, funcName: string = "main", joinType: TCallChildrenJoinType = "void", options: IGenerateChildrenOption = {}, ...args: any[]): any {
-    let sortDatas: TSortDataType[] = [];
-    for (let childNode of _.values(this.getChildren(childSheetName))) {
-      let childResult: any = childNode.call(funcName, ...args);
-      // type check from join type
-      switch (joinType) {
-        case "void":
-          if (!_.isUndefined(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects void");
-          break;
-        case "string":
-          if (!_.isString(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects string");
-          break;
-        case "array":
-        case "object":
-          break;
-        case "concat":
-          if (!_.isArray(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects array");
-          break;
-        case "merge":
-          if (!_.isObject(childResult)) this._throwErrorCallChildren(funcName, joinType, childResult, "result expects object");
-          break;
-        default:
-          this._throwErrorCallChildren(funcName, joinType, childResult, "unknown join type");
-      }
-      sortDatas.push({
-        child: childNode,
-        result: childResult,
-      });
-    }
-    if (options.sort)
-      sortDatas.sort((a: TSortDataType, b: TSortDataType) => {
-        return options.sort(a.child.data, b.child.data);
-      });
-    switch (joinType) {
-      case "void":
-        return undefined;
-      case "string":
-        let resultString: string = "";
-        for (let sortData of sortDatas)
-          resultString += sortData.result;
-        return resultString;
-      case "array":
-        let resultArray: any[] = [];
-        for (let sortData of sortDatas)
-          resultArray.push(<any[]>sortData.result);
-        return resultArray;
-      case "object":
-        let resultObject: any = {};
-        for (let sortData of sortDatas)
-          resultObject = _.set(resultObject, sortData.child.name, <any>sortData.result);
-        return resultObject;
-      case "concat":
-        let resultConcat: any[] = [];
-        for (let sortData of sortDatas)
-          resultConcat = _.concat(resultConcat, <any>sortData.result);
-        return resultConcat;
-      case "merge":
-        let resultMerge: any = {};
-        for (let sortData of sortDatas)
-          resultMerge = _.merge(resultMerge, <any>sortData.result);
-        return resultMerge;
-      default:
-        this._throwErrorCallChildren(funcName, joinType, null, "unknown join type");
-    }
-  }
-
-  protected _throwErrorCallChildren(funcName: string, argJoinType: string, childResult: any, message: string) {
-    throw new Error(`callChildren error.
-${message}
-sheetName=${this.Class.definition.name}
-nodeName=${this.name}
-funcName=${funcName}
-argJoinType=${argJoinType}
-result=${childResult}
-resultType="${typeof childResult} is invalid return data.`);
+  main() {
   }
 
   write(argPath: string, data: string, option: { override?: boolean } = {}): void {
@@ -184,18 +99,6 @@ resultType="${typeof childResult} is invalid return data.`);
     this.Class.definition.process.unitIndent = arg;
   }
 
-  getChild(sheetName: string, nodeName: string): GeneratorNode {
-    sheetName = _.camelCase(sheetName);
-    return this.__childrenMap[sheetName] && this.__childrenMap[sheetName][nodeName];
-  }
-
-  getChildren(sheetName: string): { [nodeName: string]: GeneratorNode } {
-    sheetName = _.camelCase(sheetName);
-    if (!_.has(this.__childrenMap, sheetName))
-      throw new Error(`Can not find child node. sheetName="${sheetName}".`);
-    return this.__childrenMap[sheetName];
-  }
-
   toObject(): { [columnName: string]: any } {
     return _.cloneDeep(this.data);
   }
@@ -209,7 +112,7 @@ resultType="${typeof childResult} is invalid return data.`);
       if (_.includes(this.Class.definition.descendants, node.Class.definition)) {
         for (let childDefinition of _.values(this.Class.definition.children)) {
           if (_.includes(childDefinition.descendants, node.Class.definition)) {
-            let childNode = this.getChild(childDefinition.name, node.data[childDefinition.name]);
+            let childNode = this.__getChild(childDefinition.name, node.data[childDefinition.name]);
             if (childNode)
               childNode.__add(node);
           }
@@ -218,10 +121,22 @@ resultType="${typeof childResult} is invalid return data.`);
     }
   }
 
+  private __getChild(sheetName: string, nodeName: string): GeneratorNode {
+    sheetName = _.camelCase(sheetName);
+    return this.__children[sheetName] && this.__children[sheetName][nodeName];
+  }
+
+  private __getChildren(sheetName: string): { [nodeName: string]: GeneratorNode } {
+    sheetName = _.camelCase(sheetName);
+    if (!_.has(this.__children, sheetName))
+      throw new Error(`Can not find child node. sheetName="${sheetName}".`);
+    return this.__children[sheetName];
+  }
+
   private __addChild(childNode: GeneratorNode): void {
     let sheetName = _.camelCase(childNode.Class.definition.name);
     if (childNode.name) {
-      this.__childrenMap[sheetName][childNode.name] = childNode;
+      this.__children[sheetName][childNode.name] = childNode;
       childNode.parent = this;
     }
   }

@@ -1,10 +1,6 @@
 snippet ${}
 	${${0}}
 # call children node method and join that
-snippet this.callChildren
-	this.callChildren("${1:child_sheet_name}", "${2:method_name}", "${3:join_type}")
-snippet this.call
-	this.call("${1:method_name}")
 snippet this.children
 	this.children.${1:sheet_name}.${2:node_name}
 snippet this.columns
@@ -31,11 +27,3 @@ snippet this.source
 	`);
 snippet this.write
 	this.write("${1:./path/to/file.ext}", ${2:source})
-snippet module.exports
-	module.exports = {
-
-		main: function() {
-			$0
-		}
-
-	}

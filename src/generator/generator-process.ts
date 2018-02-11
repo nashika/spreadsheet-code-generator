@@ -71,7 +71,7 @@ export class GeneratorProcess {
     this.unitIndent = 4;
     this.writeCount = 0;
     log.debug(`Generate process was started.`);
-    rootNode.call();
+    rootNode.main();
     log.debug(`Generate process was finished.`);
 
     log.debug(`Generate process was done. Write ${this.writeCount} files.`);
