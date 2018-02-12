@@ -4,7 +4,7 @@ import _ = require("lodash");
 import BaseComponent from "./base.component";
 import {RecordExtender} from "../util/record-extender";
 import {IColumn} from "../service/hub.service";
-import * as Handsontable from "handsontable";
+import Handsontable from "handsontable";
 
 type THandsontableChange = [number, string, any, any];
 
