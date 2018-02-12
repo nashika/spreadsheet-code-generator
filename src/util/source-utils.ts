@@ -27,14 +27,14 @@ export class SourceUtils {
     return result;
   }
 
-  static indent(numIndent: number, argSource: any, unitIndent: number, indentFirstLine: boolean = true): string {
+  static indent(unitIndent: number, numIndent: number, argSource: any, noIndentFirstLine: boolean = false): string {
     let result: string = "";
     let source: string = _.isString(argSource) ? argSource : _.toString(argSource);
     let lines: string[] = source.split(/\n/g);
     if (lines[lines.length - 1] == "") lines.pop();
     lines.forEach((line: string, index: number) => {
       let newLine: string = (index < lines.length - 1) ? "\n" : "";
-      if (line && (index > 0 || indentFirstLine))
+      if (line && (index > 0 || !noIndentFirstLine))
         result += _.repeat(" ", unitIndent * numIndent) + line + newLine;
       else
         result += line + newLine;

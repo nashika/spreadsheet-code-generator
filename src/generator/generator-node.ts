@@ -91,8 +91,8 @@ export class GeneratorNode {
     return SourceUtils.source(argSource);
   }
 
-  indent(numIndent: number, argSource: any, indentFirstLine: boolean = true): string {
-    return SourceUtils.indent(numIndent, argSource, this.Class.definition.process.unitIndent, indentFirstLine);
+  indent(numIndent: number, argSource: any, noIndentFirstLine: boolean = false): string {
+    return SourceUtils.indent(this.Class.definition.process.unitIndent, numIndent, argSource, noIndentFirstLine);
   }
 
   setIndent(arg: number): void {

@@ -2,7 +2,7 @@ import _ = require("lodash");
 import {injectable} from "inversify";
 
 import {BaseIoService} from "./base-io.service";
-import {HubService, ISheet} from "./hub.service";
+import {HubService, IColumn, ISheet} from "./hub.service";
 import {SourceUtils} from "../util/source-utils";
 
 @injectable()
@@ -27,12 +27,15 @@ import ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode from "../code/${she
 ${parentSheet ? `import ${_.upperFirst(_.camelCase(parentSheet.name))}GeneratorNode from "../code/${parentSheet.name}";` : SourceUtils.deleteLine}
 ${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFirst(_.camelCase(childSheet.name))}Node from "../code/${childSheet.name}";`).join("\n") : SourceUtils.deleteLine}
 
+export interface I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeData ${this.columnDataTypes(sheet.columns)}
+
 type T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren = {
   ${childSheets.length > 0 ? _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node};`).join("\n") : SourceUtils.deleteLine}
 }
 
 export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenerated extends scg.GeneratorNode {
 
+  readonly data: I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeData;
   readonly parent: ${parentSheet ? `${_.upperFirst(_.camelCase(parentSheet.name))}GeneratorNode` : "null"};
   readonly siblings: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode };
   readonly children: T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren;
@@ -40,6 +43,24 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
 }
 `);
     super.save(sheet.name, source);
+  }
+
+  private columnDataTypes(columns: IColumn[]): string {
+    let result = {};
+    for (let column of columns) _.set(result, column.data, this.columnDataType(column));
+    return JSON.stringify(result, null, 2);
+  }
+
+  private columnDataType(column: IColumn): string {
+    switch (column.type) {
+      case "text":
+      case "select":
+        return column.json ? "any" : "string";
+      case "numeric":
+        return "number";
+      default:
+        throw Error();
+    }
   }
 
   newAll(): void {
