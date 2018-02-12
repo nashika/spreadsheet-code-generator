@@ -39,6 +39,10 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
   readonly parent: ${parentSheet ? `${_.upperFirst(_.camelCase(parentSheet.name))}GeneratorNode` : "null"};
   readonly siblings: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode };
   readonly children: T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren;
+  
+  toObject(): I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeData {
+    return <any>super.toObject();
+  }
 
 }
 `);
@@ -46,9 +50,14 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
   }
 
   private columnDataTypes(columns: IColumn[]): string {
-    let result = {};
-    for (let column of columns) _.set(result, column.data, this.columnDataType(column));
-    return JSON.stringify(result, null, 2);
+    type TPair = {[columnKey: string]: string | TPair};
+    let pair: TPair = {};
+    for (let column of columns) _.set(pair, column.data, this.columnDataType(column));
+    delete pair.extends;
+    let func = (pair: TPair): string => {
+      return "{\n" + _(pair).map((value: string | TPair, key: string) => SourceUtils.indent(2, 1, `${key}?: ${_.isString(value) ? `${value};` : func(<TPair>value)}`)).join("\n") + "\n}";
+    }
+    return func(pair);
   }
 
   private columnDataType(column: IColumn): string {
