@@ -9,7 +9,7 @@ import {SourceUtils} from "../util/source-utils";
 export class TsCodeService extends BaseIoService {
 
   protected static DIR_NAME: string = "ts-code";
-  protected static EXT: string = "ts";
+  protected static EXT: string = "generated.ts";
 
   constructor(protected hubService: HubService) {
     super(hubService);
