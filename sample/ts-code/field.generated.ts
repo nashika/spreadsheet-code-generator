@@ -9,11 +9,27 @@ export interface IFieldGeneratorNodeData {
   format?: string;
   options?: any;
   width?: number;
-  display: {
+  sysinfo?: string;
+  display?: {
     list?: any;
     view?: any;
     edit?: any;
-  }
+  };
+}
+
+export interface IFieldGeneratorNodeExport {
+  model: string;
+  field: string;
+  label: string;
+  type: string;
+  format?: string;
+  options?: any;
+  width?: number;
+  display?: {
+    list?: any;
+    view?: any;
+    edit?: any;
+  };
 }
 
 type TFieldGeneratorNodeChildren = {
@@ -26,7 +42,7 @@ export default class FieldGeneratorNodeGenerated extends scg.GeneratorNode {
   readonly siblings: { [nodeName: string]: FieldGeneratorNode };
   readonly children: TFieldGeneratorNodeChildren;
   
-  toObject(): IFieldGeneratorNodeData {
+  toObject(): IFieldGeneratorNodeExport {
     return <any>super.toObject();
   }
 

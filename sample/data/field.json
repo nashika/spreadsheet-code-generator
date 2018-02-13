@@ -5,6 +5,7 @@
     "label": "ID",
     "type": "number",
     "width": 40,
+    "sysinfo": "id",
     "display": {
       "list": "true",
       "view": "true",

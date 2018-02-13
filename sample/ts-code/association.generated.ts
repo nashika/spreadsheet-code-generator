@@ -9,6 +9,14 @@ export interface IAssociationGeneratorNodeData {
   foreignKey: string;
 }
 
+export interface IAssociationGeneratorNodeExport {
+  model: string;
+  association: string;
+  type: string;
+  target: string;
+  foreignKey: string;
+}
+
 type TAssociationGeneratorNodeChildren = {
 }
 
@@ -19,7 +27,7 @@ export default class AssociationGeneratorNodeGenerated extends scg.GeneratorNode
   readonly siblings: { [nodeName: string]: AssociationGeneratorNode };
   readonly children: TAssociationGeneratorNodeChildren;
   
-  toObject(): IAssociationGeneratorNodeData {
+  toObject(): IAssociationGeneratorNodeExport {
     return <any>super.toObject();
   }
 

@@ -22,7 +22,8 @@
       "data": "extends",
       "type": "text",
       "width": 120,
-      "required": false
+      "required": false,
+      "export": false
     },
     {
       "header": "Type",

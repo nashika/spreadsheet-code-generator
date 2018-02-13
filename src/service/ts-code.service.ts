@@ -29,6 +29,8 @@ ${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFir
 
 export interface I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeData ${this.columnDataTypes(sheet.columns)}
 
+export interface I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeExport ${this.columnDataTypes(sheet.columns, true)}
+
 type T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren = {
   ${childSheets.length > 0 ? _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node};`).join("\n") : SourceUtils.deleteLine}
 }
@@ -40,7 +42,7 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
   readonly siblings: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNode };
   readonly children: T${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeChildren;
   
-  toObject(): I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeData {
+  toObject(): I${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeExport {
     return <any>super.toObject();
   }
 
@@ -49,31 +51,34 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
     super.save(sheet.name, source);
   }
 
-  private columnDataTypes(columns: IColumn[]): string {
-    type TPair = {[columnKey: string]: string | TPair};
-    let pair: TPair = {};
-    for (let column of columns) _.set(pair, column.data, this.columnDataType(column));
-    delete pair.extends;
-    let func = (pair: TPair): string => {
-      return "{\n" + _(pair).map((value: string | TPair, key: string) => SourceUtils.indent(2, 1, `${key}${_.isString(value) ? value : "?: " + func(<TPair>value)}`)).join("\n") + "\n}";
+  private columnDataTypes(columns: IColumn[], isExport: boolean = false): string {
+    type TDefElement = [string, boolean] | TDefTree;
+    type TDefTree = { [columnKey: string]: TDefElement };
+    let columnDataType = (column: IColumn): string => {
+      switch (column.type) {
+        case "text":
+        case "select":
+          return column.json ? "any" : "string";
+        case "numeric":
+          return "number";
+        default:
+          throw Error();
+      }
+    };
+    let isRequired = (elm: TDefElement): boolean => {
+      if (_.isArray(elm)) return elm[1];
+      return _.some(elm, (celm: TDefElement) => isRequired(celm));
+    };
+    let recursive = (tree: TDefTree): string => {
+      return "{\n" + _(tree).map((elm: TDefElement, key: string) => SourceUtils.indent(2, 1, `${key}${isRequired(elm) ? "" : "?"}: ${_.isArray(elm) ? elm[0] : recursive(elm)};`)).join("\n") + "\n}";
+    };
+    let tree: TDefTree = {};
+    for (let column of columns) {
+      if (isExport && !column.export) continue;
+      _.set(tree, column.data, [columnDataType(column), column.required]);
     }
-    return func(pair);
-  }
-
-  private columnDataType(column: IColumn): string {
-    let type = "";
-    switch (column.type) {
-      case "text":
-      case "select":
-        type = column.json ? "any" : "string";
-        break;
-      case "numeric":
-        type = "number";
-        break;
-      default:
-        throw Error();
-    }
-    return `${column.required ? "" : "?"}: ${type};`;
+    delete tree.extends;
+    return recursive(tree);
   }
 
   newAll(): void {

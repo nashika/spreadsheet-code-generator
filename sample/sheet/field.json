@@ -21,7 +21,9 @@
       "data": "extends",
       "type": "text",
       "width": 120,
-      "header": "Extends"
+      "header": "Extends",
+      "required": false,
+      "export": false
     },
     {
       "data": "label",
@@ -61,14 +63,24 @@
       "type": "text",
       "width": 120,
       "json": true,
-      "export": true
+      "export": true,
+      "required": false
     },
     {
       "data": "width",
       "type": "numeric",
       "width": 80,
       "header": "Width",
-      "export": true
+      "export": true,
+      "required": false
+    },
+    {
+      "header": "Sysinfo",
+      "data": "sysinfo",
+      "type": "text",
+      "width": 80,
+      "required": false,
+      "export": false
     },
     {
       "data": "display.list",
@@ -76,7 +88,8 @@
       "width": 80,
       "header": "Disp List",
       "json": true,
-      "export": true
+      "export": true,
+      "required": false
     },
     {
       "header": "Disp View",
@@ -84,7 +97,8 @@
       "type": "text",
       "width": 80,
       "json": true,
-      "export": true
+      "export": true,
+      "required": false
     },
     {
       "header": "Disp Edit",
@@ -92,7 +106,8 @@
       "type": "text",
       "width": 80,
       "json": true,
-      "export": true
+      "export": true,
+      "required": false
     }
   ],
   "parent": "model"

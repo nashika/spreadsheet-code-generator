@@ -99,8 +99,19 @@ export class GeneratorNode {
     this.Class.definition.process.unitIndent = arg;
   }
 
+  get(key: string): any {
+    return _.get(this.data, key);
+  }
+
   toObject(): { [columnName: string]: any } {
-    return _.cloneDeep(this.data);
+    let result = {};
+    for (let column of this.Class.definition.columns) {
+      if (!column.export) continue;
+      let value = this.get(column.data);
+      if (_.isUndefined(value)) continue;
+      _.set(result, column.data, value);
+    }
+    return result;
   }
 
   __add(node: GeneratorNode): void {

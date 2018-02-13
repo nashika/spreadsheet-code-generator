@@ -5,6 +5,10 @@ export interface IRootGeneratorNodeData {
 
 }
 
+export interface IRootGeneratorNodeExport {
+
+}
+
 type TRootGeneratorNodeChildren = {
   model: { [nodeName: string]: ModelNode};
 }
@@ -16,7 +20,7 @@ export default class RootGeneratorNodeGenerated extends scg.GeneratorNode {
   readonly siblings: { [nodeName: string]: RootGeneratorNode };
   readonly children: TRootGeneratorNodeChildren;
   
-  toObject(): IRootGeneratorNodeData {
+  toObject(): IRootGeneratorNodeExport {
     return <any>super.toObject();
   }
 
