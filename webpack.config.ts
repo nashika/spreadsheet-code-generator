@@ -19,11 +19,10 @@ let webpackConfig: webpack.Configuration = {
   },
   module: {
     loaders: [
-      {test: /\.ts$/, loader: "awesome-typescript-loader", exclude: /node_modules/},
-      {test: /\.snippets/, loader: "raw-loader"},
+      {test: /\.ts$/, use: "awesome-typescript-loader", exclude: /node_modules/},
+      {test: /\.snippets/, use: "raw-loader"},
       {
-        test: /\.vue$/, loader: "Vue-loader", options:
-        {
+        test: /\.vue$/, loader: "Vue-loader", options: {
           loaders: {
             ts: "awesome-typescript-loader",
             pug: "pug-html-loader?doctype=html&pretty",
@@ -31,6 +30,7 @@ let webpackConfig: webpack.Configuration = {
           },
         }
       },
+      {test: /\.css$/, use: ["style-loader", "css-loader"]},
     ],
   },
   plugins: [
