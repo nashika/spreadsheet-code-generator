@@ -5,19 +5,24 @@
       "header": "Model",
       "data": "model",
       "type": "text",
-      "width": 120
+      "width": 120,
+      "required": true,
+      "export": true
     },
     {
       "header": "Association",
       "data": "association",
       "type": "text",
-      "width": 120
+      "width": 120,
+      "required": true,
+      "export": true
     },
     {
       "header": "Extends",
       "data": "extends",
       "type": "text",
-      "width": 120
+      "width": 120,
+      "required": false
     },
     {
       "header": "Type",
@@ -29,19 +34,25 @@
         "hasMany",
         "hasOne",
         "belongsToMany"
-      ]
+      ],
+      "required": true,
+      "export": true
     },
     {
       "header": "Target",
       "data": "target",
       "type": "text",
-      "width": 120
+      "width": 120,
+      "required": true,
+      "export": true
     },
     {
       "header": "Foreign Key",
       "data": "foreignKey",
       "type": "text",
-      "width": 120
+      "width": 120,
+      "required": true,
+      "export": true
     }
   ],
   "parent": "model"

@@ -4,10 +4,9 @@ import AssociationNode from "../code/association";
 import FieldNode from "../code/field";
 
 export interface IModelGeneratorNodeData {
-  "model": "string",
-  "extends": "string",
-  "label": "string",
-  "view": "string"
+  model: string;
+  label: string;
+  view?: string;
 }
 
 type TModelGeneratorNodeChildren = {
@@ -21,5 +20,9 @@ export default class ModelGeneratorNodeGenerated extends scg.GeneratorNode {
   readonly parent: RootGeneratorNode;
   readonly siblings: { [nodeName: string]: ModelGeneratorNode };
   readonly children: TModelGeneratorNodeChildren;
+  
+  toObject(): IModelGeneratorNodeData {
+    return <any>super.toObject();
+  }
 
 }

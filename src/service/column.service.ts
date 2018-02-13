@@ -67,6 +67,8 @@ export class ColumnService extends BaseHubService {
       data: "extends",
       type: "text",
       width: 120,
+      required: false,
+      export: false,
     }];
     let emptyColumns: IColumn[] = _.times(5, this.generateInitialEmptyColumn);
     return _.concat(treeColumns, extendsColumns, emptyColumns);
@@ -80,6 +82,8 @@ export class ColumnService extends BaseHubService {
       data: _.camelCase(sheetName),
       type: "text",
       width: 120,
+      required: true,
+      export: true,
     };
     return _.concat(this.generateInitialTreeColumns(parentSheet.name, parentSheet.parent), [sheetColumn])
   }
@@ -91,6 +95,8 @@ export class ColumnService extends BaseHubService {
       data: `data${no}`,
       type: "text",
       width: 80,
+      required: false,
+      export: true,
     };
   }
 

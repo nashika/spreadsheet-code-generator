@@ -55,21 +55,25 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
     for (let column of columns) _.set(pair, column.data, this.columnDataType(column));
     delete pair.extends;
     let func = (pair: TPair): string => {
-      return "{\n" + _(pair).map((value: string | TPair, key: string) => SourceUtils.indent(2, 1, `${key}?: ${_.isString(value) ? `${value};` : func(<TPair>value)}`)).join("\n") + "\n}";
+      return "{\n" + _(pair).map((value: string | TPair, key: string) => SourceUtils.indent(2, 1, `${key}${_.isString(value) ? value : "?: " + func(<TPair>value)}`)).join("\n") + "\n}";
     }
     return func(pair);
   }
 
   private columnDataType(column: IColumn): string {
+    let type = "";
     switch (column.type) {
       case "text":
       case "select":
-        return column.json ? "any" : "string";
+        type = column.json ? "any" : "string";
+        break;
       case "numeric":
-        return "number";
+        type = "number";
+        break;
       default:
         throw Error();
     }
+    return `${column.required ? "" : "?"}: ${type};`;
   }
 
   newAll(): void {

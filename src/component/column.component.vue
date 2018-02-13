@@ -24,6 +24,10 @@
                 b-form-textarea(:rows="5", v-model="optionsText", lazy)
             b-form-group(label="Width")
               b-form-input(type="number", v-model="column.width", required)
+            b-form-group(label="Required")
+              b-form-checkbox(v-model="column.required")
+            b-form-group(label="Export")
+              b-form-checkbox(v-model="column.export")
             b-button(type="submit", variant="primary", block) #[i.fa.fa-save] Modify
         b-list-group-item(v-if="column")
           .row

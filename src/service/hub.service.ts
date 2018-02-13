@@ -6,7 +6,7 @@ import {BaseService} from "./base.service";
 
 export interface ISheet {
   name: string;
-  columns: Array<IColumn>;
+  columns: IColumn[];
   parent: string;
   freezeColumn: number;
 }
@@ -26,6 +26,8 @@ export interface IColumn {
   json?: boolean;
   options?: string[];
   width: number;
+  required: boolean;
+  export: boolean;
 }
 
 export interface IConfig {

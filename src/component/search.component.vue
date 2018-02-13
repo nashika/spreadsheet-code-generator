@@ -7,8 +7,8 @@
           b-form(@submit.prevent="search")
             b-input-group
               b-form-input(type="text", v-model="query", placeholder="Search for...")
-              b-input-group-button
-                b-button(type="submit", variant="primary") #[i.fa.fa-search]
+              b-input-group-append
+                b-btn(type="submit", variant="primary") #[i.fa.fa-search]
 </template>
 
 <script lang="ts" src="./search.component.ts"></script>

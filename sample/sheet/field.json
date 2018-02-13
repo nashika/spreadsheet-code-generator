@@ -5,13 +5,17 @@
       "data": "model",
       "type": "text",
       "width": 120,
-      "header": "Model"
+      "header": "Model",
+      "required": true,
+      "export": true
     },
     {
       "data": "field",
       "type": "text",
       "width": 120,
-      "header": "Field"
+      "header": "Field",
+      "required": true,
+      "export": true
     },
     {
       "data": "extends",
@@ -23,7 +27,9 @@
       "data": "label",
       "type": "text",
       "width": 120,
-      "header": "Label"
+      "header": "Label",
+      "required": true,
+      "export": true
     },
     {
       "header": "Type",
@@ -37,47 +43,56 @@
         "division",
         "belongsTo",
         "datetime"
-      ]
+      ],
+      "required": true,
+      "export": true
     },
     {
       "data": "format",
       "type": "text",
       "width": 120,
-      "header": "Format"
+      "header": "Format",
+      "required": false,
+      "export": true
     },
     {
       "header": "Options",
       "data": "options",
       "type": "text",
       "width": 120,
-      "json": true
+      "json": true,
+      "export": true
     },
     {
       "data": "width",
       "type": "numeric",
       "width": 80,
-      "header": "Width"
+      "header": "Width",
+      "export": true
     },
     {
       "data": "display.list",
       "type": "text",
       "width": 80,
       "header": "Disp List",
-      "json": true
+      "json": true,
+      "export": true
     },
     {
       "header": "Disp View",
       "data": "display.view",
       "type": "text",
       "width": 80,
-      "json": true
+      "json": true,
+      "export": true
     },
     {
       "header": "Disp Edit",
       "data": "display.edit",
       "type": "text",
       "width": 80,
-      "json": true
+      "json": true,
+      "export": true
     }
   ],
   "parent": "model"

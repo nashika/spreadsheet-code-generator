@@ -77,14 +77,17 @@ export default class SpreadsheetComponent extends BaseComponent {
     }, 200);
   }
 
-  jsonValidator(value: string, callback: (result: boolean) => void): void {
-    if (value == "") return callback(true);
-    try {
-      JSON.parse(value);
-    } catch (e) {
-      return callback(false);
+  private makeValidator(column: IColumn): ((value: string, callback: (result: boolean) => void) => void) {
+    return function (this: Handsontable._editors.Base, value: string, callback: (result: boolean) => void): void {
+      if (column.json && value != "") {
+        try {
+          JSON.parse(value);
+        } catch (e) {
+          return callback(false);
+        }
+      }
+      return callback(true);
     }
-    return callback(true);
   }
 
   private afterSelection(r: number, c: number, _r2: number, _c2: number): void {
@@ -131,33 +134,33 @@ export default class SpreadsheetComponent extends BaseComponent {
     let data: any[] = this.$hub.currentData;
     let colHeaders: string[] = _.map(this.$hub.currentSheet.columns, c => c.header);
     let colWidths: number[] = _.map(this.$hub.currentSheet.columns, c => c.width);
-    let columns: any[] = _.map(this.$hub.currentSheet.columns, (c: IColumn) => {
-      let column: any = {};
+    let columnSettings: any[] = _.map(this.$hub.currentSheet.columns, (c: IColumn) => {
+      let columnSetting: Handsontable.GridSettings = {};
       switch (c.type) {
         case "text":
-          column.type = "text";
+          columnSetting.type = "text";
           break;
         case "select":
-          column.editor = "select";
-          column.selectOptions = c.options;
+          columnSetting.editor = "select";
+          columnSetting.selectOptions = c.options;
           break;
         case "numeric":
-          column.type = "numeric";
+          columnSetting.type = "numeric";
           break;
       }
-      if (c.json) {
-        column.validator = this.jsonValidator;
-        column.invalidCellClassName = "invalid-cell";
-        column.allowInvalid = true;
+      if (c.json || c.required) {
+        columnSetting.validator = <any>this.makeValidator(c);
+        columnSetting.invalidCellClassName = "invalid-cell";
+        columnSetting.allowInvalid = true;
       }
-      column.data = c.data;
-      return column;
+      columnSetting.data = c.data;
+      return columnSetting;
     });
     this.hot = <IMyHandsontable>new Handsontable(container, {
       data: data,
       width: this.$el.offsetWidth - 1,
       height: this.$el.offsetHeight - 1,
-      columns: columns,
+      columns: columnSettings,
       rowHeaders: true,
       colHeaders: colHeaders,
       colWidths: colWidths,
@@ -203,6 +206,14 @@ export default class SpreadsheetComponent extends BaseComponent {
           value = data;
           td.style.color = "#bbf";
         }
+      }
+    }
+    let column = this.$hub.currentSheet.columns[col];
+    if (column.required) {
+      if (_.isNull(value) || value === "") {
+        let firstCellData = instance.getDataAtCell(row, 0);
+        if (firstCellData && !_.startsWith(firstCellData, "*"))
+          td.style.backgroundColor = "#f88";
       }
     }
     switch (cellProperties.type) {
