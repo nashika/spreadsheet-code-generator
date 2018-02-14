@@ -12,13 +12,13 @@ export class ColumnService extends BaseHubService {
     super(hubService);
   }
 
-  public add(index: number): void {
+  add(index: number): void {
     let columns = this.$hub.currentSheet.columns;
     this.$hub.currentSheet.columns = _.concat(_.slice(columns, 0, index), [this.generateInitialEmptyColumn()], _.slice(columns, index));
     this.$hub.currentSheetMeta.modified = true;
   }
 
-  public modify(index: number, column: IColumn): void {
+  modify(index: number, column: IColumn): void {
     if (this.$hub.currentSheet.columns[index].data != column.data
       && _.find(this.$hub.currentSheet.columns, {"data": column.data})) {
       alert(`data="${column.data}" is already exists.`);
@@ -38,7 +38,7 @@ export class ColumnService extends BaseHubService {
     this.$hub.currentSheetMeta.modified = true;
   }
 
-  public move(index: number, right: boolean): void {
+  move(index: number, right: boolean): void {
     let columns: IColumn[] = this.$hub.currentSheet.columns;
     if (right) {
       this.$hub.currentSheet.columns = _.concat(
@@ -50,17 +50,23 @@ export class ColumnService extends BaseHubService {
     this.$hub.currentSheetMeta.modified = true;
   }
 
-  public remove(index: number): void {
+  remove(index: number): void {
     Vue.delete(this.$hub.currentSheet.columns, index);
     this.$hub.sheetMetas[this.$hub.currentSheet.name].modified = true;
   }
 
-  public freeze(index: number): void {
+  freeze(index: number): void {
     this.$hub.currentSheet.freezeColumn = index;
     this.$hub.currentSheetMeta.modified = true;
   }
 
-  public generateInitialColumns(sheetName: string, parentSheetName: string): IColumn[] {
+  loadColumns(columns: IColumn[]) {
+    _(columns).each(column => {
+      _.defaults(column, this.generateInitialEmptyColumn(99));
+    });
+  }
+
+  generateInitialColumns(sheetName: string, parentSheetName: string): IColumn[] {
     let treeColumns: IColumn[] = this.generateInitialTreeColumns(sheetName, parentSheetName);
     let extendsColumns: IColumn[] = [{
       header: "Extends",
@@ -69,6 +75,7 @@ export class ColumnService extends BaseHubService {
       width: 120,
       required: false,
       export: false,
+      tsType: "",
     }];
     let emptyColumns: IColumn[] = _.times(5, this.generateInitialEmptyColumn);
     return _.concat(treeColumns, extendsColumns, emptyColumns);
@@ -84,6 +91,7 @@ export class ColumnService extends BaseHubService {
       width: 120,
       required: true,
       export: true,
+      tsType: "",
     };
     return _.concat(this.generateInitialTreeColumns(parentSheet.name, parentSheet.parent), [sheetColumn])
   }
@@ -97,6 +105,7 @@ export class ColumnService extends BaseHubService {
       width: 80,
       required: false,
       export: true,
+      tsType: "",
     };
   }
 

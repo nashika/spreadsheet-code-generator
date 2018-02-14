@@ -61,6 +61,7 @@ export class SheetService extends BaseIoService {
     this.newAll();
     let names: string[] = this.list();
     this.$hub.sheets = _.merge(this.$hub.sheets, _.zipObject(names, names.map(name => this.load(name))));
+    _(this.$hub.sheets).each(sheet => this.columnService.loadColumns(sheet.columns))
     this.$hub.sheetMetas = _.merge(this.$hub.sheetMetas, _.zipObject(names, names.map(() => this.sheetMetaTemplate)));
     return true;
   }

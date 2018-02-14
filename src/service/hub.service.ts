@@ -28,6 +28,7 @@ export interface IColumn {
   width: number;
   required: boolean;
   export: boolean;
+  tsType: string;
 }
 
 export interface IConfig {
