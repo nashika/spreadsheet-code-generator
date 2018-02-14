@@ -57,8 +57,9 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}GeneratorNodeGenera
     let columnDataType = (column: IColumn): string => {
       switch (column.type) {
         case "text":
-        case "select":
           return column.json ? "any" : "string";
+        case "select":
+          return column.json ? "any" : column.options.map(op => `"${op}"`).join(" | ");
         case "numeric":
           return "number";
         default:
