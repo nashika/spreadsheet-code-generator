@@ -1,4 +1,11 @@
-export default {
+import {NuxtConfig} from "@nuxt/types";
+import webpack from "webpack";
+
+const webpackConfig: webpack.Configuration = {
+
+}
+
+const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -40,5 +47,13 @@ export default {
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: <any>{
+    babel: {
+      compact: false,
+    },
+    ...webpackConfig,
+  },
+  telemetry: true,
 }
+
+export default config;
