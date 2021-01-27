@@ -1,26 +1,31 @@
-import {NuxtConfig} from "@nuxt/types";
+import { NuxtConfig } from "@nuxt/types";
 import webpack from "webpack";
 
-const webpackConfig: webpack.Configuration = {
-
-}
+const webpackConfig: webpack.Configuration = {};
 
 const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
-
+  dir: {
+    assets: "src/assets",
+    layouts: "src/layouts",
+    middleware: "src/middleware",
+    pages: "src/pages",
+    static: "src/static",
+    store: "src/store",
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'spreadsheed-code-generator',
+    title: "spreadsheed-code-generator",
     htmlAttrs: {
-      lang: 'en',
+      lang: "en",
     },
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: "" },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -35,15 +40,15 @@ const config: NuxtConfig = {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/typescript
-    '@nuxt/typescript-build',
+    "@nuxt/typescript-build",
     // https://go.nuxtjs.dev/stylelint
-    '@nuxtjs/stylelint-module',
+    "@nuxtjs/stylelint-module",
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt',
+    "bootstrap-vue/nuxt",
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -54,6 +59,6 @@ const config: NuxtConfig = {
     ...webpackConfig,
   },
   telemetry: true,
-}
+};
 
 export default config;
