@@ -1,14 +1,4 @@
 /.idea/workspace.xml
-/dist/
-/npm-debug.log*
-/node_modules
 /tmp
-/typings
-/*.js
-/*.js.map
-/*.html
 /sample/ts-code/*.js
 /sample/ts-code/*.js.map
-/src/**/*.js
-/src/**/*.js.map
-/src/**/*.html
