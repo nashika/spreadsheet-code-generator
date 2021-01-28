@@ -77,8 +77,8 @@ dist
 # Serverless directories
 .serverless
 
-# IDE / Editor
-.idea
+# IDE / Editor (modified)
+# .idea
 
 # Service worker
 sw.*
