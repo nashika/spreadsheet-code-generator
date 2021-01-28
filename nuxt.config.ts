@@ -6,6 +6,7 @@ const webpackConfig: webpack.Configuration = {};
 const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
+  port: 18191,
   dir: {
     assets: "src/assets",
     layouts: "src/layouts",
