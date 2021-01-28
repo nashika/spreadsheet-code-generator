@@ -7,6 +7,9 @@ const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
   port: 18191,
+  router: {
+    mode: "hash",
+  },
   dir: {
     assets: "src/assets",
     layouts: "src/layouts",
@@ -54,6 +57,12 @@ const config: NuxtConfig = {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: <any>{
+    // change url to relative path
+    extend(config: any, options: { isDev: boolean; isClient: boolean }) {
+      if (!options.isDev) {
+        config.output.publicPath = "./_nuxt/";
+      }
+    },
     babel: {
       compact: false,
     },
