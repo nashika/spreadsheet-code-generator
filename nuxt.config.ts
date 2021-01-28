@@ -17,7 +17,7 @@ const config: NuxtConfig = {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: "spreadsheed-code-generator",
+    title: "spreadsheet-code-generator",
     htmlAttrs: {
       lang: "en",
     },

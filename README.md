@@ -1,4 +1,4 @@
-# spreadsheed-code-generator
+# spreadsheet-code-generator
 
 ## Build Setup
 
