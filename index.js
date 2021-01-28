@@ -13,4 +13,5 @@ require("ts-node").register({
     module: "commonjs",
   },
 });
+console.log("Compiling typescript.");
 require("./src/main");

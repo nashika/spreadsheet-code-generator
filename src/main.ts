@@ -12,51 +12,49 @@ config.rootDir = path.join(__dirname, "../");
 
 config.dev = process.env.NODE_ENV !== "production";
 
-try {
-  // Build only in dev mode
-  let url: string = "";
-  if (config.dev) {
-    // Init Nuxt.js
-    const nuxt = new Nuxt(config);
-    const builder = new Builder(nuxt);
-    const server = http.createServer(nuxt.render);
-    builder.build();
-    // Listen the server
-    server.listen(config.port);
-    url = `http://localhost:${config.port}`;
-    console.log(`Nuxt working on ${url}`);
-  } else {
-    url = "file://" + path.join(__dirname, "../dist/index.html");
-  }
-  // Electron
-  let win: BrowserWindow | null;
-  const newWin = () => {
-    win = new BrowserWindow({ width: 1200, height: 800 });
-    win.on("closed", () => (win = null));
-    if (config.dev) {
-      // Wait for nuxt to build
-      const pollServer = () => {
-        http
-          .get(url, (res) => {
-            if (res.statusCode === 200) {
-              win?.loadURL(url);
-            } else {
-              console.log("restart poolServer");
-              setTimeout(pollServer, 300);
-            }
-          })
-          .on("error", pollServer);
+async function start(): Promise<void> {
+  try {
+    // Electron
+    console.log("Opening electron window.");
+    let win: BrowserWindow | null;
+    let url: string = "";
+    await new Promise<BrowserWindow>((resolve) => {
+      const newWin = () => {
+        win = new BrowserWindow({ width: 1200, height: 800 });
+        win.on("closed", () => (win = null));
+        resolve(win);
       };
-      pollServer();
+      app.on("ready", newWin);
+      app.on("window-all-closed", () => app.quit());
+      app.on("activate", () => win === null && newWin());
+    });
+
+    // Build only in dev mode
+    if (config.dev) {
+      // Init Nuxt.js
+      console.log("Starting HTTP Server.");
+      const nuxt = new Nuxt(config);
+      const server = http.createServer(nuxt.render);
+      server.listen(config.port);
+      console.log("Waiting nuxt ready.");
+      await nuxt.ready();
+      console.log("Starting nuxt dev server build process.");
+      const builder = new Builder(nuxt);
+      await builder.build();
+      // Listen the server
+      url = `http://localhost:${config.port}`;
+      console.log(`Nuxt working on ${url}`);
     } else {
-      return win.loadURL(url);
+      url = "file://" + path.join(__dirname, "../dist/index.html");
     }
-  };
-  app.on("ready", newWin);
-  app.on("window-all-closed", () => app.quit());
-  app.on("activate", () => win === null && newWin());
-} catch (err) {
-  console.error(`Server initialize failed. err=${err}`);
-  if (err.stack) console.error(err.stack);
-  process.exit(1);
+    console.log("Opening application URL.");
+    // @ts-ignore
+    await win?.loadURL(url);
+    console.log("Done.");
+  } catch (err) {
+    console.error(`Server initialize failed. err=${err}`);
+    if (err.stack) console.error(err.stack);
+    process.exit(1);
+  }
 }
+start();

@@ -10,6 +10,8 @@ interface IMyStore {
 export const myStore: IMyStore = <any>{};
 
 function initialiseStores(store: Store<any>): void {
+  debugger;
+  console.log("initialize stores.");
   myStore.hub = getModule(HubModule, store);
 }
 
