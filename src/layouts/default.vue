@@ -1,7 +1,6 @@
-<template>
-  <div>
-    <Nuxt />
-  </div>
+<template lang="pug">
+div
+  nuxt
 </template>
 
 <style>
