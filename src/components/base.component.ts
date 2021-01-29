@@ -7,7 +7,7 @@ import { NuxtContext } from "~/src/types/nuxt";
 export abstract class BaseComponent extends Vue {
   lodash = _;
 
-  // インスタンスライフサイクルフックの定義
+  // instance lifecycle hooks
   async beforeCreate(): Promise<void> {}
   async created(): Promise<void> {}
   async beforeMount(): Promise<void> {}
@@ -17,7 +17,7 @@ export abstract class BaseComponent extends Vue {
   async beforeDestroy(): Promise<void> {}
   async destroyed(): Promise<void> {}
 
-  // nuxt独自の処理を定義
+  // nuxt hooks
   async fetch(_context: NuxtContext): Promise<void> {}
   async asyncData(_context: NuxtContext): Promise<void> {}
 }
