@@ -29,7 +29,7 @@ export default class DefaultLayoutComponent extends BaseComponent {
 
   // eslint-disable-next-line require-await
   async beforeCreate(): Promise<void> {
-    // this.$myService.push.initialize(this);
+    this.$myStore.config.load();
     await this.$myStore.hub.initialize();
     this.initialized = true;
   }

@@ -28,18 +28,13 @@ export interface IColumn {
   tsType: string;
 }
 
-export interface IConfig {
-  recentSaveBaseDirs?: string[];
-}
-
 @Module({
   name: "hub",
   stateFactory: true,
   namespaced: true,
 })
-export default class HubModule extends BaseStore {
+export default class HubStore extends BaseStore {
   saveBaseDir: string = "";
-  config: IConfig | null = null;
   mode: string = "data";
   sheets: { [sheetName: string]: ISheet } | null = null;
   sheetMetas: { [sheetName: string]: ISheetMeta } | null = null;

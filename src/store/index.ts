@@ -1,16 +1,19 @@
 import { Store } from "vuex";
 import { getModule } from "vuex-module-decorators";
 
-import HubModule from "~/src/store/hub";
+import HubStore from "~/src/store/hub";
+import ConfigStore from "~/src/store/config";
 
 interface IMyStore {
-  hub: HubModule;
+  hub: HubStore;
+  config: ConfigStore;
 }
 
 export const myStore: IMyStore = <any>{};
 
 function initialiseStores(store: Store<any>): void {
-  myStore.hub = getModule(HubModule, store);
+  myStore.hub = getModule(HubStore, store);
+  myStore.config = getModule(ConfigStore, store)
 }
 
 const initializer = (store: Store<any>) => initialiseStores(store);

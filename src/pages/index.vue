@@ -1,7 +1,6 @@
 <template lang="pug">
 .container
   div
-    Logo
     h1.title spreadsheet-code-generator
     .links
       a.button--green(href="https://nuxtjs.org/", target="_blank", rel="noopener noreferrer") Documentation
