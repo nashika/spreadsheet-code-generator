@@ -23,7 +23,7 @@ async function start(): Promise<void> {
         win = new BrowserWindow({
           width: 1200,
           height: 800,
-          webPreferences: { nodeIntegration: true },
+          webPreferences: { nodeIntegration: true, enableRemoteModule: true },
         });
         win.on("closed", () => (win = null));
         resolve(win);

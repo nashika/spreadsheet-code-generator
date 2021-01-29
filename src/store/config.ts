@@ -18,12 +18,7 @@ export interface IConfig {
 })
 export default class ConfigStore extends BaseStore {
   config?: IConfig;
-
-  protected get filePath(): string {
-    debugger;
-    console.log(`a = ${electron.remote.app.getAppPath()}`);
-    return path.join(electron.remote.app.getAppPath(), "./tmp/config.json");
-  }
+  filePath = path.join(electron.remote.app.getAppPath(), "./tmp/config.json");
 
   @Mutation
   load(): void {

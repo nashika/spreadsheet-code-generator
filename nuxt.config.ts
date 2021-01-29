@@ -61,13 +61,9 @@ const config: NuxtConfig = {
     // change url to relative path
     extend(config, ctx) {
       if (!ctx.isDev) {
-        Object.assign(config, <webpack.Configuration>{
-          output: { publicPath: "./_nuxt/" },
-        });
+        if (config.output) config.output.publicPath = "./_nuxt/";
       }
-      Object.assign(config, <webpack.Configuration>{
-        target: "electron-renderer",
-      });
+      config.target = "electron-renderer";
     },
   },
   telemetry: true,
