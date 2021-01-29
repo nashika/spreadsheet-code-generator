@@ -1,4 +1,5 @@
-import { Module, MutationAction, VuexModule } from "vuex-module-decorators";
+import { Module, MutationAction } from "vuex-module-decorators";
+import { BaseStore } from "~/src/store/base";
 
 export interface ISheet {
   name: string;
@@ -36,7 +37,7 @@ export interface IConfig {
   stateFactory: true,
   namespaced: true,
 })
-export default class HubModule extends VuexModule {
+export default class HubModule extends BaseStore {
   saveBaseDir: string = "";
   config: IConfig | null = null;
   mode: string = "data";

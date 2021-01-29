@@ -1,5 +1,5 @@
-import logger from "loglevel";
+import loglevel from "loglevel";
 
 // (<any>window).log = log; TODO: recover?
-logger.setLevel("trace");
-export default logger;
+loglevel.setLevel("trace");
+export const logger = loglevel;

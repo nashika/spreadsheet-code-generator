@@ -20,7 +20,11 @@ async function start(): Promise<void> {
     let url: string = "";
     await new Promise<BrowserWindow>((resolve) => {
       const newWin = () => {
-        win = new BrowserWindow({ width: 1200, height: 800 });
+        win = new BrowserWindow({
+          width: 1200,
+          height: 800,
+          webPreferences: { nodeIntegration: true },
+        });
         win.on("closed", () => (win = null));
         resolve(win);
       };

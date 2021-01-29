@@ -1,8 +1,6 @@
 import { NuxtConfig } from "@nuxt/types";
 import webpack from "webpack";
 
-const webpackConfig: webpack.Configuration = {};
-
 const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -56,17 +54,21 @@ const config: NuxtConfig = {
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: <any>{
-    // change url to relative path
-    extend(config: any, options: { isDev: boolean; isClient: boolean }) {
-      if (!options.isDev) {
-        config.output.publicPath = "./_nuxt/";
-      }
-    },
+  build: {
     babel: {
       compact: false,
     },
-    ...webpackConfig,
+    // change url to relative path
+    extend(config, ctx) {
+      if (!ctx.isDev) {
+        Object.assign(config, <webpack.Configuration>{
+          output: { publicPath: "./_nuxt/" },
+        });
+      }
+      Object.assign(config, <webpack.Configuration>{
+        target: "electron-renderer",
+      });
+    },
   },
   telemetry: true,
 };
