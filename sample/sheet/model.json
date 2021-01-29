@@ -1,0 +1,38 @@
+{
+  "name": "model",
+  "columns": [
+    {
+      "data": "model",
+      "type": "text",
+      "width": 120,
+      "header": "Model",
+      "required": true,
+      "export": true
+    },
+    {
+      "data": "extends",
+      "type": "text",
+      "width": 120,
+      "header": "Extends",
+      "required": false,
+      "export": false
+    },
+    {
+      "data": "label",
+      "type": "text",
+      "width": 120,
+      "header": "Label",
+      "required": true,
+      "export": true
+    },
+    {
+      "data": "view",
+      "type": "text",
+      "width": 120,
+      "header": "View",
+      "required": false,
+      "export": true
+    }
+  ],
+  "parent": "root"
+}

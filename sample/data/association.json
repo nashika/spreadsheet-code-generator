@@ -1,0 +1,76 @@
+[
+  {
+    "model": "*",
+    "association": "author",
+    "type": "belongsTo",
+    "target": "Author",
+    "foreignKey": "author_id"
+  },
+  {},
+  {
+    "model": "Article",
+    "association": "author",
+    "extends": "author"
+  },
+  {
+    "model": "Article",
+    "association": "category",
+    "type": "belongsTo",
+    "target": "Category",
+    "foreignKey": "category_id"
+  },
+  {
+    "model": "Article",
+    "association": "tags",
+    "type": "belongsToMany",
+    "target": "Tag",
+    "foreignKey": "article_tag"
+  },
+  {
+    "model": "Article",
+    "association": "comments",
+    "type": "hasMany",
+    "target": "Comment",
+    "foreignKey": "article_id"
+  },
+  {},
+  {
+    "model": "Author",
+    "association": "articles",
+    "type": "hasMany",
+    "target": "Article",
+    "foreignKey": "author_id"
+  },
+  {
+    "model": "Author",
+    "association": "comments",
+    "type": "hasMany",
+    "target": "Comment",
+    "foreignKey": "author_id"
+  },
+  {},
+  {
+    "model": "Category",
+    "association": "articles",
+    "type": "hasMany",
+    "target": "Article",
+    "foreignKey": "category_id"
+  },
+  {},
+  {
+    "model": "Comment",
+    "association": "article",
+    "type": "belongsTo",
+    "target": "Article",
+    "foreignKey": "article_id"
+  },
+  {
+    "model": "Comment",
+    "association": "author",
+    "extends": "author"
+  },
+  {},
+  {},
+  {},
+  {}
+]

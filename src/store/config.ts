@@ -8,8 +8,14 @@ import { BaseStore } from "~/src/store/base";
 import { logger } from "~/src/logger";
 
 export interface IConfig {
-  recentSaveBaseDirs?: string[];
+  saveBaseDir: string;
+  recentSaveBaseDirs: string[];
 }
+
+const configFilePath = path.join(
+  electron.remote.app.getAppPath(),
+  "./tmp/config.json"
+);
 
 @Module({
   name: "config",
@@ -17,27 +23,33 @@ export interface IConfig {
   namespaced: true,
 })
 export default class ConfigStore extends BaseStore {
-  config?: IConfig;
-  filePath = path.join(electron.remote.app.getAppPath(), "./tmp/config.json");
+  config!: IConfig;
 
   @Mutation
+  SET_CONFIG(config: IConfig) {
+    this.config = config;
+  }
+
+  @Action
   load(): void {
-    const filePath: string = this.filePath;
-    logger.debug(`Loadig ${filePath}.`);
-    let result: IConfig;
-    if (fs.existsSync(filePath)) {
-      result = JSON.parse(fs.readFileSync(filePath).toString());
-    } else {
-      result = {};
-    }
-    if (!result.recentSaveBaseDirs) result.recentSaveBaseDirs = [];
-    this.config = result;
+    logger.debug(`Loadig ${configFilePath}.`);
+    const config: IConfig = fs.existsSync(configFilePath)
+      ? JSON.parse(fs.readFileSync(configFilePath).toString())
+      : this.configTemplate();
+    this.SET_CONFIG(config);
   }
 
   @Action
   save(): void {
-    const filePath: string = this.filePath;
+    const filePath: string = configFilePath;
     logger.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.config, null, "  "));
+  }
+
+  protected configTemplate(): IConfig {
+    return {
+      saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample/"),
+      recentSaveBaseDirs: [],
+    };
   }
 }
