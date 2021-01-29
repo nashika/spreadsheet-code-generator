@@ -2,10 +2,10 @@
 section.app(v-if="initialized")
   #main.d-flex
     #menu-area(v-if="$myStore.hub.showMenu")
-      menu-component()
-      sheets-component(v-if="$myStore.hub.sheets")
-      search-component()
-      column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
+      menu-component
+      // sheets-component(v-if="$myStore.hub.sheets")
+      // search-component()
+      // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
     #main-area(:class="{'col-xs-9': $myStore.hub.showMenu, 'col-xs-12': !$myStore.hub.showMenu}")
       #main-message(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name == 'root'") root sheet can not have data, please select or create new sheet.
       nuxt
@@ -15,10 +15,14 @@ section.initialize(v-else) 起動中
 
 <script lang="ts">
 import { Component } from "nuxt-property-decorator";
+
 import { BaseComponent } from "~/src/components/base.component";
+import MenuComponent from "~/src/components/menu.component.vue";
 
 @Component({
-  components: {},
+  components: {
+    MenuComponent,
+  },
 })
 export default class DefaultLayoutComponent extends BaseComponent {
   initialized: boolean = false;
