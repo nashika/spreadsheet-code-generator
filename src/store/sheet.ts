@@ -131,7 +131,9 @@ function _rootSheetTemplate(): ISheet {
 }
 
 function _load(sheetName: string): ISheet {
-  const sheet = ioManagers.sheet.load(sheetName);
+  let sheet: ISheet;
+  if (sheetName === "root") sheet = _rootSheetTemplate();
+  else sheet = ioManagers.sheet.load(sheetName);
   sheet.meta = _sheetMetaTemplate();
   sheet.columns = _initializeColumns(sheet.columns);
   sheet.data = ioManagers.data.load(sheetName) ?? [];
@@ -177,9 +179,9 @@ function _countSheetDepth(
   return _countSheetDepth(sheet.parent, sheets) + 1;
 }
 
-function _initializeColumns(columns: IColumn[]) {
-  _(columns).each((column) => {
-    _.defaults(column, _columnTemplate(99));
+function _initializeColumns(columns: IColumn[]): IColumn[] {
+  return columns.map((column) => {
+    return Object.assign(_columnTemplate(99), column);
   });
 }
 
