@@ -15,9 +15,12 @@ section.initialize(v-else) 起動中
 
 <script lang="ts">
 import { Component } from "nuxt-property-decorator";
+import { config } from "vuex-module-decorators";
 
 import { BaseComponent } from "~/src/components/base.component";
 import MenuComponent from "~/src/components/menu.component.vue";
+
+config.rawError = true;
 
 @Component({
   components: {

@@ -2,11 +2,10 @@ import path from "path";
 import fs from "fs";
 
 import _ from "lodash";
-import { Action, Module, Mutation } from "vuex-module-decorators";
+import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import { assertIsDefined } from "~/src/util/assert";
 import { TSheetData } from "~/src/store/hub";
-import { BaseStore } from "~/src/store/base";
 import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
 
@@ -124,7 +123,7 @@ const ioManagers = {
   stateFactory: true,
   namespaced: true,
 })
-export default class SheetStore extends BaseStore {
+export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
   currentSheet?: ISheet;
 

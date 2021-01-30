@@ -1,5 +1,4 @@
 import { NuxtConfig } from "@nuxt/types";
-import webpack from "webpack";
 
 const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode

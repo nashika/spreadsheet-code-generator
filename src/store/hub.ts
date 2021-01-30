@@ -1,5 +1,4 @@
-import { Module, MutationAction } from "vuex-module-decorators";
-import { BaseStore } from "~/src/store/base";
+import { Module, MutationAction, VuexModule } from "vuex-module-decorators";
 
 export type TSheetData = Array<{ [columnName: string]: any }>;
 
@@ -8,7 +7,7 @@ export type TSheetData = Array<{ [columnName: string]: any }>;
   stateFactory: true,
   namespaced: true,
 })
-export default class HubStore extends BaseStore {
+export default class HubStore extends VuexModule {
   mode: string = "data";
   showMenu: boolean = true;
 

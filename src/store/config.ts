@@ -2,9 +2,8 @@ import path from "path";
 import fs from "fs";
 
 import * as electron from "electron";
-import { Action, Module, Mutation } from "vuex-module-decorators";
+import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
-import { BaseStore } from "~/src/store/base";
 import { logger } from "~/src/logger";
 
 export interface IConfig {
@@ -29,7 +28,7 @@ function configTemplate(): IConfig {
   stateFactory: true,
   namespaced: true,
 })
-export default class ConfigStore extends BaseStore {
+export default class ConfigStore extends VuexModule {
   config: IConfig = <any>{};
 
   @Mutation
