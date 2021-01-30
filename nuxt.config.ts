@@ -1,5 +1,7 @@
 import { NuxtConfig } from "@nuxt/types";
 
+import { icons } from "./src/util/icons";
+
 const config: NuxtConfig = {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -50,8 +52,12 @@ const config: NuxtConfig = {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     "bootstrap-vue/nuxt",
+    "@nuxtjs/fontawesome",
   ],
-
+  fontawesome: {
+    component: "fa",
+    icons,
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     babel: {

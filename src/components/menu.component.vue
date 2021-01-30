@@ -1,7 +1,9 @@
 <template lang="pug">
   .menu-component
     b-card(no-body)
-      .h6(slot="header") #[i.fa.fa-cube] Menu
+      .h6(slot="header")
+        fa(icon="cube")
+        | Menu
       b-list-group(flush)
         b-list-group-item
           b-form-radio-group.w-100(buttons, button-variant="outline-primary", v-model="$myStore.hub.mode",
