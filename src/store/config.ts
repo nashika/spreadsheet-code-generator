@@ -11,12 +11,12 @@ export interface IConfig {
   recentSaveBaseDirs: string[];
 }
 
-const configFilePath = path.join(
+const _configFilePath = path.join(
   electron.remote.app.getAppPath(),
   "./tmp/config.json"
 );
 
-function configTemplate(): IConfig {
+function _configTemplate(): IConfig {
   return {
     saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample/"),
     recentSaveBaseDirs: [],
@@ -38,16 +38,16 @@ export default class ConfigStore extends VuexModule {
 
   @Action
   load(): void {
-    logger.debug(`Loading ${configFilePath}.`);
-    const config: IConfig = fs.existsSync(configFilePath)
-      ? JSON.parse(fs.readFileSync(configFilePath).toString())
-      : configTemplate();
+    logger.debug(`Loading ${_configFilePath}.`);
+    const config: IConfig = fs.existsSync(_configFilePath)
+      ? JSON.parse(fs.readFileSync(_configFilePath).toString())
+      : _configTemplate();
     this.SET_CONFIG(config);
   }
 
   @Action
   save(): void {
-    const filePath: string = configFilePath;
+    const filePath: string = _configFilePath;
     logger.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.config, null, "  "));
   }

@@ -118,6 +118,172 @@ const ioManagers = {
   code: new IoManager("code", "js"),
 };
 
+function _rootSheetTemplate(): ISheet {
+  return {
+    name: "root",
+    parent: "",
+    freezeColumn: 0,
+    columns: [],
+    meta: _sheetMetaTemplate(),
+    data: [],
+    code: "",
+  };
+}
+
+function _load(sheetName: string): ISheet {
+  const sheet = ioManagers.sheet.load(sheetName);
+  sheet.meta = _sheetMetaTemplate();
+  sheet.columns = _initializeColumns(sheet.columns);
+  sheet.data = ioManagers.data.load(sheetName) ?? [];
+  sheet.code = ioManagers.code.load(sheetName) ?? "";
+  return sheet;
+}
+
+function _save(sheetName: string, sheet: ISheet) {
+  if (sheetName !== "root") {
+    ioManagers.sheet.save(sheetName, sheet);
+    ioManagers.data.save(sheetName, _parseData(sheet));
+  }
+  ioManagers.code.save(sheetName, sheet.code);
+}
+
+export function loadAllForGenerate(): { [sheetName: string]: ISheet } {
+  const names: string[] = ioManagers.sheet.list();
+  const result: { [sheetName: string]: ISheet } = {
+    root: _rootSheetTemplate(),
+  };
+  for (const name of names) {
+    result[_.camelCase(name)] = _load(name);
+  }
+  return result;
+}
+
+export function isParentRecursive(
+  target: ISheet,
+  parent: ISheet,
+  sheets: { [sheetName: string]: ISheet }
+): boolean {
+  if (target.parent === parent.name) return true;
+  if (!target.parent) return false;
+  return isParentRecursive(sheets[target.parent], parent, sheets);
+}
+
+function _countSheetDepth(
+  sheetName: string,
+  sheets: { [sheetName: string]: ISheet }
+): number {
+  if (sheetName === "root") return 0;
+  const sheet: ISheet = sheets[sheetName];
+  return _countSheetDepth(sheet.parent, sheets) + 1;
+}
+
+function _initializeColumns(columns: IColumn[]) {
+  _(columns).each((column) => {
+    _.defaults(column, _columnTemplate(99));
+  });
+}
+
+function _generateInitialColumns(
+  sheetName: string,
+  parentSheetName: string,
+  sheets: { [sheetName: string]: ISheet }
+): IColumn[] {
+  const treeColumns: IColumn[] = _generateInitialTreeColumns(
+    sheetName,
+    parentSheetName,
+    sheets
+  );
+  const extendsColumns: IColumn[] = [
+    {
+      header: "Extends",
+      data: "extends",
+      type: "text",
+      width: 120,
+      required: false,
+      export: false,
+      tsType: "",
+    },
+  ];
+  const emptyColumns: IColumn[] = _.times(5, _columnTemplate);
+  return _.concat(treeColumns, extendsColumns, emptyColumns);
+}
+
+function _generateInitialTreeColumns(
+  sheetName: string,
+  parentSheetName: string,
+  sheets: { [sheetName: string]: ISheet }
+): IColumn[] {
+  if (sheetName === "root") return [];
+  const parentSheet = sheets[parentSheetName];
+  const sheetColumn: IColumn = {
+    header: _.startCase(sheetName),
+    data: _.camelCase(sheetName),
+    type: "text",
+    width: 120,
+    required: true,
+    export: true,
+    tsType: "",
+  };
+  return _.concat(
+    _generateInitialTreeColumns(parentSheet.name, parentSheet.parent, sheets),
+    [sheetColumn]
+  );
+}
+
+function _parseData(sheet: ISheet): TSheetData {
+  return sheet.data.map((record) => {
+    const result: any = {};
+    for (const column of sheet.columns) {
+      let columnData: any = _.get(record, column.data);
+      if (_.isNull(columnData)) continue;
+      if (_.isUndefined(columnData)) continue;
+      if (columnData === "") continue;
+      switch (column.type) {
+        case "text":
+        case "select":
+          if (!_.isString(columnData)) columnData = _.toString(columnData);
+          break;
+        case "numeric":
+          if (!_.isNumber(columnData)) columnData = _.toNumber(columnData);
+          break;
+      }
+      _.set(result, column.data, columnData);
+    }
+    return result;
+  });
+}
+
+function _sheetMetaTemplate(): ISheetMeta {
+  return {
+    modified: false,
+    rowOffset: 0,
+    colOffset: 0,
+  };
+}
+
+function _columnTemplate(no: number): IColumn {
+  return {
+    header: `Col${no}`,
+    data: `data${no}`,
+    type: "text",
+    width: 80,
+    required: false,
+    export: true,
+    tsType: "",
+  };
+}
+
+function _codeTemplate(): string {
+  return `module.exports = {
+
+  main: function() {
+
+  },
+
+};
+`;
+}
+
 @Module({
   name: "sheet",
   stateFactory: true,
@@ -125,7 +291,7 @@ const ioManagers = {
 })
 export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
-  currentSheet?: ISheet;
+  currentSheet?: ISheet | null = null;
 
   @Mutation
   SET_SHEET(sheetName: string, value: ISheet) {
@@ -151,7 +317,7 @@ export default class SheetStore extends VuexModule {
 
   @Action
   newAll(): void {
-    this.SET_SHEET("root", this._rootSheetTemplate());
+    this.SET_SHEET("root", _rootSheetTemplate());
     this.SET_CURRENT_SHEET("root");
   }
 
@@ -163,7 +329,7 @@ export default class SheetStore extends VuexModule {
     this.newAll();
     const names: string[] = ["root", ...ioManagers.sheet.list()];
     for (const name of names) {
-      this.SET_SHEET(name, this._load(name));
+      this.SET_SHEET(name, _load(name));
     }
     return true;
   }
@@ -174,7 +340,7 @@ export default class SheetStore extends VuexModule {
       if (!io.checkAndCreateDir()) return false;
     }
     for (const name in this.sheets) {
-      this._save(name, this.sheets[name]);
+      _save(name, this.sheets[name]);
       this.setModified(name, false);
     }
     _.difference(ioManagers.sheet.list(), Object.keys(this.sheets)).forEach(
@@ -198,12 +364,12 @@ export default class SheetStore extends VuexModule {
     }
     const emptySheet: ISheet = {
       name: sheetName,
-      columns: this._generateInitialColumns(sheetName, parentSheetName),
+      columns: _generateInitialColumns(sheetName, parentSheetName, this.sheets),
       parent: parentSheetName,
-      freezeColumn: this._countSheetDepth(parentSheetName) + 1,
+      freezeColumn: _countSheetDepth(parentSheetName, this.sheets) + 1,
       meta: { modified: true },
       data: _.times(10, () => ({})),
-      code: this._codeTemplate(),
+      code: _codeTemplate(),
     };
     this.SET_SHEET(sheetName, emptySheet);
     return true;
@@ -261,162 +427,5 @@ export default class SheetStore extends VuexModule {
     this.REMOVE_SHEET(sheetName);
     this.setModified(sheetName, true);
     this.SET_CURRENT_SHEET("root");
-  }
-
-  protected _load(sheetName: string): ISheet {
-    const sheet = ioManagers.sheet.load(sheetName);
-    sheet.meta = this._sheetMetaTemplate();
-    sheet.columns = this._initializeColumns(sheet.columns);
-    sheet.data = ioManagers.data.load(sheetName) ?? [];
-    sheet.code = ioManagers.code.load(sheetName) ?? "";
-    return sheet;
-  }
-
-  protected _save(sheetName: string, sheet: ISheet) {
-    if (sheetName !== "root") {
-      ioManagers.sheet.save(sheetName, sheet);
-      ioManagers.data.save(sheetName, this._parseData(sheetName, sheet.data));
-    }
-    ioManagers.code.save(sheetName, sheet.code);
-  }
-
-  protected _loadAllForGenerate(): { [sheetName: string]: ISheet } {
-    const names: string[] = ioManagers.sheet.list();
-    const result: { [sheetName: string]: ISheet } = {
-      root: this._rootSheetTemplate(),
-    };
-    for (const name of names) {
-      result[_.camelCase(name)] = this._load(name);
-    }
-    return result;
-  }
-
-  protected _isParentRecursive(target: ISheet, parent: ISheet): boolean {
-    if (target.parent === parent.name) return true;
-    if (!target.parent) return false;
-    return this._isParentRecursive(this.sheets[target.parent], parent);
-  }
-
-  protected _countSheetDepth(sheetName: string): number {
-    if (sheetName === "root") return 0;
-    const sheet: ISheet = this.sheets[sheetName];
-    return this._countSheetDepth(sheet.parent) + 1;
-  }
-
-  protected _initializeColumns(columns: IColumn[]) {
-    _(columns).each((column) => {
-      _.defaults(column, this._columnTemplate(99));
-    });
-  }
-
-  protected _generateInitialColumns(
-    sheetName: string,
-    parentSheetName: string
-  ): IColumn[] {
-    const treeColumns: IColumn[] = this._generateInitialTreeColumns(
-      sheetName,
-      parentSheetName
-    );
-    const extendsColumns: IColumn[] = [
-      {
-        header: "Extends",
-        data: "extends",
-        type: "text",
-        width: 120,
-        required: false,
-        export: false,
-        tsType: "",
-      },
-    ];
-    const emptyColumns: IColumn[] = _.times(5, this._columnTemplate);
-    return _.concat(treeColumns, extendsColumns, emptyColumns);
-  }
-
-  protected _generateInitialTreeColumns(
-    sheetName: string,
-    parentSheetName: string
-  ): IColumn[] {
-    if (sheetName === "root") return [];
-    const parentSheet = this.sheets[parentSheetName];
-    const sheetColumn: IColumn = {
-      header: _.startCase(sheetName),
-      data: _.camelCase(sheetName),
-      type: "text",
-      width: 120,
-      required: true,
-      export: true,
-      tsType: "",
-    };
-    return _.concat(
-      this._generateInitialTreeColumns(parentSheet.name, parentSheet.parent),
-      [sheetColumn]
-    );
-  }
-
-  protected _parseData(sheetName: string, data: TSheetData): TSheetData {
-    return data.map((record) => {
-      const result: any = {};
-      for (const column of this.sheets[sheetName].columns) {
-        let columnData: any = _.get(record, column.data);
-        if (_.isNull(columnData)) continue;
-        if (_.isUndefined(columnData)) continue;
-        if (columnData === "") continue;
-        switch (column.type) {
-          case "text":
-          case "select":
-            if (!_.isString(columnData)) columnData = _.toString(columnData);
-            break;
-          case "numeric":
-            if (!_.isNumber(columnData)) columnData = _.toNumber(columnData);
-            break;
-        }
-        _.set(result, column.data, columnData);
-      }
-      return result;
-    });
-  }
-
-  protected _rootSheetTemplate(): ISheet {
-    return {
-      name: "root",
-      parent: "",
-      freezeColumn: 0,
-      columns: [],
-      meta: this._sheetMetaTemplate(),
-      data: [],
-      code: "",
-    };
-  }
-
-  protected _sheetMetaTemplate(): ISheetMeta {
-    return {
-      modified: false,
-      rowOffset: 0,
-      colOffset: 0,
-    };
-  }
-
-  protected _columnTemplate(no?: number): IColumn {
-    no = _.isUndefined(no) ? this.currentSheet?.columns.length : no;
-    return {
-      header: `Col${no}`,
-      data: `data${no}`,
-      type: "text",
-      width: 80,
-      required: false,
-      export: true,
-      tsType: "",
-    };
-  }
-
-  protected _codeTemplate(): string {
-    return `module.exports = {
-
-  main: function() {
-
-  },
-
-};
-`;
   }
 }
