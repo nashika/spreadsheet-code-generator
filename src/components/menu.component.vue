@@ -5,7 +5,7 @@
       b-list-group(flush)
         b-list-group-item
           b-form-radio-group.w-100(buttons, button-variant="outline-primary", v-model="$myStore.hub.mode",
-          :options="[{text: 'Data', value: 'data'}, {text: 'Code', value: 'code'}]")
+            :options="[{text: 'Data', value: 'data'}, {text: 'Code', value: 'code'}]")
         b-list-group-item
           b-button(variant="primary", block, @click="generate") #[i.fa.fa-industry] Generate
 </template>

@@ -17,25 +17,32 @@ const configFilePath = path.join(
   "./tmp/config.json"
 );
 
+function configTemplate(): IConfig {
+  return {
+    saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample/"),
+    recentSaveBaseDirs: [],
+  };
+}
+
 @Module({
   name: "config",
   stateFactory: true,
   namespaced: true,
 })
 export default class ConfigStore extends BaseStore {
-  config!: IConfig;
+  config: IConfig = <any>{};
 
   @Mutation
-  SET_CONFIG(config: IConfig) {
+  SET_CONFIG(config: IConfig): void {
     this.config = config;
   }
 
   @Action
   load(): void {
-    logger.debug(`Loadig ${configFilePath}.`);
+    logger.debug(`Loading ${configFilePath}.`);
     const config: IConfig = fs.existsSync(configFilePath)
       ? JSON.parse(fs.readFileSync(configFilePath).toString())
-      : this.configTemplate();
+      : configTemplate();
     this.SET_CONFIG(config);
   }
 
@@ -44,12 +51,5 @@ export default class ConfigStore extends BaseStore {
     const filePath: string = configFilePath;
     logger.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.config, null, "  "));
-  }
-
-  protected configTemplate(): IConfig {
-    return {
-      saveBaseDir: path.join(electron.remote.app.getAppPath(), "./sample/"),
-      recentSaveBaseDirs: [],
-    };
   }
 }

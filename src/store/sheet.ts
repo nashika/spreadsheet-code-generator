@@ -199,7 +199,7 @@ export default class SheetStore extends BaseStore {
     }
     const emptySheet: ISheet = {
       name: sheetName,
-      columns: [], // this.columnService.generateInitialColumns(sheetName, parentSheetName),
+      columns: this._generateInitialColumns(sheetName, parentSheetName),
       parent: parentSheetName,
       freezeColumn: this._countSheetDepth(parentSheetName) + 1,
       meta: { modified: true },
