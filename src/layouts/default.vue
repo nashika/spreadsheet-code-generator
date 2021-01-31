@@ -7,10 +7,10 @@ section.app(v-if="initialized")
       // search-component()
       // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
     #main-area(:class="{'col-xs-9': $myStore.hub.showMenu, 'col-xs-12': !$myStore.hub.showMenu}")
-      #main-message(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name == 'root'") root sheet can not have data, please select or create new sheet.
+      #main-message(v-if="$myStore.hub.mode == 'data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name == 'root'") root sheet can not have data, please select or create new sheet.
       nuxt
 section.initialize(v-else) 起動中
-  // fa.fa-pulse(:icon="['fas', 'spinner']") 起動中
+  fa.fa-pulse(:icon="['fas', 'spinner']") 起動中
 </template>
 
 <script lang="ts">
@@ -30,10 +30,10 @@ config.rawError = true;
 export default class DefaultLayoutComponent extends BaseComponent {
   initialized: boolean = false;
 
-  async beforeCreate(): Promise<void> {
+  // eslint-disable-next-line require-await
+  async beforeCreate() {
     this.$myStore.config.load();
     this.$myStore.sheet.loadAll();
-    await this.$myStore.hub.initialize();
     this.initialized = true;
   }
 }

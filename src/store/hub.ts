@@ -1,4 +1,4 @@
-import { Module, MutationAction, VuexModule } from "vuex-module-decorators";
+import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 export type TSheetData = Array<{ [columnName: string]: any }>;
 
@@ -8,16 +8,16 @@ export type TSheetData = Array<{ [columnName: string]: any }>;
   namespaced: true,
 })
 export default class HubStore extends VuexModule {
-  mode: string = "data";
+  mode: "data" | "code" = "data";
   showMenu: boolean = true;
 
-  // eslint-disable-next-line require-await
-  @MutationAction({
-    mutate: ["showMenu"],
-  })
-  async initialize() {
-    return {
-      showMenu: true,
-    };
+  @Mutation
+  SET_MODE(mode: "data" | "code"): void {
+    this.mode = mode;
+  }
+
+  @Mutation
+  SET_SHOW_MENU(arg: boolean): void {
+    this.showMenu = arg;
   }
 }
