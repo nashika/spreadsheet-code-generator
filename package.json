@@ -10,7 +10,8 @@
     "lint:js": "eslint --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
     "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:style",
-    "test": "jest"
+    "test": "jest",
+    "ncu": "ncu"
   },
   "lint-staged": {
     "*.{ts,js,vue}": "eslint",
@@ -53,6 +54,7 @@
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.20",
     "loglevel": "^1.7.1",
+    "npm-check-updates": "^11.1.1",
     "nuxt-property-decorator": "^2.9.1",
     "prettier": "^2.2.1",
     "pug": "^3.0.0",

@@ -28,7 +28,7 @@ config.rawError = true;
   },
 })
 export default class DefaultLayoutComponent extends BaseComponent {
-  initialized: boolean = false;
+  initialized: boolean = true;
 
   // eslint-disable-next-line require-await
   async beforeCreate() {
