@@ -309,10 +309,10 @@ export default class SheetStore extends VuexModule {
   }
 
   @Action
-  setModified(sheetName: string, modified: boolean) {
-    const sheet = this.sheets[sheetName];
-    sheet.meta.modified = modified;
-    this.SET_SHEET({ key: sheetName, value: sheet });
+  setModified(payload: { name: string; value: boolean }) {
+    const sheet = this.sheets[payload.name];
+    sheet.meta.modified = payload.value;
+    this.SET_SHEET({ key: payload.name, value: sheet });
   }
 
   @Action

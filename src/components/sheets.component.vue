@@ -51,7 +51,7 @@ interface ITreeSheet {
 
 @Component({
   watch: {
-    "$hub.sheets": {
+    sheets: {
       handler: SheetsComponent.prototype.watchSheets,
       deep: true,
     },
@@ -61,6 +61,10 @@ export default class SheetsComponent extends BaseComponent {
   treeSheets: ITreeSheet[] = [];
   newSheetParent: string = "";
   newSheetName: string = "";
+
+  get sheets() {
+    return this.$myStore.sheet.sheets;
+  }
 
   // eslint-disable-next-line require-await
   async mounted(): Promise<void> {
