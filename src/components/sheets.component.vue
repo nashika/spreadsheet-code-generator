@@ -104,9 +104,10 @@ export default class SheetsComponent extends BaseComponent {
       const sheetName = treeSheet.sheet.name;
       if (sheetName === this.$myStore.sheet.currentSheet?.name) return false;
       if (!this.$myStore.sheet.sheets[sheetName]) return true;
-      return !this.$myStore.sheet.isParentRecursive(
+      return !this.$myStore.sheet.funcs.isParentRecursive(
         this.$myStore.sheet.sheets[sheetName],
-        this.$myStore.sheet.currentSheet
+        this.$myStore.sheet.currentSheet,
+        this.$myStore.sheet.sheets
       );
     });
   }

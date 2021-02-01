@@ -160,16 +160,6 @@ export function loadAllForGenerate(): { [sheetName: string]: ISheet } {
   return result;
 }
 
-export function isParentRecursive(
-  target: ISheet,
-  parent: ISheet,
-  sheets: { [sheetName: string]: ISheet }
-): boolean {
-  if (target.parent === parent.name) return true;
-  if (!target.parent) return false;
-  return isParentRecursive(sheets[target.parent], parent, sheets);
-}
-
 function _countSheetDepth(
   sheetName: string,
   sheets: { [sheetName: string]: ISheet }
@@ -295,6 +285,22 @@ export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
   currentSheet: ISheet = <any>{};
 
+  funcs = {
+    isParentRecursive: (
+      target: ISheet,
+      parent: ISheet,
+      sheets: { [sheetName: string]: ISheet }
+    ): boolean => {
+      if (target.parent === parent.name) return true;
+      if (!target.parent) return false;
+      return this.funcs.isParentRecursive(
+        sheets[target.parent],
+        parent,
+        sheets
+      );
+    },
+  };
+
   @Mutation
   SET_SHEET(payload: { key: string; value: ISheet }) {
     this.sheets[payload.key] = payload.value;
@@ -334,6 +340,7 @@ export default class SheetStore extends VuexModule {
       this.SET_SHEET({ key: name, value: _load(name) });
     }
     this.select("root");
+    debugger;
     return true;
   }
 
