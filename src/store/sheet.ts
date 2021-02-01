@@ -296,8 +296,8 @@ export default class SheetStore extends VuexModule {
   currentSheet: ISheet = <any>{};
 
   @Mutation
-  SET_SHEET(sheetName: string, value: ISheet) {
-    this.sheets[sheetName] = value;
+  SET_SHEET(payload: { key: string; value: ISheet }) {
+    this.sheets[payload.key] = payload.value;
   }
 
   @Mutation
@@ -314,12 +314,12 @@ export default class SheetStore extends VuexModule {
   setModified(sheetName: string, modified: boolean) {
     const sheet = this.sheets[sheetName];
     sheet.meta.modified = modified;
-    this.SET_SHEET(sheetName, sheet);
+    this.SET_SHEET({ key: sheetName, value: sheet });
   }
 
   @Action
   newAll(): void {
-    this.SET_SHEET("root", _rootSheetTemplate());
+    this.SET_SHEET({ key: "root", value: _rootSheetTemplate() });
     this.SET_CURRENT_SHEET("root");
   }
 
@@ -331,7 +331,7 @@ export default class SheetStore extends VuexModule {
     this.newAll();
     const names: string[] = ["root", ...ioManagers.sheet.list()];
     for (const name of names) {
-      this.SET_SHEET(name, _load(name));
+      this.SET_SHEET({ key: name, value: _load(name) });
     }
     this.select("root");
     return true;
@@ -378,7 +378,7 @@ export default class SheetStore extends VuexModule {
       data: _.times(10, () => ({})),
       code: _codeTemplate(),
     };
-    this.SET_SHEET(sheetName, emptySheet);
+    this.SET_SHEET({ key: sheetName, value: emptySheet });
     return true;
   }
 
@@ -401,12 +401,12 @@ export default class SheetStore extends VuexModule {
       _.forIn(this.sheets, (s: ISheet, n: string) => {
         if (s.parent === oldSheetName) {
           s.parent = newSheetName;
-          this.SET_SHEET(n, s);
+          this.SET_SHEET({ key: n, value: s });
         }
       });
       this.REMOVE_SHEET(oldSheetName);
     }
-    this.SET_SHEET(newSheetName, sheet);
+    this.SET_SHEET({ key: newSheetName, value: sheet });
     return true;
   }
 
