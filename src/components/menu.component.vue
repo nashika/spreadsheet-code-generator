@@ -9,7 +9,9 @@
           b-form-radio-group.w-100(buttons, button-variant="outline-primary", v-model="mode",
             :options="[{text: 'Data', value: 'data'}, {text: 'Code', value: 'code'}]")
         b-list-group-item
-          b-button(variant="primary", block, @click="generate") #[i.fa.fa-industry] Generate
+          b-button(variant="primary", block, @click="generate")
+            fa(icon="industry")
+            | &nbsp;Generate
 </template>
 
 <script lang="ts">

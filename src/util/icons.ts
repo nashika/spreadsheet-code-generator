@@ -1,3 +1,3 @@
 export const icons = {
-  solid: ["faCube", "faSpinner"],
+  solid: ["faCube", "faIndustry", "faSpinner"],
 };
