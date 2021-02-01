@@ -293,7 +293,7 @@ function _codeTemplate(): string {
 })
 export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
-  currentSheet?: ISheet | null = null;
+  currentSheet: ISheet = <any>{};
 
   @Mutation
   SET_SHEET(sheetName: string, value: ISheet) {
@@ -333,6 +333,7 @@ export default class SheetStore extends VuexModule {
     for (const name of names) {
       this.SET_SHEET(name, _load(name));
     }
+    this.select("root");
     return true;
   }
 
@@ -354,8 +355,12 @@ export default class SheetStore extends VuexModule {
   }
 
   @Action
-  select(sheet: ISheet) {
-    this.SET_CURRENT_SHEET(sheet.name);
+  select(target: ISheet | string) {
+    if (typeof target === "string") {
+      this.SET_CURRENT_SHEET(target);
+    } else {
+      this.SET_CURRENT_SHEET(target.name);
+    }
   }
 
   @Action

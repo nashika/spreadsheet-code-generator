@@ -3,7 +3,7 @@ section.app(v-if="initialized")
   #main.d-flex
     #menu-area(v-if="$myStore.hub.showMenu")
       menu-component
-      // sheets-component(v-if="$myStore.hub.sheets")
+      sheets-component
       // search-component()
       // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
     #main-area(:class="{'col-xs-9': $myStore.hub.showMenu, 'col-xs-12': !$myStore.hub.showMenu}")
@@ -19,12 +19,14 @@ import { config } from "vuex-module-decorators";
 
 import { BaseComponent } from "~/src/components/base.component";
 import MenuComponent from "~/src/components/menu.component.vue";
+import SheetsComponent from "~/src/components/sheets.component.vue";
 
 config.rawError = true;
 
 @Component({
   components: {
     MenuComponent,
+    SheetsComponent,
   },
 })
 export default class DefaultLayoutComponent extends BaseComponent {
