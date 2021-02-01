@@ -3,7 +3,7 @@
     b-card(no-body)
       .h6(slot="header")
         fa(icon="cube")
-        | Menu
+        | &nbsp;Menu
       b-list-group(flush)
         b-list-group-item
           b-form-radio-group.w-100(buttons, button-variant="outline-primary", v-model="mode",

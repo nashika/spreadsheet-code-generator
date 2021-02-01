@@ -285,21 +285,13 @@ export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
   currentSheet: ISheet = <any>{};
 
-  funcs = {
-    isParentRecursive: (
-      target: ISheet,
-      parent: ISheet,
-      sheets: { [sheetName: string]: ISheet }
-    ): boolean => {
+  get isParentRecursive(): (target: ISheet, parent: ISheet) => boolean {
+    return (target, parent) => {
       if (target.parent === parent.name) return true;
       if (!target.parent) return false;
-      return this.funcs.isParentRecursive(
-        sheets[target.parent],
-        parent,
-        sheets
-      );
-    },
-  };
+      return this.isParentRecursive(this.sheets[target.parent], parent);
+    };
+  }
 
   @Mutation
   SET_SHEET(payload: { key: string; value: ISheet }) {
@@ -340,7 +332,6 @@ export default class SheetStore extends VuexModule {
       this.SET_SHEET({ key: name, value: _load(name) });
     }
     this.select("root");
-    debugger;
     return true;
   }
 

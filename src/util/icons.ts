@@ -1,3 +1,12 @@
 export const icons = {
-  solid: ["faCube", "faIndustry", "faSpinner"],
+  solid: [
+    "faBars",
+    "faCube",
+    "faEdit",
+    "faIndustry",
+    "faPlus",
+    "faSpinner",
+    "faTable",
+    "faTrash",
+  ],
 };

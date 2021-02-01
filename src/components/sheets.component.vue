@@ -2,12 +2,21 @@
   .sheets-component
     b-card(no-body)
       template(slot="header")
-        b-dropdown.pull-right.my-0(variant="primary", size="sm")
-          template(slot="button-content") #[i.fa.fa-bars]
-          b-dropdown-item(v-b-modal.add-modal) #[i.fa.fa-fw.fa-plus] Add
-          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", v-b-modal.edit-modal) #[fa(icon="pencil")] Edit
-          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", @click="remove") #[fa(icon="trash")] Delete
-        h6 #[i.fa.fa-table] Sheets
+        b-dropdown.float-right.my-0(variant="primary", size="sm")
+          template(slot="button-content")
+            fa(icon="bars")
+          b-dropdown-item(v-b-modal.add-modal)
+            fa(icon="plus")
+            | &nbsp;Add
+          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", v-b-modal.edit-modal)
+            fa(icon="edit")
+            | &nbsp;Edit
+          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", @click="remove")
+            fa(icon="trash")
+            | &nbsp;Delete
+        h6
+          fa(icon="table")
+          | &nbsp;Sheets
       b-list-group(flush)
         template(v-for="treeSheet in treeSheets")
           b-list-group-item(@click="select(treeSheet.sheet)", :active="treeSheet.sheet == $myStore.sheet.currentSheet",
@@ -104,10 +113,9 @@ export default class SheetsComponent extends BaseComponent {
       const sheetName = treeSheet.sheet.name;
       if (sheetName === this.$myStore.sheet.currentSheet?.name) return false;
       if (!this.$myStore.sheet.sheets[sheetName]) return true;
-      return !this.$myStore.sheet.funcs.isParentRecursive(
+      return !this.$myStore.sheet.isParentRecursive(
         this.$myStore.sheet.sheets[sheetName],
-        this.$myStore.sheet.currentSheet,
-        this.$myStore.sheet.sheets
+        this.$myStore.sheet.currentSheet
       );
     });
   }
