@@ -14,39 +14,35 @@ import { BaseComponent } from "~/src/components/base.component";
 import { IColumn } from "~/src/store/sheet";
 import { RecordExtender } from "~/src/util/record-extender";
 import { assertIsDefined } from "~/src/util/assert";
-
-/* TODO: recover
-interface IMyHandsontable extends Handsontable {
-  search: {
-    query(q: string): any;
-  };
-  scrollViewportTo: (row: number, column: number) => boolean;
-}
- */
+import { TSheetData } from "~/src/store/hub";
 
 @Component
 export default class DataComponent extends BaseComponent {
   private currentRow: number = 0;
   private currentCol: number = 0;
   private resizeTimer: any = null;
+  private editingData: TSheetData = [];
+  private editingSheetName: string = "";
 
   private hot?: Handsontable;
   private recordExtender?: RecordExtender;
 
-  async created() {
+  async mounted() {
     // TODO: recover
-    // this.$hub.$on("search", this.onSearch);
+    this.$root.$on("search", this.onSearch);
     // this.$hub.$on("insert", this.onInsert);
     this.$root.$on("change-sheet", () => this.rebuildSpreadsheet());
     // this.$root.$on("showMenu", () => this.watchShowMenu());
     // beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
+    window.addEventListener("resize", this.resize);
+    this.rebuildSpreadsheet();
     await Promise.resolve();
   }
 
-  async mounted() {
-    window.addEventListener("resize", this.resize);
-    this.rebuildSpreadsheet();
-    return await Promise.resolve();
+  async beforeDestroy() {
+    this.storeEditingData();
+    window.removeEventListener("resize", this.resize);
+    await Promise.resolve();
   }
 
   onSearch(query: string) {
@@ -70,10 +66,6 @@ export default class DataComponent extends BaseComponent {
 
   onInsert() {
     this.hot?.alter("insert_row", this.currentRow);
-  }
-
-  onBeforeDestroy() {
-    window.removeEventListener("resize", this.resize);
   }
 
   resize() {
@@ -148,25 +140,34 @@ export default class DataComponent extends BaseComponent {
     });
   }
 
+  private storeEditingData(): void {
+    if (!this.hot) return;
+    this.$myStore.sheet.m_mergeSheet({
+      name: this.editingSheetName,
+      value: { data: this.editingData },
+    });
+  }
+
   private rebuildSpreadsheet(): void {
     if (this.hot) {
+      this.storeEditingData();
       this.hot.destroy();
       this.hot = undefined;
     }
     if (this.$myStore.sheet.currentSheet.name === "root") return;
-    this.recordExtender = new RecordExtender(
-      this.$myStore.sheet.currentSheet.data,
-      this.$myStore.sheet.currentSheet
-    );
+    const currentSheet = this.$myStore.sheet.currentSheet;
+    this.recordExtender = new RecordExtender(currentSheet.data, currentSheet);
     const container: Element | null = this.$el.querySelector("#spreadsheet");
     assertIsDefined(container);
-    const sheetName: string = this.$myStore.sheet.currentSheet.name;
+    const sheetName: string = currentSheet.name;
+    this.editingSheetName = currentSheet.name;
+    this.editingData = _.cloneDeep(currentSheet.data);
     if (!sheetName) return;
     this.hot = new Handsontable(container, {
-      data: _.cloneDeep(this.$myStore.sheet.currentSheet.data),
+      data: this.editingData,
       width: this.$el.clientWidth - 1,
       height: this.$el.clientHeight - 1,
-      columns: this.$myStore.sheet.currentSheet.columns.map((c: IColumn) => {
+      columns: currentSheet.columns.map((c: IColumn) => {
         const columnSetting: Handsontable.ColumnSettings = {};
         switch (c.type) {
           case "text":
@@ -189,12 +190,12 @@ export default class DataComponent extends BaseComponent {
         return columnSetting;
       }),
       rowHeaders: true,
-      colHeaders: this.$myStore.sheet.currentSheet.columns.map((c) => c.header),
-      colWidths: this.$myStore.sheet.currentSheet.columns.map((c) => c.width),
+      colHeaders: currentSheet.columns.map((c) => c.header),
+      colWidths: currentSheet.columns.map((c) => c.width),
       contextMenu: true,
       wordWrap: false,
       manualColumnFreeze: true,
-      fixedColumnsLeft: this.$myStore.sheet.currentSheet.freezeColumn || 0,
+      fixedColumnsLeft: currentSheet.freezeColumn || 0,
       search: {
         searchResultClass: "search-cell",
       },
@@ -216,8 +217,8 @@ export default class DataComponent extends BaseComponent {
        */
     });
     this.hot.scrollViewportTo(
-      this.$myStore.sheet.currentSheet.meta.rowOffset ?? 0,
-      this.$myStore.sheet.currentSheet.meta.colOffset ?? 0
+      currentSheet.meta.rowOffset ?? 0,
+      currentSheet.meta.colOffset ?? 0
     );
   }
 

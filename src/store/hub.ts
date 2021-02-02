@@ -1,6 +1,6 @@
 import { Module, Mutation, VuexModule } from "vuex-module-decorators";
 
-export type TSheetData = Array<{ [columnName: string]: any }>;
+export type TSheetData = { [columnName: string]: any }[];
 
 @Module({
   name: "hub",
