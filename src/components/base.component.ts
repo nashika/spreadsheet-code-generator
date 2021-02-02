@@ -8,16 +8,16 @@ export abstract class BaseComponent extends Vue {
   lodash = _;
 
   // instance lifecycle hooks
-  async beforeCreate(): Promise<void> {}
-  async created(): Promise<void> {}
-  async beforeMount(): Promise<void> {}
-  async mounted(): Promise<void> {}
-  async beforeUpdate(): Promise<void> {}
-  async updated(): Promise<void> {}
-  async beforeDestroy(): Promise<void> {}
-  async destroyed(): Promise<void> {}
+  async beforeCreate() {}
+  async created() {}
+  async beforeMount() {}
+  async mounted() {}
+  async beforeUpdate() {}
+  async updated() {}
+  async beforeDestroy() {}
+  async destroyed() {}
 
   // nuxt hooks
-  async fetch(_context: NuxtContext): Promise<void> {}
-  async asyncData(_context: NuxtContext): Promise<void> {}
+  async fetch(_context: NuxtContext) {}
+  async asyncData(_context: NuxtContext) {}
 }

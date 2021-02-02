@@ -293,6 +293,12 @@ export default class SheetStore extends VuexModule {
     };
   }
 
+  get g_getSheetData(): (name: string) => TSheetData {
+    return (name) => {
+      return this.sheets[name].data;
+    };
+  }
+
   @Mutation
   m_setSheet(payload: { name: string; value: ISheet }) {
     this.sheets[payload.name] = payload.value;

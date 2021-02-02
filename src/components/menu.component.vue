@@ -1,5 +1,5 @@
 <template lang="pug">
-.menu-component
+section.menu
   b-card(no-body)
     .h6(slot="header")
       fa(icon="cube")
