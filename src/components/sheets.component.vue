@@ -21,7 +21,7 @@
         template(v-for="treeSheet in treeSheets")
           b-list-group-item(@click="select(treeSheet.sheet)", :active="treeSheet.sheet === $myStore.sheet.currentSheet",
             :style="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
-            b-badge.pull-right(v-if="$myStore.sheet.sheets[treeSheet.sheet.name].meta && $myStore.sheet.sheets[treeSheet.sheet.name].meta.modified", variant="danger") !
+            b-badge.float-right(v-if="$myStore.sheet.sheets[treeSheet.sheet.name].meta && $myStore.sheet.sheets[treeSheet.sheet.name].meta.modified", variant="danger") !
     b-modal#add-modal(title="Add Sheet", @show="showAddModal", @ok="okAddModal")
       b-form
         b-form-group(label="Parent Sheet")
@@ -49,14 +49,7 @@ interface ITreeSheet {
   level: number;
 }
 
-@Component({
-  watch: {
-    sheets: {
-      handler: SheetsComponent.prototype.watchSheets,
-      deep: true,
-    },
-  },
-})
+@Component({})
 export default class SheetsComponent extends BaseComponent {
   treeSheets: ITreeSheet[] = [];
   newSheetParent: string = "";
@@ -68,7 +61,7 @@ export default class SheetsComponent extends BaseComponent {
 
   // eslint-disable-next-line require-await
   async mounted(): Promise<void> {
-    this.watchSheets();
+    this.rebuildTreeSheets();
   }
 
   select(sheet: ISheet): void {
@@ -89,6 +82,7 @@ export default class SheetsComponent extends BaseComponent {
     ) {
       e.preventDefault();
     }
+    this.rebuildTreeSheets();
   }
 
   showEditModal(): void {
@@ -106,10 +100,12 @@ export default class SheetsComponent extends BaseComponent {
     ) {
       e.preventDefault();
     }
+    this.rebuildTreeSheets();
   }
 
   remove(): void {
     this.$myStore.sheet.a_remove();
+    this.rebuildTreeSheets();
   }
 
   notSelfOrChildTreeSheets(treeSheets: ITreeSheet[]): ITreeSheet[] {
@@ -124,7 +120,7 @@ export default class SheetsComponent extends BaseComponent {
     });
   }
 
-  watchSheets(): void {
+  rebuildTreeSheets(): void {
     this.treeSheets = this.treeSheetRecursive("", 0);
   }
 

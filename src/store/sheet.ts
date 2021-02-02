@@ -299,6 +299,11 @@ export default class SheetStore extends VuexModule {
   }
 
   @Mutation
+  m_mergeSheet(payload: { name: string; value: Partial<ISheet> }) {
+    _.merge(this.sheets[payload.name], payload.value);
+  }
+
+  @Mutation
   m_setCurrentSheet(name: string) {
     this.currentSheet = this.sheets[name];
   }
@@ -310,9 +315,10 @@ export default class SheetStore extends VuexModule {
 
   @Action
   a_setModified(payload: { name: string; value: boolean }) {
-    const sheet = this.sheets[payload.name];
-    sheet.meta.modified = payload.value;
-    this.m_setSheet({ name: payload.name, value: sheet });
+    this.m_mergeSheet({
+      name: payload.name,
+      value: { meta: { modified: payload.value } },
+    });
   }
 
   @Action
@@ -395,20 +401,24 @@ export default class SheetStore extends VuexModule {
       return false;
     }
     assertIsDefined(this.sheets[payload.oldName]);
-    const sheet = this.sheets[payload.oldName];
-    sheet.name = payload.newName;
-    sheet.parent = payload.parentName;
-    sheet.meta.modified = true;
+    const oldSheet = this.sheets[payload.oldName];
     if (payload.newName !== payload.oldName) {
       _.forIn(this.sheets, (s: ISheet, n: string) => {
         if (s.parent === payload.oldName) {
-          s.parent = payload.newName;
-          this.m_setSheet({ name: n, value: s });
+          this.m_mergeSheet({ name: n, value: { parent: payload.newName } });
         }
       });
       this.m_removeSheet(payload.oldName);
+      this.m_setSheet({ name: payload.newName, value: oldSheet });
     }
-    this.m_setSheet({ name: payload.newName, value: sheet });
+    this.m_mergeSheet({
+      name: payload.newName,
+      value: {
+        name: payload.newName,
+        parent: payload.parentName,
+        meta: { modified: true },
+      },
+    });
     return true;
   }
 
