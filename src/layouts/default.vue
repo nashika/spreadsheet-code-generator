@@ -4,12 +4,12 @@ section.app(v-if="initialized")
     #menu-area(v-if="$myStore.hub.showMenu")
       menu-component
       sheets-component
-      // search-component()
+      search-component
       // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
     #main-area(:class="{'col-xs-9': $myStore.hub.showMenu, 'col-xs-12': !$myStore.hub.showMenu}")
       nuxt
-section.initialize(v-else) 起動中
-  fa.fa-pulse(:icon="['fas', 'spinner']") 起動中
+section.initialize(v-else)
+  fa.fa-pulse(icon="['fas', 'spinner']") 起動中
 </template>
 
 <script lang="ts">
@@ -19,6 +19,7 @@ import { config } from "vuex-module-decorators";
 import { BaseComponent } from "~/src/components/base.component";
 import MenuComponent from "~/src/components/menu.component.vue";
 import SheetsComponent from "~/src/components/sheets.component.vue";
+import SearchComponent from "~/src/components/search.component.vue";
 
 config.rawError = true;
 
@@ -26,6 +27,7 @@ config.rawError = true;
   components: {
     MenuComponent,
     SheetsComponent,
+    SearchComponent,
   },
 })
 export default class DefaultLayoutComponent extends BaseComponent {

@@ -5,6 +5,7 @@ export const icons = {
     "faEdit",
     "faIndustry",
     "faPlus",
+    "faSearch",
     "faSpinner",
     "faTable",
     "faTrash",
