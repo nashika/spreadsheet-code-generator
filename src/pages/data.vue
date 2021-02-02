@@ -1,8 +1,8 @@
 <template lang="pug">
 section.data(style="height:100%")
-  #main-message(v-if="$myStore.hub.mode == 'data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name == 'root'") root sheet can not have data, please select or create new sheet.
-  .spreadsheet-component(style="height:100%")
-    div#spreadsheet(style="height:100%")
+  .message(v-if="$myStore.hub.mode == 'data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name === 'root'") root sheet can not have data, please select or create new sheet.
+  .spreadsheet-area(v-b-visible="$myStore.sheet.currentSheet.name !== 'root'", style="height:100%")
+    #spreadsheet(style="height:100%")
 </template>
 
 <script lang="ts">
@@ -267,3 +267,27 @@ export default class DataComponent extends BaseComponent {
    */
 }
 </script>
+
+<style lang="scss">
+.message {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.current-row {
+  background-color: #f8f8f8;
+}
+.current-col {
+  background-color: #f8f8f8;
+}
+.search-cell {
+  background-color: #fcedd9 !important;
+}
+.invalid-cell {
+  background-color: #f88 !important;
+}
+</style>
