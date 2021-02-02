@@ -2,15 +2,21 @@
 .container
   div
     h1.title spreadsheet-code-generator
-    .links
-      a.button--green(href="https://nuxtjs.org/", target="_blank", rel="noopener noreferrer") Documentation
-      a.button--grey(href="https://github.com/nuxt/nuxt.js", target="_blank", rel="noopener noreferrer") GitHub
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { Component } from "nuxt-property-decorator";
 
-export default Vue.extend({});
+import { BaseComponent } from "~/src/components/base.component";
+import { NuxtContext } from "~/src/types/nuxt";
+
+@Component
+export default class IndexComponent extends BaseComponent {
+  async fetch(context: NuxtContext): Promise<void> {
+    context.redirect(301, "/data");
+    return await Promise.resolve();
+  }
+}
 </script>
 
 <style>
@@ -31,17 +37,5 @@ export default Vue.extend({});
   font-size: 100px;
   color: #35495e;
   letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>
