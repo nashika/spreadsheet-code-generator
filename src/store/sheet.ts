@@ -8,6 +8,7 @@ import { assertIsDefined } from "~/src/util/assert";
 import { TSheetData } from "~/src/store/hub";
 import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
+import { MyDeepPartial } from "~/src/types/util";
 
 export interface ISheet {
   name: string;
@@ -293,20 +294,15 @@ export default class SheetStore extends VuexModule {
     };
   }
 
-  get g_getSheetData(): (name: string) => TSheetData {
-    return (name) => {
-      return this.sheets[name].data;
-    };
-  }
-
   @Mutation
   m_setSheet(payload: { name: string; value: ISheet }) {
     this.sheets[payload.name] = payload.value;
   }
 
   @Mutation
-  m_mergeSheet(payload: { name: string; value: Partial<ISheet> }) {
-    _.merge(this.sheets[payload.name], payload.value);
+  m_mergeSheet(payload: { name?: string; value: MyDeepPartial<ISheet> }) {
+    const name = payload.name ?? this.currentSheet.name;
+    _.merge(this.sheets[name], payload.value);
   }
 
   @Mutation
@@ -320,9 +316,10 @@ export default class SheetStore extends VuexModule {
   }
 
   @Action
-  a_setModified(payload: { name: string; value: boolean }) {
+  a_setModified(payload: { name?: string; value: boolean }) {
+    const name = payload.name ?? this.currentSheet.name;
     this.m_mergeSheet({
-      name: payload.name,
+      name,
       value: { meta: { modified: payload.value } },
     });
   }

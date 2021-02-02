@@ -8,6 +8,7 @@ section.data(style="height:100%")
 <script lang="ts">
 import { Component } from "nuxt-property-decorator";
 import Handsontable from "handsontable";
+import _ from "lodash";
 
 import { BaseComponent } from "~/src/components/base.component";
 import { IColumn } from "~/src/store/sheet";
@@ -116,7 +117,7 @@ export default class DataComponent extends BaseComponent {
     _source: Handsontable.ChangeSource
   ): void {
     if (changes) {
-      this.$myStore.sheet.currentSheet.meta.modified = true;
+      this.$myStore.sheet.a_setModified({ value: true });
     }
     if (changes && changes.length > 0) {
       this.setReloadRecordExtenderTimer();
@@ -137,8 +138,14 @@ export default class DataComponent extends BaseComponent {
   }
 
   private afterScroll(): void {
-    this.$myStore.sheet.currentSheet.meta.colOffset = this.hot?.colOffset?.();
-    this.$myStore.sheet.currentSheet.meta.rowOffset = this.hot?.rowOffset?.();
+    this.$myStore.sheet.m_mergeSheet({
+      value: {
+        meta: {
+          colOffset: this.hot?.colOffset?.(),
+          rowOffset: this.hot?.rowOffset?.(),
+        },
+      },
+    });
   }
 
   private rebuildSpreadsheet(): void {
@@ -156,7 +163,7 @@ export default class DataComponent extends BaseComponent {
     const sheetName: string = this.$myStore.sheet.currentSheet.name;
     if (!sheetName) return;
     this.hot = new Handsontable(container, {
-      data: this.$myStore.sheet.g_getSheetData(sheetName),
+      data: _.cloneDeep(this.$myStore.sheet.currentSheet.data),
       width: this.$el.clientWidth - 1,
       height: this.$el.clientHeight - 1,
       columns: this.$myStore.sheet.currentSheet.columns.map((c: IColumn) => {
