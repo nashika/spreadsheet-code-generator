@@ -16,4 +16,12 @@ module.exports = {
   rules: {
     "no-use-before-define": "off",
   },
+  overrides: [
+    {
+      files: ["src/store/*.ts"],
+      rules: {
+        camelcase: "off",
+      },
+    },
+  ],
 };

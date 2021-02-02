@@ -107,7 +107,7 @@ class IoManager {
 
   unlink(sheetName: string): void {
     const filePath: string = this.filePath(sheetName);
-    console.log(`Removing ${filePath}.`);
+    logger.info(`Removing ${filePath}.`);
     fs.unlinkSync(filePath);
   }
 }
@@ -285,64 +285,64 @@ export default class SheetStore extends VuexModule {
   sheets: { [sheetName: string]: ISheet } = {};
   currentSheet: ISheet = <any>{};
 
-  get isParentRecursive(): (target: ISheet, parent: ISheet) => boolean {
+  get g_isParentRecursive(): (target: ISheet, parent: ISheet) => boolean {
     return (target, parent) => {
       if (target.parent === parent.name) return true;
       if (!target.parent) return false;
-      return this.isParentRecursive(this.sheets[target.parent], parent);
+      return this.g_isParentRecursive(this.sheets[target.parent], parent);
     };
   }
 
   @Mutation
-  SET_SHEET(payload: { key: string; value: ISheet }) {
-    this.sheets[payload.key] = payload.value;
+  m_setSheet(payload: { name: string; value: ISheet }) {
+    this.sheets[payload.name] = payload.value;
   }
 
   @Mutation
-  SET_CURRENT_SHEET(sheetName: string) {
-    this.currentSheet = this.sheets[sheetName];
+  m_setCurrentSheet(name: string) {
+    this.currentSheet = this.sheets[name];
   }
 
   @Mutation
-  REMOVE_SHEET(sheetName: string) {
-    delete this.sheets[sheetName];
+  m_removeSheet(name: string) {
+    delete this.sheets[name];
   }
 
   @Action
-  setModified(payload: { name: string; value: boolean }) {
+  a_setModified(payload: { name: string; value: boolean }) {
     const sheet = this.sheets[payload.name];
     sheet.meta.modified = payload.value;
-    this.SET_SHEET({ key: payload.name, value: sheet });
+    this.m_setSheet({ name: payload.name, value: sheet });
   }
 
   @Action
-  newAll(): void {
-    this.SET_SHEET({ key: "root", value: _rootSheetTemplate() });
-    this.SET_CURRENT_SHEET("root");
+  a_newAll(): void {
+    this.m_setSheet({ name: "root", value: _rootSheetTemplate() });
+    this.m_setCurrentSheet("root");
   }
 
   @Action
-  loadAll(): boolean {
+  a_loadAll(): boolean {
     for (const io of _.toArray(ioManagers)) {
       if (!io.checkDir()) return false;
     }
-    this.newAll();
+    this.a_newAll();
     const names: string[] = ["root", ...ioManagers.sheet.list()];
     for (const name of names) {
-      this.SET_SHEET({ key: name, value: _load(name) });
+      this.m_setSheet({ name, value: _load(name) });
     }
-    this.select("root");
+    this.a_select("root");
     return true;
   }
 
   @Action
-  saveAll(): boolean {
+  a_saveAll(): boolean {
     for (const io of _.toArray(ioManagers)) {
       if (!io.checkAndCreateDir()) return false;
     }
     for (const name in this.sheets) {
       _save(name, this.sheets[name]);
-      this.setModified(name, false);
+      this.a_setModified({ name, value: false });
     }
     _.difference(ioManagers.sheet.list(), Object.keys(this.sheets)).forEach(
       (name) => {
@@ -353,63 +353,67 @@ export default class SheetStore extends VuexModule {
   }
 
   @Action
-  select(target: ISheet | string) {
+  a_select(target: ISheet | string) {
     if (typeof target === "string") {
-      this.SET_CURRENT_SHEET(target);
+      this.m_setCurrentSheet(target);
     } else {
-      this.SET_CURRENT_SHEET(target.name);
+      this.m_setCurrentSheet(target.name);
     }
   }
 
   @Action
-  add(sheetName: string, parentSheetName: string): boolean {
-    if (this.sheets[sheetName]) {
-      alert(`Sheet "${sheetName}" already exists.`);
+  a_add(payload: { name: string; parentName: string }): boolean {
+    if (this.sheets[payload.name]) {
+      alert(`Sheet "${payload.name}" already exists.`);
       return false;
     }
     const emptySheet: ISheet = {
-      name: sheetName,
-      columns: _generateInitialColumns(sheetName, parentSheetName, this.sheets),
-      parent: parentSheetName,
-      freezeColumn: _countSheetDepth(parentSheetName, this.sheets) + 1,
+      name: payload.name,
+      columns: _generateInitialColumns(
+        payload.name,
+        payload.parentName,
+        this.sheets
+      ),
+      parent: payload.parentName,
+      freezeColumn: _countSheetDepth(payload.parentName, this.sheets) + 1,
       meta: { modified: true },
       data: _.times(10, () => ({})),
       code: _codeTemplate(),
     };
-    this.SET_SHEET({ key: sheetName, value: emptySheet });
+    this.m_setSheet({ name: payload.name, value: emptySheet });
     return true;
   }
 
   @Action
-  edit(
-    oldSheetName: string,
-    newSheetName: string,
-    parentSheetName: string
-  ): boolean {
-    if (oldSheetName !== newSheetName && this.sheets[newSheetName]) {
-      alert(`Sheet "${newSheetName}" already exists.`);
+  a_edit(payload: {
+    oldName: string;
+    newName: string;
+    parentName: string;
+  }): boolean {
+    if (payload.oldName !== payload.newName && this.sheets[payload.newName]) {
+      alert(`Sheet "${payload.newName}" already exists.`);
       return false;
     }
-    assertIsDefined(this.sheets[oldSheetName]);
-    const sheet = this.sheets[oldSheetName];
-    sheet.name = newSheetName;
-    sheet.parent = parentSheetName;
+    assertIsDefined(this.sheets[payload.oldName]);
+    const sheet = this.sheets[payload.oldName];
+    sheet.name = payload.newName;
+    sheet.parent = payload.parentName;
     sheet.meta.modified = true;
-    if (newSheetName !== oldSheetName) {
+    if (payload.newName !== payload.oldName) {
       _.forIn(this.sheets, (s: ISheet, n: string) => {
-        if (s.parent === oldSheetName) {
-          s.parent = newSheetName;
-          this.SET_SHEET({ key: n, value: s });
+        if (s.parent === payload.oldName) {
+          s.parent = payload.newName;
+          this.m_setSheet({ name: n, value: s });
         }
       });
-      this.REMOVE_SHEET(oldSheetName);
+      this.m_removeSheet(payload.oldName);
     }
-    this.SET_SHEET({ key: newSheetName, value: sheet });
+    this.m_setSheet({ name: payload.newName, value: sheet });
     return true;
   }
 
   @Action
-  remove(): void {
+  a_remove(): void {
     if (!this.currentSheet) {
       alert(`No selected sheet.`);
       return;
@@ -428,9 +432,9 @@ export default class SheetStore extends VuexModule {
     if (!confirm(`Are you sure to delete sheet:"${this.currentSheet.name}"?`)) {
       return;
     }
-    const sheetName: string = this.currentSheet.name;
-    this.REMOVE_SHEET(sheetName);
-    this.setModified(sheetName, true);
-    this.SET_CURRENT_SHEET("root");
+    const name: string = this.currentSheet.name;
+    this.m_removeSheet(name);
+    this.a_setModified({ name, value: true });
+    this.m_setCurrentSheet("root");
   }
 }

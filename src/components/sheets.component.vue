@@ -8,10 +8,10 @@
           b-dropdown-item(v-b-modal.add-modal)
             fa(icon="plus")
             | &nbsp;Add
-          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", v-b-modal.edit-modal)
+          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name !== 'root'", v-b-modal.edit-modal)
             fa(icon="edit")
             | &nbsp;Edit
-          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name != 'root'", @click="remove")
+          b-dropdown-item(v-if="$myStore.sheet.currentSheet.name !== 'root'", @click="remove")
             fa(icon="trash")
             | &nbsp;Delete
         h6
@@ -19,7 +19,7 @@
           | &nbsp;Sheets
       b-list-group(flush)
         template(v-for="treeSheet in treeSheets")
-          b-list-group-item(@click="select(treeSheet.sheet)", :active="treeSheet.sheet == $myStore.sheet.currentSheet",
+          b-list-group-item(@click="select(treeSheet.sheet)", :active="treeSheet.sheet === $myStore.sheet.currentSheet",
             :style="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
             b-badge.pull-right(v-if="$myStore.sheet.sheets[treeSheet.sheet.name].meta && $myStore.sheet.sheets[treeSheet.sheet.name].meta.modified", variant="danger") !
     b-modal#add-modal(title="Add Sheet", @show="showAddModal", @ok="okAddModal")
@@ -72,7 +72,7 @@ export default class SheetsComponent extends BaseComponent {
   }
 
   select(sheet: ISheet): void {
-    this.$myStore.sheet.select(sheet);
+    this.$myStore.sheet.a_select(sheet);
   }
 
   showAddModal(): void {
@@ -82,10 +82,10 @@ export default class SheetsComponent extends BaseComponent {
 
   okAddModal(e: Event): void {
     if (
-      !this.$myStore.sheet.add(
-        this.newSheetName,
-        this.$myStore.sheet.currentSheet?.name ?? ""
-      )
+      !this.$myStore.sheet.a_add({
+        name: this.newSheetName,
+        parentName: this.$myStore.sheet.currentSheet?.name ?? "",
+      })
     ) {
       e.preventDefault();
     }
@@ -98,18 +98,18 @@ export default class SheetsComponent extends BaseComponent {
 
   okEditModal(e: Event): void {
     if (
-      !this.$myStore.sheet.edit(
-        this.$myStore.sheet.currentSheet?.name ?? "",
-        this.newSheetName,
-        this.newSheetParent
-      )
+      !this.$myStore.sheet.a_edit({
+        oldName: this.$myStore.sheet.currentSheet?.name ?? "",
+        newName: this.newSheetName,
+        parentName: this.newSheetParent,
+      })
     ) {
       e.preventDefault();
     }
   }
 
   remove(): void {
-    this.$myStore.sheet.remove();
+    this.$myStore.sheet.a_remove();
   }
 
   notSelfOrChildTreeSheets(treeSheets: ITreeSheet[]): ITreeSheet[] {
@@ -117,7 +117,7 @@ export default class SheetsComponent extends BaseComponent {
       const sheetName = treeSheet.sheet.name;
       if (sheetName === this.$myStore.sheet.currentSheet?.name) return false;
       if (!this.$myStore.sheet.sheets[sheetName]) return true;
-      return !this.$myStore.sheet.isParentRecursive(
+      return !this.$myStore.sheet.g_isParentRecursive(
         this.$myStore.sheet.sheets[sheetName],
         this.$myStore.sheet.currentSheet
       );

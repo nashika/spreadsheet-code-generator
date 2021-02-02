@@ -35,7 +35,7 @@ export default class DefaultLayoutComponent extends BaseComponent {
   // eslint-disable-next-line require-await
   async beforeCreate() {
     this.$myStore.config.load();
-    this.$myStore.sheet.loadAll();
+    this.$myStore.sheet.a_loadAll();
     this.initialized = true;
   }
 }
