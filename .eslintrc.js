@@ -18,10 +18,17 @@ module.exports = {
   },
   overrides: [
     {
+      files: ["index.js", "src/main.ts"],
+      rules: {
+        "no-console": "off",
+      },
+    },
+    {
       files: ["src/store/*.ts"],
       rules: {
         camelcase: "off",
       },
     },
   ],
+  ignorePatterns: ["sample/*"],
 };
