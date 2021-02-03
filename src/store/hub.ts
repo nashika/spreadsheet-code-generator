@@ -1,4 +1,4 @@
-import { Module, Mutation, VuexModule } from "vuex-module-decorators";
+import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 export type TSheetData = { [columnName: string]: any }[];
 
@@ -8,16 +8,15 @@ export type TSheetData = { [columnName: string]: any }[];
   namespaced: true,
 })
 export default class HubStore extends VuexModule {
-  mode: "data" | "code" = "data";
   showMenu: boolean = true;
 
   @Mutation
-  SET_MODE(mode: "data" | "code"): void {
-    this.mode = mode;
+  m_setShowMenu(arg: boolean): void {
+    this.showMenu = arg;
   }
 
-  @Mutation
-  SET_SHOW_MENU(arg: boolean): void {
-    this.showMenu = arg;
+  @Action
+  a_toggleShowMenu(): void {
+    this.m_setShowMenu(!this.showMenu);
   }
 }

@@ -1,10 +1,12 @@
 import path from "path";
 import fs from "fs";
 
-import * as electron from "electron";
+import electron from "electron";
+import _ from "lodash";
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import { logger } from "~/src/logger";
+import { MyDeepPartial } from "~/src/types/util";
 
 export interface IConfig {
   saveBaseDir: string;
@@ -32,21 +34,26 @@ export default class ConfigStore extends VuexModule {
   config: IConfig = <any>{};
 
   @Mutation
-  SET_CONFIG(config: IConfig): void {
+  m_setConfig(config: IConfig): void {
     this.config = config;
   }
 
+  @Mutation
+  m_mergeConfig(config: MyDeepPartial<IConfig>): void {
+    _.merge(this.config, config);
+  }
+
   @Action
-  load(): void {
+  a_load(): void {
     logger.debug(`Loading ${_configFilePath}.`);
     const config: IConfig = fs.existsSync(_configFilePath)
       ? JSON.parse(fs.readFileSync(_configFilePath).toString())
       : _configTemplate();
-    this.SET_CONFIG(config);
+    this.m_setConfig(config);
   }
 
   @Action
-  save(): void {
+  a_save(): void {
     const filePath: string = _configFilePath;
     logger.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.config, null, "  "));

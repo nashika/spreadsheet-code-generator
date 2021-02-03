@@ -326,6 +326,7 @@ export default class SheetStore extends VuexModule {
 
   @Action
   a_newAll(): void {
+    for (const name in this.sheets) this.m_removeSheet(name);
     this.m_setSheet({ name: "root", value: _rootSheetTemplate() });
     this.m_setCurrentSheet("root");
   }

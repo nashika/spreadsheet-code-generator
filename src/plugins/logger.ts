@@ -1,28 +1,27 @@
 import { Plugin } from "@nuxt/types";
 
-import { myStore } from "~/src/store";
+import { logger } from "~/src/logger";
 
-const myStorePlugin: Plugin = (_context, inject) => {
-  inject("myStore", myStore);
+const loggerPlugin: Plugin = (_context, inject) => {
+  inject("logger", logger);
 };
-
-export default myStorePlugin;
+export default loggerPlugin;
 
 declare module "vue/types/vue" {
   interface Vue {
-    $myStore: typeof myStore;
+    $logger: typeof logger;
   }
 }
 
 declare module "@nuxt/types" {
   interface NuxtAppOptions {
-    $myStore: typeof myStore;
+    $logger: typeof logger;
   }
 }
 
 declare module "vuex/types/index" {
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   interface Store<S> {
-    $myStore: typeof myStore;
+    $logger: typeof logger;
   }
 }

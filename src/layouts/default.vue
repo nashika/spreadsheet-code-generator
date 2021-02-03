@@ -20,6 +20,7 @@ import { BaseComponent } from "~/src/components/base.component";
 import MenuComponent from "~/src/components/menu.component.vue";
 import SheetsComponent from "~/src/components/sheets.component.vue";
 import SearchComponent from "~/src/components/search.component.vue";
+import { BaseService } from "~/src/service/base.service";
 
 config.rawError = true;
 
@@ -35,7 +36,9 @@ export default class DefaultLayoutComponent extends BaseComponent {
 
   // eslint-disable-next-line require-await
   async beforeCreate() {
-    this.$myStore.config.load();
+    BaseService.prototype.$root = this.$root;
+    BaseService.prototype.$router = this.$router;
+    this.$myStore.config.a_load();
     this.$myStore.sheet.a_loadAll();
     this.initialized = true;
   }
