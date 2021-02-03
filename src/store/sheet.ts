@@ -328,7 +328,7 @@ export default class SheetStore extends BaseStore {
   @Action
   a_selectCurrentSheet(name: string) {
     this.m_setCurrentSheet(name);
-    debugger;
+    this.$root.$emit(eventNames.sheet.change);
   }
 
   @Action
