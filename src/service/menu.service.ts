@@ -16,12 +16,12 @@ export class MenuService extends BaseService {
           {
             label: "&New",
             accelerator: "Ctrl+N",
-            click: this.new,
+            click: () => this.new(),
           },
           {
             label: "&Open",
             accelerator: "Ctrl+O",
-            click: this.open,
+            click: () => this.open(),
           },
           {
             label: "Open &Recent",
@@ -30,12 +30,12 @@ export class MenuService extends BaseService {
           {
             label: "&Save",
             accelerator: "Ctrl+S",
-            click: this.saveTo,
+            click: () => this.save(false),
           },
           {
             label: "Save &As",
             accelerator: "Ctrl+Shift+S",
-            click: this.saveAs,
+            click: () => this.save(true),
           },
           {
             label: "&Exit",
@@ -112,10 +112,11 @@ export class MenuService extends BaseService {
       },
     ]);
     electron.remote.getCurrentWindow().setMenu(this.menu);
+    this.$myStore.config.a_load();
     this.openRecent();
   }
 
-  protected new = (): void => {
+  protected new(): void {
     if (
       !window.confirm(
         `All editing data will be erased, Do you really want to new project?`
@@ -125,12 +126,12 @@ export class MenuService extends BaseService {
     this.$myStore.config.m_mergeConfig({ saveBaseDir: "" });
     this.$myStore.sheet.a_newAll();
     this.saveDirInfo(false);
-  };
+  }
 
-  protected open = (): void => {
+  protected open(): void {
     if (!this.openDir()) return;
     if (this.$myStore.sheet.a_loadAll()) this.saveDirInfo();
-  };
+  }
 
   protected openRecent(dir: string = ""): void {
     if (dir) {
@@ -147,14 +148,6 @@ export class MenuService extends BaseService {
     }
     if (this.$myStore.sheet.a_loadAll()) this.saveDirInfo();
   }
-
-  protected saveTo = (): void => {
-    this.save(false);
-  };
-
-  protected saveAs = (): void => {
-    this.save(true);
-  };
 
   protected save(as: boolean = false): void {
     if (as || !this.$myStore.config.config.saveBaseDir)

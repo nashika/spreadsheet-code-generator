@@ -34,13 +34,13 @@ config.rawError = true;
 export default class DefaultLayoutComponent extends BaseComponent {
   initialized: boolean = true;
 
-  // eslint-disable-next-line require-await
   async beforeCreate() {
     BaseService.prototype.$root = this.$root;
-    BaseService.prototype.$router = this.$router;
-    this.$myStore.config.a_load();
-    this.$myStore.sheet.a_loadAll();
+    this.$myService.menu.initialize();
+    // this.$myStore.config.a_load();
+    // this.$myStore.sheet.a_loadAll();
     this.initialized = true;
+    await Promise.resolve();
   }
 }
 </script>
