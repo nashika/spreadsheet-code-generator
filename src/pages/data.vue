@@ -15,6 +15,7 @@ import { IColumn } from "~/src/store/sheet";
 import { RecordExtender } from "~/src/util/record-extender";
 import { assertIsDefined } from "~/src/util/assert";
 import { TSheetData } from "~/src/store/hub";
+import { eventNames } from "~/src/util/event-names";
 
 @Component
 export default class DataComponent extends BaseComponent {
@@ -29,11 +30,12 @@ export default class DataComponent extends BaseComponent {
 
   async mounted() {
     // TODO: recover
-    this.$root.$on("search", this.onSearch);
-    // this.$hub.$on("insert", this.onInsert);
-    this.$root.$on("change-sheet", () => this.rebuildSpreadsheet());
+    this.$root.$on(eventNames.search, this.onSearch);
+    this.$root.$on(eventNames.data.insert, this.onInsert);
+    this.$root.$on(eventNames.data.selectColumn, () =>
+      this.rebuildSpreadsheet()
+    );
     // this.$root.$on("showMenu", () => this.watchShowMenu());
-    // beforeDestroy: SpreadsheetComponent.prototype.onBeforeDestroy,
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
     await Promise.resolve();
@@ -100,7 +102,7 @@ export default class DataComponent extends BaseComponent {
     this.currentRow = r;
     this.currentCol = c;
     setTimeout(() => {
-      this.$root.$emit("select-column", c);
+      this.$root.$emit(eventNames.data.selectColumn, c);
     }, 0);
   }
 

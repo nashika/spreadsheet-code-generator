@@ -43,6 +43,7 @@ import { Component } from "nuxt-property-decorator";
 
 import { ISheet } from "~/src/store/sheet";
 import { BaseComponent } from "~/src/components/base.component";
+import { eventNames } from "~/src/util/event-names";
 
 interface ITreeSheet {
   sheet: ISheet;
@@ -66,7 +67,7 @@ export default class SheetsComponent extends BaseComponent {
 
   select(sheet: ISheet): void {
     this.$myStore.sheet.a_select(sheet);
-    this.$root.$emit("change-sheet");
+    this.$root.$emit(eventNames.sheet.change);
   }
 
   showAddModal(): void {

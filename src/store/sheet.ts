@@ -2,12 +2,14 @@ import path from "path";
 import fs from "fs";
 
 import _ from "lodash";
-import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
+import { Action, Module, Mutation } from "vuex-module-decorators";
 
 import { assertIsDefined } from "~/src/util/assert";
 import { TSheetData } from "~/src/store/hub";
 import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
+import { BaseStore } from "~/src/store/base";
+import { eventNames } from "~/src/util/event-names";
 
 export interface ISheet {
   name: string;
@@ -281,7 +283,7 @@ function _codeTemplate(): string {
   stateFactory: true,
   namespaced: true,
 })
-export default class SheetStore extends VuexModule {
+export default class SheetStore extends BaseStore {
   sheets: { [sheetName: string]: ISheet } = {};
   currentSheet: ISheet = <any>{};
 
@@ -341,6 +343,7 @@ export default class SheetStore extends VuexModule {
       this.m_setSheet({ name, value: _load(name) });
     }
     this.a_select("root");
+    this.$root.$emit(eventNames.sheet.reload);
     return true;
   }
 

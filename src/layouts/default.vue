@@ -21,6 +21,7 @@ import MenuComponent from "~/src/components/menu.component.vue";
 import SheetsComponent from "~/src/components/sheets.component.vue";
 import SearchComponent from "~/src/components/search.component.vue";
 import { BaseService } from "~/src/service/base.service";
+import { setBaseStoreRootComponent } from "~/src/store/base";
 
 config.rawError = true;
 
@@ -36,6 +37,7 @@ export default class DefaultLayoutComponent extends BaseComponent {
 
   async beforeCreate() {
     BaseService.prototype.$root = this.$root;
+    setBaseStoreRootComponent(this.$root);
     this.$myService.menu.initialize();
     // this.$myStore.config.a_load();
     // this.$myStore.sheet.a_loadAll();

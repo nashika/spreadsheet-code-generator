@@ -3,9 +3,10 @@ import fs from "fs";
 
 import electron from "electron";
 import _ from "lodash";
-import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
+import { Action, Module, Mutation } from "vuex-module-decorators";
 
 import { logger } from "~/src/logger";
+import { BaseStore } from "~/src/store/base";
 
 export interface IConfig {
   saveBaseDir: string;
@@ -29,7 +30,7 @@ function _configTemplate(): IConfig {
   stateFactory: true,
   namespaced: true,
 })
-export default class ConfigStore extends VuexModule {
+export default class ConfigStore extends BaseStore {
   config: IConfig = <any>{};
 
   @Mutation

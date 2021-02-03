@@ -4,6 +4,7 @@ import _ from "lodash";
 import electron from "electron";
 
 import { BaseService } from "~/src/service/base.service";
+import { eventNames } from "~/src/util/event-names";
 
 export class MenuService extends BaseService {
   private menu!: electron.Menu;
@@ -50,7 +51,7 @@ export class MenuService extends BaseService {
           {
             label: "Insert new line",
             accelerator: "Ctrl+I",
-            click: () => this.$root.$emit("insert"),
+            click: () => this.$root.$emit(eventNames.data.insert),
           },
         ],
       },

@@ -18,6 +18,7 @@ section.search
 import { Component } from "nuxt-property-decorator";
 
 import { BaseComponent } from "./base.component";
+import { eventNames } from "~/src/util/event-names";
 
 @Component
 export default class SearchComponent extends BaseComponent {
@@ -25,7 +26,7 @@ export default class SearchComponent extends BaseComponent {
 
   search() {
     if (!this.query) return;
-    this.$root.$emit("search", this.query);
+    this.$root.$emit(eventNames.search, this.query);
   }
 }
 </script>
