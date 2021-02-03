@@ -307,12 +307,12 @@ export default class SheetStore extends BaseStore {
   }
 
   @Mutation
-  m_setCurrentSheet(name: string) {
+  private m_setCurrentSheet(name: string) {
     this.currentSheet = this.sheets[name];
   }
 
   @Mutation
-  m_removeSheet(name: string) {
+  private m_removeSheet(name: string) {
     delete this.sheets[name];
   }
 
@@ -323,6 +323,12 @@ export default class SheetStore extends BaseStore {
       name,
       value: { meta: { modified: payload.value } },
     });
+  }
+
+  @Action
+  a_selectCurrentSheet(name: string) {
+    this.m_setCurrentSheet(name);
+    debugger;
   }
 
   @Action

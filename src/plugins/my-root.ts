@@ -1,9 +1,13 @@
+import { Vue } from "nuxt-property-decorator";
 import { Plugin } from "@nuxt/types";
 
-import { myStore } from "~/src/store";
+export const resolver: { resolve?: (root: Vue) => void } = {};
+const getMyRoot = new Promise<Vue>((resolve) => {
+  resolver.resolve = resolve;
+});
 
-const myStorePlugin: Plugin = (_context, inject) => {
-  inject("myStore", myStore);
+const myStorePlugin: Plugin = async (_context, inject) => {
+  inject("myStore", await getMyRoot);
 };
 
 export default myStorePlugin;

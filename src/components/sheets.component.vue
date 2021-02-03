@@ -67,7 +67,7 @@ export default class SheetsComponent extends BaseComponent {
   }
 
   select(sheet: ISheet): void {
-    this.$myStore.sheet.m_setCurrentSheet(sheet.name);
+    this.$myStore.sheet.a_selectCurrentSheet(sheet.name);
     this.$root.$emit(eventNames.sheet.change);
   }
 
