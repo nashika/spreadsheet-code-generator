@@ -30,7 +30,7 @@ export interface IColumn {
   width: number;
   required: boolean;
   export: boolean;
-  tsType: string;
+  // tsType: string;
 }
 
 export interface ISheetMeta {
@@ -120,9 +120,9 @@ const ioManagers = {
   code: new IoManager("code", "js"),
 };
 
-function _rootSheetTemplate(): ISheet {
+function _sheetTemplate(): ISheet {
   return {
-    name: "root",
+    name: "",
     parent: "",
     freezeColumn: 0,
     columns: [],
@@ -132,10 +132,15 @@ function _rootSheetTemplate(): ISheet {
   };
 }
 
+function _rootSheetTemplate(): ISheet {
+  return Object.assign(_sheetTemplate(), { name: "root" });
+}
+
 function _load(sheetName: string): ISheet {
   let sheet: ISheet;
   if (sheetName === "root") sheet = _rootSheetTemplate();
-  else sheet = ioManagers.sheet.load(sheetName);
+  else
+    sheet = Object.assign(_sheetTemplate(), ioManagers.sheet.load(sheetName));
   sheet.meta = _sheetMetaTemplate();
   sheet.columns = _initializeColumns(sheet.columns);
   sheet.data = ioManagers.data.load(sheetName) ?? [];
@@ -145,7 +150,7 @@ function _load(sheetName: string): ISheet {
 
 function _save(sheetName: string, sheet: ISheet) {
   if (sheetName !== "root") {
-    ioManagers.sheet.save(sheetName, sheet);
+    ioManagers.sheet.save(sheetName, _.omit(sheet, ["data", "code", "meta"]));
     ioManagers.data.save(sheetName, _parseData(sheet));
   }
   ioManagers.code.save(sheetName, sheet.code);
@@ -195,7 +200,7 @@ function _generateInitialColumns(
       width: 120,
       required: false,
       export: false,
-      tsType: "",
+      // tsType: "",
     },
   ];
   const emptyColumns: IColumn[] = _.times(5, _columnTemplate);
@@ -216,7 +221,7 @@ function _generateInitialTreeColumns(
     width: 120,
     required: true,
     export: true,
-    tsType: "",
+    // tsType: "",
   };
   return _.concat(
     _generateInitialTreeColumns(parentSheet.name, parentSheet.parent, sheets),
@@ -260,10 +265,12 @@ function _columnTemplate(no: number): IColumn {
     header: `Col${no}`,
     data: `data${no}`,
     type: "text",
+    json: undefined,
+    options: undefined,
     width: 80,
     required: false,
     export: true,
-    tsType: "",
+    // tsType: "",
   };
 }
 

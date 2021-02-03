@@ -1,5 +1,7 @@
 {
   "name": "association",
+  "parent": "model",
+  "freezeColumn": 0,
   "columns": [
     {
       "header": "Model",
@@ -29,13 +31,13 @@
       "header": "Type",
       "data": "type",
       "type": "select",
-      "width": 120,
       "options": [
         "belongsTo",
         "hasMany",
         "hasOne",
         "belongsToMany"
       ],
+      "width": 120,
       "required": true,
       "export": true
     },
@@ -55,6 +57,5 @@
       "required": true,
       "export": true
     }
-  ],
-  "parent": "model"
+  ]
 }

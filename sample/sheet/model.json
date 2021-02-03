@@ -1,38 +1,39 @@
 {
   "name": "model",
+  "parent": "root",
+  "freezeColumn": 0,
   "columns": [
     {
+      "header": "Model",
       "data": "model",
       "type": "text",
       "width": 120,
-      "header": "Model",
       "required": true,
       "export": true
     },
     {
+      "header": "Extends",
       "data": "extends",
       "type": "text",
       "width": 120,
-      "header": "Extends",
       "required": false,
       "export": false
     },
     {
+      "header": "Label",
       "data": "label",
       "type": "text",
       "width": 120,
-      "header": "Label",
       "required": true,
       "export": true
     },
     {
+      "header": "View",
       "data": "view",
       "type": "text",
       "width": 120,
-      "header": "View",
       "required": false,
       "export": true
     }
-  ],
-  "parent": "root"
+  ]
 }
