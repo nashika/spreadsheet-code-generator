@@ -32,9 +32,7 @@ export default class DataComponent extends BaseComponent {
     // TODO: recover
     this.$root.$on(eventNames.search, this.onSearch);
     this.$root.$on(eventNames.data.insert, this.onInsert);
-    this.$root.$on(eventNames.data.selectColumn, () =>
-      this.rebuildSpreadsheet()
-    );
+    this.$root.$on(eventNames.sheet.change, () => this.rebuildSpreadsheet());
     // this.$root.$on("showMenu", () => this.watchShowMenu());
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();

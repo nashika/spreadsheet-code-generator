@@ -60,13 +60,14 @@ export default class SheetsComponent extends BaseComponent {
     return this.$myStore.sheet.sheets;
   }
 
-  // eslint-disable-next-line require-await
-  async mounted(): Promise<void> {
+  async created(): Promise<void> {
+    this.$root.$on(eventNames.sheet.reload, () => this.rebuildTreeSheets());
     this.rebuildTreeSheets();
+    await Promise.resolve();
   }
 
   select(sheet: ISheet): void {
-    this.$myStore.sheet.a_select(sheet);
+    this.$myStore.sheet.m_setCurrentSheet(sheet.name);
     this.$root.$emit(eventNames.sheet.change);
   }
 

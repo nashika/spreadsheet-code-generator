@@ -342,7 +342,7 @@ export default class SheetStore extends BaseStore {
     for (const name of names) {
       this.m_setSheet({ name, value: _load(name) });
     }
-    this.a_select("root");
+    this.m_setCurrentSheet("root");
     this.$root.$emit(eventNames.sheet.reload);
     return true;
   }
@@ -362,15 +362,6 @@ export default class SheetStore extends BaseStore {
       }
     );
     return true;
-  }
-
-  @Action
-  a_select(target: ISheet | string) {
-    if (typeof target === "string") {
-      this.m_setCurrentSheet(target);
-    } else {
-      this.m_setCurrentSheet(target.name);
-    }
   }
 
   @Action
