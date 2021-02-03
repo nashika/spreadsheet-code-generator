@@ -18,6 +18,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ["**/*.ts"],
+      rules: {
+        "no-undef": "off",
+      },
+    },
+    {
       files: ["index.js", "src/main.ts"],
       rules: {
         "no-console": "off",

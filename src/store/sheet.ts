@@ -8,7 +8,6 @@ import { assertIsDefined } from "~/src/util/assert";
 import { TSheetData } from "~/src/store/hub";
 import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
-import { MyDeepPartial } from "~/src/types/util";
 
 export interface ISheet {
   name: string;

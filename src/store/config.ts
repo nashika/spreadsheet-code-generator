@@ -6,7 +6,6 @@ import _ from "lodash";
 import { Action, Module, Mutation, VuexModule } from "vuex-module-decorators";
 
 import { logger } from "~/src/logger";
-import { MyDeepPartial } from "~/src/types/util";
 
 export interface IConfig {
   saveBaseDir: string;
