@@ -1,7 +1,7 @@
 <template lang="pug">
 section.data(style="height:100%")
   .message(v-if="$myStore.hub.mode == 'data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name === 'root'") root sheet can not have data, please select or create new sheet.
-  .spreadsheet-area(v-b-visible="$myStore.sheet.currentSheet.name !== 'root'", style="height:100%")
+  .spreadsheet-area(v-show="$myStore.sheet.currentSheet.name !== 'root'", style="height:100%")
     #spreadsheet(style="height:100%")
 </template>
 
