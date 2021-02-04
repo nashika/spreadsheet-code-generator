@@ -34,13 +34,23 @@ export default class ConfigStore extends BaseStore {
   config: IConfig = <any>{};
 
   @Mutation
-  m_setConfig(config: IConfig): void {
+  private m_setConfig(config: IConfig): void {
     this.config = config;
   }
 
   @Mutation
-  m_mergeConfig(config: MyDeepPartial<IConfig>): void {
+  private m_mergeConfig(config: MyDeepPartial<IConfig>): void {
     _.merge(this.config, config);
+  }
+
+  @Action
+  a_setSaveBaseDir(dir: string): void {
+    this.m_mergeConfig({ saveBaseDir: dir });
+  }
+
+  @Action
+  a_setRecentSaveBaseDirs(dirs: string[]): void {
+    this.m_mergeConfig({ recentSaveBaseDirs: dirs });
   }
 
   @Action

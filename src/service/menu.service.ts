@@ -124,7 +124,7 @@ export class MenuService extends BaseService {
       )
     )
       return;
-    this.$myStore.config.m_mergeConfig({ saveBaseDir: "" });
+    this.$myStore.config.a_setSaveBaseDir("");
     this.$myStore.sheet.a_newAll();
     this.saveDirInfo(false);
   }
@@ -136,15 +136,14 @@ export class MenuService extends BaseService {
 
   protected openRecent(dir: string = ""): void {
     if (dir) {
-      this.$myStore.config.m_mergeConfig({ saveBaseDir: dir });
+      this.$myStore.config.a_setSaveBaseDir(dir);
     } else if (this.$myStore.config.config.recentSaveBaseDirs.length > 0) {
-      this.$myStore.config.m_mergeConfig({
-        saveBaseDir: this.$myStore.config.config.recentSaveBaseDirs[0],
-      });
+      this.$myStore.config.a_setSaveBaseDir(
+        this.$myStore.config.config.recentSaveBaseDirs[0]
+      );
     } else {
-      this.$myStore.config.config.saveBaseDir = path.join(
-        electron.remote.app.getAppPath(),
-        "sample"
+      this.$myStore.config.a_setSaveBaseDir(
+        path.join(electron.remote.app.getAppPath(), "sample")
       );
     }
     if (this.$myStore.sheet.a_loadAll()) this.saveDirInfo();
@@ -166,7 +165,7 @@ export class MenuService extends BaseService {
       properties: ["openDirectory"],
     });
     if (!dirs || dirs.length === 0) return false;
-    this.$myStore.config.m_mergeConfig({ saveBaseDir: dirs[0] });
+    this.$myStore.config.a_setSaveBaseDir(dirs[0]);
     return true;
   }
 
@@ -189,7 +188,7 @@ export class MenuService extends BaseService {
         recentSaveBaseDirs
       );
       recentSaveBaseDirs = _.take(recentSaveBaseDirs, 5);
-      this.$myStore.config.m_mergeConfig({ recentSaveBaseDirs });
+      this.$myStore.config.a_setRecentSaveBaseDirs(recentSaveBaseDirs);
       this.$myStore.config.a_save();
       const submenu: electron.Menu | undefined = this.menu.items?.[0]?.submenu
         ?.items?.[2]?.submenu;
