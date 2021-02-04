@@ -190,9 +190,9 @@ export class MenuService extends BaseService {
       recentSaveBaseDirs = _.take(recentSaveBaseDirs, 5);
       this.$myStore.config.a_setRecentSaveBaseDirs(recentSaveBaseDirs);
       this.$myStore.config.a_save();
-      const submenu: electron.Menu | undefined = this.menu.items?.[0]?.submenu
-        ?.items?.[2]?.submenu;
+      const submenu = this.menu.items?.[0]?.submenu?.items?.[2]?.submenu;
       if (submenu) {
+        (<any>submenu).clear();
         submenu.items = [];
         for (const dir of recentSaveBaseDirs) {
           submenu.append(
