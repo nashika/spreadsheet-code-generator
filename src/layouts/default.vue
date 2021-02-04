@@ -5,7 +5,7 @@ section.app(v-if="initialized")
       menu-component
       sheets-component
       search-component
-      // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
+      column-component(v-if="$route.path === '/data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name !== 'root'")
     #main-area
       nuxt
 section.initialize(v-else)
@@ -20,6 +20,7 @@ import { BaseComponent } from "~/src/components/base.component";
 import MenuComponent from "~/src/components/menu.component.vue";
 import SheetsComponent from "~/src/components/sheets.component.vue";
 import SearchComponent from "~/src/components/search.component.vue";
+import ColumnComponent from "~/src/components/column.component.vue";
 import { BaseService } from "~/src/service/base.service";
 import { setBaseStoreRootComponent } from "~/src/store/base";
 
@@ -30,6 +31,7 @@ config.rawError = true;
     MenuComponent,
     SheetsComponent,
     SearchComponent,
+    ColumnComponent,
   },
 })
 export default class DefaultLayoutComponent extends BaseComponent {

@@ -326,6 +326,21 @@ export default class SheetStore extends BaseStore {
     delete this.sheets[name];
   }
 
+  @Mutation
+  private m_setColumns(columns: IColumn[]) {
+    this.currentSheet.columns = columns;
+  }
+
+  @Mutation
+  private m_setColumn(payload: { index: number; column: IColumn }) {
+    this.currentSheet.columns[payload.index] = payload.column;
+  }
+
+  @Mutation
+  private m_removeColumn(index: number) {
+    this.currentSheet.columns.splice(index, 1);
+  }
+
   @Action
   a_setModified(payload: { name?: string; value: boolean }) {
     const name = payload.name ?? this.currentSheet.name;
@@ -483,5 +498,85 @@ export default class SheetStore extends BaseStore {
     this.m_removeSheet(name);
     this.a_setModified({ name, value: true });
     this.m_setCurrentSheet("root");
+  }
+
+  @Action
+  a_addColumn(index: number): void {
+    const columns = this.currentSheet.columns;
+    this.m_setColumns(
+      _.concat(
+        _.slice(columns, 0, index),
+        [_columnTemplate(columns.length)],
+        _.slice(columns, index)
+      )
+    );
+    this.a_setModified({ value: true });
+    this.$root.$emit(eventNames.sheet.change);
+  }
+
+  @Action
+  a_modifyColumn(payload: { index: number; column: IColumn }): void {
+    if (
+      this.currentSheet.columns[payload.index]?.data !== payload.column.data &&
+      _.find(this.currentSheet.columns, { data: payload.column.data })
+    ) {
+      alert(`data="${payload.column.data}" is already exists.`);
+      return;
+    }
+    const oldColumn = this.currentSheet.columns[payload.index];
+    if (payload.column.data !== oldColumn.data) {
+      const data = _.cloneDeep(this.currentSheet.data);
+      for (const record of data) {
+        const cellData = _.get(record, oldColumn.data);
+        if (cellData !== undefined)
+          _.set(record, payload.column.data, cellData);
+        _.unset(record, oldColumn.data);
+      }
+      this.a_setData({ data });
+    }
+    if (payload.column.type !== "select") payload.column.options = undefined;
+    if (!_.includes(["text", "select"], payload.column.type))
+      payload.column.json = undefined;
+    this.m_setColumn(payload);
+    this.a_setModified({ value: true });
+    this.$root.$emit(eventNames.sheet.change);
+  }
+
+  @Action
+  a_moveColumn(payload: { index: number; right: boolean }): void {
+    const columns: IColumn[] = this.currentSheet.columns;
+    if (payload.right) {
+      this.m_setColumns(
+        _.concat(
+          _.take(columns, payload.index),
+          [columns[payload.index + 1], columns[payload.index]],
+          _.takeRight(columns, columns.length - payload.index - 2)
+        )
+      );
+    } else {
+      this.m_setColumns(
+        _.concat(
+          _.take(columns, payload.index - 1),
+          [columns[payload.index], columns[payload.index - 1]],
+          _.takeRight(columns, columns.length - payload.index - 1)
+        )
+      );
+    }
+    this.a_setModified({ value: true });
+    this.$root.$emit(eventNames.sheet.change);
+  }
+
+  @Action
+  a_removeColumn(index: number): void {
+    this.m_removeColumn(index);
+    this.a_setModified({ value: true });
+    this.$root.$emit(eventNames.sheet.change);
+  }
+
+  @Action
+  a_freezeColumn(index: number): void {
+    this.m_mergeSheet({ value: { freezeColumn: index } });
+    this.a_setModified({ value: true });
+    this.$root.$emit(eventNames.sheet.change);
   }
 }
