@@ -33,15 +33,14 @@ export default class DataComponent extends BaseComponent {
     this.$root.$on(eventNames.search, this.onSearch);
     this.$root.$on(eventNames.data.insert, this.onInsert);
     this.$root.$on(eventNames.sheet.change, () => this.rebuildSpreadsheet());
-    this.$root.$on(eventNames.menu.toggle, () => this.rebuildSpreadsheet());
-    window.addEventListener("resize", this.resize);
+    this.$root.$on(eventNames.menu.toggle, () => this.resize());
+    window.addEventListener("resize", () => this.resize());
     this.rebuildSpreadsheet();
     await Promise.resolve();
   }
 
   async beforeDestroy() {
     this.storeEditingData();
-    window.removeEventListener("resize", this.resize);
     await Promise.resolve();
   }
 
@@ -165,8 +164,8 @@ export default class DataComponent extends BaseComponent {
     if (!sheetName) return;
     this.hot = new Handsontable(container, {
       data: this.editingData,
-      width: this.$el.clientWidth - 1,
-      height: this.$el.clientHeight - 1,
+      width: "100%",
+      height: "100%",
       columns: currentSheet.columns.map((c: IColumn) => {
         const columnSetting: Handsontable.ColumnSettings = {};
         switch (c.type) {
@@ -275,6 +274,11 @@ section.data {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.spreadsheet-area {
+  width: 100%;
+  height: 100%;
 }
 
 .current-row {
