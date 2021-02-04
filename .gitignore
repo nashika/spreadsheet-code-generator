@@ -90,5 +90,5 @@ sw.*
 *.swp
 
 # app files
-/tmp
+/tmp/*
 !.gitkeep
