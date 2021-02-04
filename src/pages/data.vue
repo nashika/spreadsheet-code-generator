@@ -33,7 +33,7 @@ export default class DataComponent extends BaseComponent {
     this.$root.$on(eventNames.search, this.onSearch);
     this.$root.$on(eventNames.data.insert, this.onInsert);
     this.$root.$on(eventNames.sheet.change, () => this.rebuildSpreadsheet());
-    // this.$root.$on("showMenu", () => this.watchShowMenu());
+    this.$root.$on(eventNames.menu.toggle, () => this.rebuildSpreadsheet());
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
     await Promise.resolve();
@@ -220,12 +220,6 @@ export default class DataComponent extends BaseComponent {
       currentSheet.meta.rowOffset ?? 0,
       currentSheet.meta.colOffset ?? 0
     );
-  }
-
-  private watchShowMenu(): void {
-    if (this.hot) {
-      this.rebuildSpreadsheet();
-    }
   }
 
   /* TODO: recover

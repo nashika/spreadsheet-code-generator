@@ -1,5 +1,6 @@
 import { Action, Module, Mutation } from "vuex-module-decorators";
 import { BaseStore } from "~/src/store/base";
+import { eventNames } from "~/src/util/event-names";
 
 export type TSheetData = { [columnName: string]: any }[];
 
@@ -19,5 +20,6 @@ export default class HubStore extends BaseStore {
   @Action
   a_toggleShowMenu(): void {
     this.m_setShowMenu(!this.showMenu);
+    this.$root.$emit(eventNames.menu.toggle);
   }
 }
