@@ -6,7 +6,7 @@ section.app(v-if="initialized")
       sheets-component
       search-component
       // column-component(v-if="$myStore.hub.mode == 'data' && $myStore.hub.currentSheet && $myStore.hub.currentSheet.name != 'root'")
-    #main-area(:class="{'col-xs-9': $myStore.hub.showMenu, 'col-xs-12': !$myStore.hub.showMenu}")
+    #main-area
       nuxt
 section.initialize(v-else)
   fa.fa-pulse(icon="['fas', 'spinner']") 起動中
@@ -58,11 +58,6 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
-}
-
-#container,
-#row {
-  height: 100%;
 }
 
 #menu-area {
