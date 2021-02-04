@@ -129,21 +129,17 @@ export default class DataComponent extends BaseComponent {
   }
 
   private afterScroll(): void {
-    this.$myStore.sheet.m_mergeSheet({
-      value: {
-        meta: {
-          colOffset: this.hot?.colOffset?.(),
-          rowOffset: this.hot?.rowOffset?.(),
-        },
-      },
+    this.$myStore.sheet.a_setOffset({
+      colOffset: this.hot?.colOffset?.(),
+      rowOffset: this.hot?.rowOffset?.(),
     });
   }
 
   private storeEditingData(): void {
     if (!this.hot) return;
-    this.$myStore.sheet.m_mergeSheet({
+    this.$myStore.sheet.a_setData({
       name: this.editingSheetName,
-      value: { data: this.editingData },
+      data: this.editingData,
     });
   }
 

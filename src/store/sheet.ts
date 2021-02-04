@@ -303,12 +303,15 @@ export default class SheetStore extends BaseStore {
   }
 
   @Mutation
-  m_setSheet(payload: { name: string; value: ISheet }) {
+  private m_setSheet(payload: { name: string; value: ISheet }) {
     this.sheets[payload.name] = payload.value;
   }
 
   @Mutation
-  m_mergeSheet(payload: { name?: string; value: MyDeepPartial<ISheet> }) {
+  private m_mergeSheet(payload: {
+    name?: string;
+    value: MyDeepPartial<ISheet>;
+  }) {
     const name = payload.name ?? this.currentSheet.name;
     _.merge(this.sheets[name], payload.value);
   }
@@ -329,6 +332,30 @@ export default class SheetStore extends BaseStore {
     this.m_mergeSheet({
       name,
       value: { meta: { modified: payload.value } },
+    });
+  }
+
+  @Action
+  a_setOffset(payload: {
+    name?: string;
+    colOffset?: number;
+    rowOffset?: number;
+  }) {
+    const name = payload.name ?? this.currentSheet.name;
+    this.m_mergeSheet({
+      name,
+      value: {
+        meta: { colOffset: payload.colOffset, rowOffset: payload.rowOffset },
+      },
+    });
+  }
+
+  @Action
+  a_setData(payload: { name?: string; data: TSheetData }) {
+    const name = payload.name ?? this.currentSheet.name;
+    this.m_mergeSheet({
+      name,
+      value: { data: payload.data },
     });
   }
 
