@@ -1,0 +1,51 @@
+import _ from "lodash";
+
+export class SourceUtils {
+  static get deleteLine(): string {
+    return "###DeleteLine###";
+  }
+
+  static get noNewLine(): string {
+    return "###NoNewLine###";
+  }
+
+  static source(argSource: any): string {
+    let result: string = "";
+    const source: string = _.isString(argSource)
+      ? argSource
+      : _.toString(argSource);
+    const lines: Array<string> = source.toString().split(/\n/g);
+    if (lines[0] === "") lines.shift();
+    if (lines[lines.length - 1] === "") lines.pop();
+    lines.forEach((line: string) => {
+      if (line.match(/###DeleteLine###/)) return;
+      if (line.match(/###NoNewLine###/)) {
+        line = line.replace(/###NoNewLine###/, "");
+        result = result.replace(/\n$/m, "");
+      }
+      result += line + "\n";
+    });
+    return result;
+  }
+
+  static indent(
+    unitIndent: number,
+    numIndent: number,
+    argSource: any,
+    noIndentFirstLine: boolean = false
+  ): string {
+    let result: string = "";
+    const source: string = _.isString(argSource)
+      ? argSource
+      : _.toString(argSource);
+    const lines: string[] = source.split(/\n/g);
+    if (lines[lines.length - 1] === "") lines.pop();
+    lines.forEach((line: string, index: number) => {
+      const newLine: string = index < lines.length - 1 ? "\n" : "";
+      if (line && (index > 0 || !noIndentFirstLine))
+        result += _.repeat(" ", unitIndent * numIndent) + line + newLine;
+      else result += line + newLine;
+    });
+    return result;
+  }
+}
