@@ -26,11 +26,11 @@ function _configTemplate(): IConfig {
 }
 
 @Module({
-  name: "config",
+  name: "menu",
   stateFactory: true,
   namespaced: true,
 })
-export default class ConfigStore extends BaseStore {
+export default class MenuStore extends BaseStore {
   config: IConfig = <any>{};
 
   @Mutation

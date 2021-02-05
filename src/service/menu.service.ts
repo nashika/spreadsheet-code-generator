@@ -113,7 +113,7 @@ export class MenuService extends BaseService {
       },
     ]);
     electron.remote.getCurrentWindow().setMenu(this.menu);
-    this.$myStore.config.a_load();
+    this.$myStore.menu.a_load();
     this.openRecent();
   }
 
@@ -124,7 +124,7 @@ export class MenuService extends BaseService {
       )
     )
       return;
-    this.$myStore.config.a_setSaveBaseDir("");
+    this.$myStore.menu.a_setSaveBaseDir("");
     this.$myStore.sheet.a_newAll();
     this.saveDirInfo(false);
   }
@@ -136,13 +136,13 @@ export class MenuService extends BaseService {
 
   protected openRecent(dir: string = ""): void {
     if (dir) {
-      this.$myStore.config.a_setSaveBaseDir(dir);
-    } else if (this.$myStore.config.config.recentSaveBaseDirs.length > 0) {
-      this.$myStore.config.a_setSaveBaseDir(
-        this.$myStore.config.config.recentSaveBaseDirs[0]
+      this.$myStore.menu.a_setSaveBaseDir(dir);
+    } else if (this.$myStore.menu.config.recentSaveBaseDirs.length > 0) {
+      this.$myStore.menu.a_setSaveBaseDir(
+        this.$myStore.menu.config.recentSaveBaseDirs[0]
       );
     } else {
-      this.$myStore.config.a_setSaveBaseDir(
+      this.$myStore.menu.a_setSaveBaseDir(
         path.join(electron.remote.app.getAppPath(), "sample")
       );
     }
@@ -150,7 +150,7 @@ export class MenuService extends BaseService {
   }
 
   protected save(as: boolean = false): void {
-    if (as || !this.$myStore.config.config.saveBaseDir)
+    if (as || !this.$myStore.menu.config.saveBaseDir)
       if (!this.openDir()) return;
     if (this.$myStore.sheet.a_saveAll()) this.saveDirInfo();
   }
@@ -160,12 +160,12 @@ export class MenuService extends BaseService {
       | string[]
       | undefined = electron.remote.dialog.showOpenDialogSync({
       defaultPath:
-        this.$myStore.config.config.saveBaseDir ||
-        this.$myStore.config.config.recentSaveBaseDirs[0],
+        this.$myStore.menu.config.saveBaseDir ||
+        this.$myStore.menu.config.recentSaveBaseDirs[0],
       properties: ["openDirectory"],
     });
     if (!dirs || dirs.length === 0) return false;
-    this.$myStore.config.a_setSaveBaseDir(dirs[0]);
+    this.$myStore.menu.a_setSaveBaseDir(dirs[0]);
     return true;
   }
 
@@ -173,23 +173,23 @@ export class MenuService extends BaseService {
     electron.remote
       .getCurrentWindow()
       .setTitle(
-        `spreadsheet-code-generator [${this.$myStore.config.config.saveBaseDir}]`
+        `spreadsheet-code-generator [${this.$myStore.menu.config.saveBaseDir}]`
       );
     if (save) {
       let recentSaveBaseDirs: string[];
-      recentSaveBaseDirs = this.$myStore.config.config.recentSaveBaseDirs || [];
+      recentSaveBaseDirs = this.$myStore.menu.config.recentSaveBaseDirs || [];
       recentSaveBaseDirs = _.filter(
         recentSaveBaseDirs,
         (dir: string): boolean =>
-          _.toLower(dir) !== _.toLower(this.$myStore.config.config.saveBaseDir)
+          _.toLower(dir) !== _.toLower(this.$myStore.menu.config.saveBaseDir)
       );
       recentSaveBaseDirs = _.concat(
-        this.$myStore.config.config.saveBaseDir,
+        this.$myStore.menu.config.saveBaseDir,
         recentSaveBaseDirs
       );
       recentSaveBaseDirs = _.take(recentSaveBaseDirs, 5);
-      this.$myStore.config.a_setRecentSaveBaseDirs(recentSaveBaseDirs);
-      this.$myStore.config.a_save();
+      this.$myStore.menu.a_setRecentSaveBaseDirs(recentSaveBaseDirs);
+      this.$myStore.menu.a_save();
       const submenu = this.menu.items?.[0]?.submenu?.items?.[2]?.submenu;
       if (submenu) {
         (<any>submenu).clear();

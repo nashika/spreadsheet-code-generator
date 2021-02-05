@@ -47,7 +47,7 @@ class IoManager {
   ) {}
 
   get saveDir(): string {
-    return path.join(myStore.config.config.saveBaseDir, this.dirName);
+    return path.join(myStore.menu.config.saveBaseDir, this.dirName);
   }
 
   filePath(sheetName: string): string {

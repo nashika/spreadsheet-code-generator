@@ -2,12 +2,12 @@ import { Store } from "vuex";
 import { getModule } from "vuex-module-decorators";
 
 import HubStore from "~/src/store/hub";
-import ConfigStore from "~/src/store/config";
+import MenuStore from "~/src/store/menu";
 import SheetStore from "~/src/store/sheet";
 
 interface IMyStore {
   hub: HubStore;
-  config: ConfigStore;
+  menu: MenuStore;
   sheet: SheetStore;
 }
 
@@ -15,7 +15,7 @@ export const myStore: IMyStore = <any>{};
 
 function initialiseStores(store: Store<any>): void {
   myStore.hub = getModule(HubStore, store);
-  myStore.config = getModule(ConfigStore, store);
+  myStore.menu = getModule(MenuStore, store);
   myStore.sheet = getModule(SheetStore, store);
 }
 
