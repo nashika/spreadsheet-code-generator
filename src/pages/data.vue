@@ -11,10 +11,9 @@ import Handsontable from "handsontable";
 import _ from "lodash";
 
 import { BaseComponent } from "~/src/components/base.component";
-import { IColumn } from "~/src/store/sheet";
+import { IColumn, TSheetData } from "~/src/store/sheet";
 import { RecordExtender } from "~/src/util/record-extender";
 import { assertIsDefined } from "~/src/util/assert";
-import { TSheetData } from "~/src/store/hub";
 import { eventNames } from "~/src/util/event-names";
 
 @Component

@@ -7,6 +7,7 @@ import { Action, Module, Mutation } from "vuex-module-decorators";
 
 import { logger } from "~/src/logger";
 import { BaseStore } from "~/src/store/base";
+import { eventNames } from "~/src/util/event-names";
 
 export interface IConfig {
   saveBaseDir: string;
@@ -31,7 +32,13 @@ function _configTemplate(): IConfig {
   namespaced: true,
 })
 export default class MenuStore extends BaseStore {
+  showMenu: boolean = true;
   config: IConfig = <any>{};
+
+  @Mutation
+  m_setShowMenu(arg: boolean): void {
+    this.showMenu = arg;
+  }
 
   @Mutation
   private m_setConfig(config: IConfig): void {
@@ -41,6 +48,12 @@ export default class MenuStore extends BaseStore {
   @Mutation
   private m_mergeConfig(config: MyDeepPartial<IConfig>): void {
     _.merge(this.config, config);
+  }
+
+  @Action
+  a_toggleShowMenu(): void {
+    this.m_setShowMenu(!this.showMenu);
+    this.$root.$emit(eventNames.menu.toggle);
   }
 
   @Action

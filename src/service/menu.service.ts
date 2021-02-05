@@ -61,7 +61,7 @@ export class MenuService extends BaseService {
           {
             label: "Toggle Side &Menu",
             accelerator: "Ctrl+E",
-            click: () => this.$myStore.hub.a_toggleShowMenu(),
+            click: () => this.$myStore.menu.a_toggleShowMenu(),
           },
         ],
       },

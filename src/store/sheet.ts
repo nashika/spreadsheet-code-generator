@@ -5,7 +5,6 @@ import _ from "lodash";
 import { Action, Module, Mutation } from "vuex-module-decorators";
 
 import { assertIsDefined } from "~/src/util/assert";
-import { TSheetData } from "~/src/store/hub";
 import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
 import { BaseStore } from "~/src/store/base";
@@ -38,6 +37,8 @@ export interface ISheetMeta {
   colOffset?: number;
   rowOffset?: number;
 }
+
+export type TSheetData = { [columnName: string]: any }[];
 
 class IoManager {
   // eslint-disable-next-line no-useless-constructor

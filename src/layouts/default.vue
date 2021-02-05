@@ -1,7 +1,7 @@
 <template lang="pug">
 section.app(v-if="initialized")
   #main.d-flex
-    #menu-area(v-if="$myStore.hub.showMenu")
+    #menu-area(v-if="$myStore.menu.showMenu")
       menu-component
       sheets-component
       search-component
