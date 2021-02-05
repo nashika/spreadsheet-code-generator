@@ -50,7 +50,7 @@ interface ITreeSheet {
   level: number;
 }
 
-@Component({})
+@Component
 export default class SheetsComponent extends BaseComponent {
   treeSheets: ITreeSheet[] = [];
   newSheetParent: string = "";

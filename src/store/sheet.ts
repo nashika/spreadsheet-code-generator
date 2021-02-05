@@ -375,6 +375,15 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
+  a_setCode(payload: { name?: string; code: string }) {
+    const name = payload.name ?? this.currentSheet.name;
+    this.m_mergeSheet({
+      name,
+      value: { code: payload.code },
+    });
+  }
+
+  @Action
   a_selectCurrentSheet(name: string) {
     this.m_setCurrentSheet(name);
     this.$root.$emit(eventNames.sheet.change);
