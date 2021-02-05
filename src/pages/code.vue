@@ -121,7 +121,8 @@ export default class CodeComponent extends BaseComponent {
           name: this.beforeSheetName,
           code: modifiedCode,
         });
-    }, 200);
+      this.beforeCode = modifiedCode;
+    }, 500);
   }
 
   changeSheet() {

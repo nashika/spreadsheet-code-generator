@@ -137,6 +137,13 @@ export default class DataComponent extends BaseComponent {
 
   private storeEditingData(): void {
     if (!this.hot) return;
+    if (
+      _.isEqual(
+        this.editingData,
+        this.$myStore.sheet.sheets[this.editingSheetName].data
+      )
+    )
+      return;
     this.$myStore.sheet.a_setData({
       name: this.editingSheetName,
       data: this.editingData,
