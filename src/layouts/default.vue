@@ -21,7 +21,7 @@ import MenuComponent from "~/src/components/menu.component.vue";
 import SheetsComponent from "~/src/components/sheets.component.vue";
 import SearchComponent from "~/src/components/search.component.vue";
 import ColumnComponent from "~/src/components/column.component.vue";
-import { BaseService } from "~/src/service/base.service";
+import { setBaseServiceRootComponent } from "~/src/service/base.service";
 import { setBaseStoreRootComponent } from "~/src/store/base";
 
 config.rawError = true;
@@ -38,8 +38,8 @@ export default class DefaultLayoutComponent extends BaseComponent {
   initialized: boolean = true;
 
   async beforeCreate() {
-    BaseService.prototype.$root = this.$root;
     setBaseStoreRootComponent(this.$root);
+    setBaseServiceRootComponent(this.$root);
     this.$myService.menu.initialize();
     // this.$myStore.config.a_load();
     // this.$myStore.sheet.a_loadAll();
