@@ -6,22 +6,67 @@ section.code
 
 <script lang="ts">
 import { Component } from "nuxt-property-decorator";
-import Ace from "brace";
-import "brace/ext/language_tools";
-import "brace/theme/chrome";
-import "brace/mode/javascript";
-import "brace/snippets/javascript";
+import Ace from "ace-builds";
+import "ace-builds/webpack-resolver";
+// import "ace-builds/ext/language_tools";
+// import "brace/theme/chrome";
+// import "brace/mode/javascript";
+// import "brace/snippets/javascript";
 
 import { BaseComponent } from "~/src/components/base.component";
 import { assertIsDefined } from "~/src/util/assert";
 import { eventNames } from "~/src/util/event-names";
+
+/* eslint no-template-curly-in-string: off */
+const addSnippets: { name: string; content: string }[] = [
+  { name: "${}", content: "${${0}}" },
+  {
+    name: "this.children",
+    content: "this.children.${1:sheet_name}.${2:node_name}",
+  },
+  { name: "this.columns", content: "this.columns" },
+  { name: "this.data", content: "this.data.${1:column_name}" },
+  { name: "this.deleteLine", content: "this.deleteLine" },
+  { name: "this.get", content: "this.get(${1:key})" },
+  {
+    name: "this.indent",
+    content:
+      "this.indent(${1:num_indent}, ${2:source}, ${3:indent_first_line})",
+  },
+  { name: "this.name", content: "this.name" },
+  { name: "this.noNewLine", content: "this.noNewLine" },
+  { name: "this.parent", content: "this.parent" },
+  { name: "this.setIndent", content: "this.setIndent(${1:num_space})" },
+  { name: "this.siblings", content: "this.siblings" },
+  {
+    name: "this.source",
+    content: `this.source(\`
+	$0
+\`);`,
+  },
+  {
+    name: "this.write",
+    content: 'this.write("${1:./path/to/file.ext}", ${2:source})',
+  },
+];
+
+Ace.config.loadModule("ace/ext/language_tools", function () {
+  const snippetManager = Ace.require("ace/snippets").snippetManager;
+  Ace.config.loadModule("ace/snippets/javascript", function (m) {
+    if (m) {
+      m.snippets = snippetManager.parseSnippetFile(m.snippetText);
+      addSnippets.forEach((addSnippet) => m.snippets.push(addSnippet));
+      snippetManager.register(m.snippets, m.scope);
+    }
+  });
+});
 
 @Component
 export default class CodeComponent extends BaseComponent {
   beforeSheetName: string = "";
   beforeCode: string = "";
   changeTimer: any = null;
-  editor: Ace.Editor | null = null;
+  editor: Ace.Ace.Editor | null = null;
 
   async created() {
     this.$root.$on(eventNames.search, (query: string) => this.search(query));
@@ -34,16 +79,18 @@ export default class CodeComponent extends BaseComponent {
       "#code-editor"
     );
     assertIsDefined(container);
-    this.editor = Ace.edit(container);
-    this.editor.setTheme("ace/theme/chrome");
-    this.editor.getSession().setMode("ace/mode/javascript");
-    this.editor.getSession().setTabSize(2);
+    this.editor = Ace.edit(container, {
+      theme: "ace/theme/chrome",
+      mode: "ace/mode/javascript",
+      tabSize: 2,
+      enableAutoIndent: true,
+    });
     this.editor.setOptions({
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: true,
     });
-    this.editor.$blockScrolling = Infinity;
+    // this.editor.$blockScrolling = Infinity;
     this.editor.on("change", this.change);
     this.changeSheet();
     await Promise.resolve();
