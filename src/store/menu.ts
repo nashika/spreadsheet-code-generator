@@ -26,6 +26,8 @@ function _configTemplate(): IConfig {
   };
 }
 
+let _menu: electron.Menu;
+
 @Module({
   name: "menu",
   stateFactory: true,
@@ -36,7 +38,7 @@ export default class MenuStore extends BaseStore {
   config: IConfig = <any>{};
 
   @Mutation
-  m_setShowMenu(arg: boolean): void {
+  private m_setShowMenu(arg: boolean): void {
     this.showMenu = arg;
   }
 
@@ -67,7 +69,7 @@ export default class MenuStore extends BaseStore {
   }
 
   @Action
-  a_load(): void {
+  a_loadConfig(): void {
     logger.debug(`Loading ${_configFilePath}.`);
     const config: IConfig = fs.existsSync(_configFilePath)
       ? JSON.parse(fs.readFileSync(_configFilePath).toString())
@@ -76,9 +78,206 @@ export default class MenuStore extends BaseStore {
   }
 
   @Action
-  a_save(): void {
+  a_saveConfig(): void {
     const filePath: string = _configFilePath;
     logger.debug(`Saving ${filePath}.`);
     fs.writeFileSync(filePath, JSON.stringify(this.config, null, "  "));
+  }
+
+  @Action
+  a_initialize(): void {
+    _menu = electron.remote.Menu.buildFromTemplate([
+      {
+        label: "&File",
+        submenu: [
+          {
+            label: "&New",
+            accelerator: "Ctrl+N",
+            click: () => this.a_new(),
+          },
+          {
+            label: "&Open",
+            accelerator: "Ctrl+O",
+            click: () => this.a_open(),
+          },
+          {
+            label: "Open &Recent",
+            submenu: [],
+          },
+          {
+            label: "&Save",
+            accelerator: "Ctrl+S",
+            click: () => this.a_save(false),
+          },
+          {
+            label: "Save &As",
+            accelerator: "Ctrl+Shift+S",
+            click: () => this.a_save(true),
+          },
+          {
+            label: "&Exit",
+            accelerator: "Alt+F4",
+            click: () => electron.remote.app.exit(0),
+          },
+        ],
+      },
+      {
+        label: "&Edit",
+        submenu: [
+          {
+            label: "Insert new line",
+            accelerator: "Ctrl+I",
+            click: () => this.$root.$emit(eventNames.data.insert),
+          },
+        ],
+      },
+      {
+        label: "&View",
+        submenu: [
+          {
+            label: "Toggle Side &Menu",
+            accelerator: "Ctrl+E",
+            click: () => this.a_toggleShowMenu(),
+          },
+        ],
+      },
+      {
+        label: "&Application",
+        submenu: [
+          {
+            label: "&Data Edit Mode",
+            click: () => this.$root.$router.push("/data"),
+          },
+          {
+            label: "&Code Edit Mode",
+            click: () => this.$root.$router.push("/code"),
+          },
+          {
+            label: "&Generate",
+            accelerator: "Ctrl+G",
+            click: () => {
+              // this.generatorService.generate(); TODO: fix
+            },
+          },
+        ],
+      },
+      {
+        label: "&Development",
+        submenu: [
+          {
+            label: "&Reload",
+            accelerator: "F5",
+            click: () => electron.remote.getCurrentWindow().reload(),
+          },
+          {
+            label: "Toggle &Full Screen",
+            accelerator: "F11",
+            click: () =>
+              electron.remote
+                .getCurrentWindow()
+                .setFullScreen(
+                  !electron.remote.getCurrentWindow().isFullScreen()
+                ),
+          },
+          {
+            label: "Toggle &Developer Tools",
+            accelerator: "F12",
+            click: () =>
+              electron.remote.getCurrentWindow().webContents.toggleDevTools(),
+          },
+        ],
+      },
+    ]);
+    electron.remote.getCurrentWindow().setMenu(_menu);
+    this.a_loadConfig();
+    this.a_openRecent();
+  }
+
+  @Action
+  a_new(): void {
+    if (
+      !window.confirm(
+        `All editing data will be erased, Do you really want to new project?`
+      )
+    )
+      return;
+    this.a_setSaveBaseDir("");
+    this.$myStore.sheet.a_newAll();
+    this.a_saveDirInfo(false);
+  }
+
+  @Action
+  a_open(): void {
+    if (!this.a_openDir()) return;
+    if (this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
+  }
+
+  @Action
+  a_openRecent(dir: string = ""): void {
+    if (dir) {
+      this.a_setSaveBaseDir(dir);
+    } else if (this.config.recentSaveBaseDirs.length > 0) {
+      this.a_setSaveBaseDir(this.config.recentSaveBaseDirs[0]);
+    } else {
+      this.a_setSaveBaseDir(
+        path.join(electron.remote.app.getAppPath(), "sample")
+      );
+    }
+    if (this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
+  }
+
+  @Action
+  a_save(as: boolean = false): void {
+    if (as || !this.config.saveBaseDir) if (!this.a_openDir()) return;
+    if (this.$myStore.sheet.a_saveAll()) this.a_saveDirInfo();
+  }
+
+  @Action
+  a_openDir(): boolean {
+    const dirs:
+      | string[]
+      | undefined = electron.remote.dialog.showOpenDialogSync({
+      defaultPath: this.config.saveBaseDir || this.config.recentSaveBaseDirs[0],
+      properties: ["openDirectory"],
+    });
+    if (!dirs || dirs.length === 0) return false;
+    this.a_setSaveBaseDir(dirs[0]);
+    return true;
+  }
+
+  @Action
+  a_saveDirInfo(save: boolean = true): void {
+    electron.remote
+      .getCurrentWindow()
+      .setTitle(`spreadsheet-code-generator [${this.config.saveBaseDir}]`);
+    if (save) {
+      let recentSaveBaseDirs: string[];
+      recentSaveBaseDirs = this.config.recentSaveBaseDirs || [];
+      recentSaveBaseDirs = _.filter(
+        recentSaveBaseDirs,
+        (dir: string): boolean =>
+          _.toLower(dir) !== _.toLower(this.config.saveBaseDir)
+      );
+      recentSaveBaseDirs = _.concat(
+        this.config.saveBaseDir,
+        recentSaveBaseDirs
+      );
+      recentSaveBaseDirs = _.take(recentSaveBaseDirs, 5);
+      this.a_setRecentSaveBaseDirs(recentSaveBaseDirs);
+      this.a_saveConfig();
+      const submenu = _menu.items?.[0]?.submenu?.items?.[2]?.submenu;
+      if (submenu) {
+        (<any>submenu).clear();
+        submenu.items = [];
+        for (const dir of recentSaveBaseDirs) {
+          submenu.append(
+            new electron.remote.MenuItem({
+              label: dir,
+              click: () => this.a_openRecent(dir),
+            })
+          );
+        }
+      }
+    }
   }
 }

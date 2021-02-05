@@ -40,7 +40,7 @@ export default class DefaultLayoutComponent extends BaseComponent {
   async beforeCreate() {
     setBaseStoreRootComponent(this.$root);
     setBaseServiceRootComponent(this.$root);
-    this.$myService.menu.initialize();
+    this.$myStore.menu.a_initialize();
     // this.$myStore.config.a_load();
     // this.$myStore.sheet.a_loadAll();
     this.initialized = true;

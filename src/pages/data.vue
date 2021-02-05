@@ -28,22 +28,26 @@ export default class DataComponent extends BaseComponent {
   private recordExtender?: RecordExtender;
 
   async mounted() {
-    // TODO: recover
-    this.$root.$on(eventNames.search, this.onSearch);
-    this.$root.$on(eventNames.data.insert, this.onInsert);
-    this.$root.$on(eventNames.sheet.change, () => this.rebuildSpreadsheet());
-    this.$root.$on(eventNames.menu.toggle, () => this.resize());
-    window.addEventListener("resize", () => this.resize());
+    this.$root.$on(eventNames.search, this.search);
+    this.$root.$on(eventNames.data.insert, this.insert);
+    this.$root.$on(eventNames.sheet.change, this.rebuildSpreadsheet);
+    this.$root.$on(eventNames.menu.toggle, this.resize);
+    window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
     await Promise.resolve();
   }
 
   async beforeDestroy() {
+    this.$root.$off(eventNames.search, this.search);
+    this.$root.$off(eventNames.data.insert, this.insert);
+    this.$root.$off(eventNames.sheet.change, this.rebuildSpreadsheet);
+    this.$root.$off(eventNames.menu.toggle, this.resize);
+    window.removeEventListener("resize", this.resize);
     this.storeEditingData();
     await Promise.resolve();
   }
 
-  onSearch(query: string) {
+  search(query: string) {
     if (!this.hot) return;
     const search = this.hot.getPlugin("search");
     const queryResults = search.query(query);
@@ -62,7 +66,7 @@ export default class DataComponent extends BaseComponent {
     this.hot.render();
   }
 
-  onInsert() {
+  insert() {
     this.hot?.alter("insert_row", this.currentRow);
   }
 

@@ -1,13 +1,8 @@
-import { MenuService } from "~/src/service/menu.service";
 import { setBaseStoreMyService } from "~/src/store/base";
 import { setBaseServiceMyService } from "~/src/service/base.service";
 
-export interface IMyService {
-  menu: MenuService;
-}
+export interface IMyService {}
 
-export const myService: IMyService = {
-  menu: new MenuService(),
-};
+export const myService: IMyService = {};
 setBaseStoreMyService(myService);
 setBaseServiceMyService(myService);

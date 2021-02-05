@@ -373,7 +373,7 @@ export default class SheetStore extends BaseStore {
       name,
       value: { data: payload.data },
     });
-    this.a_setModified({ value: true });
+    this.a_setModified({ name, value: true });
   }
 
   @Action
@@ -383,7 +383,7 @@ export default class SheetStore extends BaseStore {
       name,
       value: { code: payload.code },
     });
-    this.a_setModified({ value: true });
+    this.a_setModified({ name, value: true });
   }
 
   @Action

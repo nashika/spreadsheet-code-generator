@@ -8,10 +8,6 @@ section.code
 import { Component } from "nuxt-property-decorator";
 import Ace from "ace-builds";
 import "ace-builds/webpack-resolver";
-// import "ace-builds/ext/language_tools";
-// import "brace/theme/chrome";
-// import "brace/mode/javascript";
-// import "brace/snippets/javascript";
 
 import { BaseComponent } from "~/src/components/base.component";
 import { assertIsDefined } from "~/src/util/assert";
@@ -68,9 +64,12 @@ export default class CodeComponent extends BaseComponent {
   changeTimer: any = null;
   editor: Ace.Ace.Editor | null = null;
 
+  private onSearch = (query: string) => this.search(query);
+  private onChangeCurrentSheet = () => this.changeSheet();
+
   async created() {
-    this.$root.$on(eventNames.search, (query: string) => this.search(query));
-    this.$root.$on(eventNames.sheet.change, () => this.changeSheet());
+    this.$root.$on(eventNames.search, this.onSearch);
+    this.$root.$on(eventNames.sheet.change, this.onChangeCurrentSheet);
     await Promise.resolve();
   }
 
@@ -98,6 +97,8 @@ export default class CodeComponent extends BaseComponent {
 
   async beforeDestroy() {
     assertIsDefined(this.editor);
+    this.$root.$off(eventNames.search, this.onSearch);
+    this.$root.$off(eventNames.sheet.change, this.onChangeCurrentSheet);
     this.editor.destroy();
     await Promise.resolve();
   }
@@ -105,10 +106,6 @@ export default class CodeComponent extends BaseComponent {
   search(query: string): void {
     assertIsDefined(this.editor);
     this.editor.find(query);
-  }
-
-  onChangeCurrentSheet() {
-    this.changeSheet();
   }
 
   change() {
