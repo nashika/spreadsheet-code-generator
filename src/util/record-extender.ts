@@ -13,7 +13,7 @@ export class RecordExtender {
 
   readonly pathFields: string[];
 
-  constructor(data: any[], private sheet: ISheet) {
+  constructor(private sheet: ISheet) {
     this.records = {};
     this.pathStrMeta = {};
     let flag = true;
@@ -32,7 +32,7 @@ export class RecordExtender {
       )
     )
       throw new Error(`${this.sheet.name} sheet has no "extends" column.`);
-    for (const dataRecord of data) {
+    for (const dataRecord of sheet.data) {
       const pathStr = this.makePathStr(dataRecord);
       if (!pathStr) continue;
       const result: any = {};

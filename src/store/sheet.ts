@@ -157,17 +157,6 @@ function _save(sheetName: string, sheet: ISheet) {
   ioManagers.code.save(sheetName, sheet.code);
 }
 
-export function loadAllForGenerate(): { [sheetName: string]: ISheet } {
-  const names: string[] = ioManagers.sheet.list();
-  const result: { [sheetName: string]: ISheet } = {
-    root: _rootSheetTemplate(),
-  };
-  for (const name of names) {
-    result[_.camelCase(name)] = _load(name);
-  }
-  return result;
-}
-
 function _countSheetDepth(
   sheetName: string,
   sheets: { [sheetName: string]: ISheet }
@@ -300,6 +289,19 @@ export default class SheetStore extends BaseStore {
       if (target.parent === parent.name) return true;
       if (!target.parent) return false;
       return this.g_isParentRecursive(this.sheets[target.parent], parent);
+    };
+  }
+
+  get g_loadAllForGenerate(): () => { [sheetName: string]: ISheet } {
+    return () => {
+      const names: string[] = ioManagers.sheet.list();
+      const result: { [sheetName: string]: ISheet } = {
+        root: _rootSheetTemplate(),
+      };
+      for (const name of names) {
+        result[_.camelCase(name)] = _load(name);
+      }
+      return result;
     };
   }
 

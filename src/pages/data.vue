@@ -124,7 +124,6 @@ export default class DataComponent extends BaseComponent {
       clearTimeout(this.reloadRecordExtenderTimer);
     this.reloadRecordExtenderTimer = setTimeout(() => {
       this.recordExtender = new RecordExtender(
-        this.$myStore.sheet.currentSheet.data,
         this.$myStore.sheet.currentSheet
       );
       this.hot?.render();
