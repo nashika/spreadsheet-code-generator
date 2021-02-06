@@ -160,7 +160,7 @@ export default class DataComponent extends BaseComponent {
     }
     if (this.$myStore.sheet.currentSheet.name === "root") return;
     const currentSheet = this.$myStore.sheet.currentSheet;
-    this.recordExtender = new RecordExtender(currentSheet.data, currentSheet);
+    this.recordExtender = new RecordExtender(currentSheet);
     const container: Element | null = this.$el.querySelector("#spreadsheet");
     assertIsDefined(container);
     const sheetName: string = currentSheet.name;

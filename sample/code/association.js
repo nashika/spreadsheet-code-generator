@@ -1,4 +1,4 @@
-module.exports = class AssociationGeneratorNode extends scg.GeneratorNode {
+module.exports = class AssociationGeneratorNode {
 
   main() {
     return this.source(`

@@ -123,9 +123,8 @@ class GeneratorProcess {
     createNodeDefinitionRecursive(rootNodeDefinition);
     logger.debug(`Create node definition tree was finished.`);
     logger.debug("Create node tree was started.");
-    const rootNode: GeneratorNode = new rootNodeDefinition.GeneratorNodeClass({
-      root: "root",
-    });
+    const rootNode: GeneratorNode = new rootNodeDefinition.GeneratorNodeClass();
+    rootNode.__initialize({ root: "root" });
     const createNodeElementRecursive = (
       currentNodeDefinition: GeneratorNodeDefinition
     ) => {
@@ -137,10 +136,9 @@ class GeneratorProcess {
       );
       const currentData: TSheetData = recordExtender.getRecords() || [];
       _.forEach(currentData, (record: { [columnName: string]: any }) => {
-        const childNodeElement: GeneratorNode = new currentNodeDefinition.GeneratorNodeClass(
-          record
-        );
-        rootNode.__add(childNodeElement);
+        const childNodeElement: GeneratorNode = new currentNodeDefinition.GeneratorNodeClass();
+        childNodeElement.__initialize(record);
+        rootNode.add(childNodeElement);
       });
       _.forIn(
         currentNodeDefinition.children,
@@ -164,15 +162,15 @@ class GeneratorProcess {
 export class GeneratorNode {
   static definition: GeneratorNodeDefinition;
 
-  parent: GeneratorNode | null;
-  data: { [columnName: string]: any };
-
-  private readonly __children: {
+  parent!: GeneratorNode | null;
+  data!: { [columnName: string]: any };
+  private __children!: {
     [sheetName: string]: { [nodeName: string]: GeneratorNode };
   };
 
-  constructor(_dataRecord: { [columnName: string]: any }) {
-    this.data = _.cloneDeep(_dataRecord);
+  __initialize(dataRecord: { [columnName: string]: any }) {
+    debugger;
+    this.data = _.cloneDeep(dataRecord);
     this.parent = null;
     this.__children = {};
     for (const childDefinition of _.values(this.Class.definition.children)) {
@@ -293,7 +291,7 @@ export class GeneratorNode {
     return result;
   }
 
-  __add(node: GeneratorNode): void {
+  add(node: GeneratorNode): void {
     if (_.isEmpty(node.data)) return;
     if (this.Class.definition === node.Class.definition.parent) {
       if (
@@ -310,7 +308,7 @@ export class GeneratorNode {
             childDefinition.name,
             node.data[childDefinition.name]
           );
-          if (childNode) childNode.__add(node);
+          if (childNode) childNode.add(node);
         }
       }
     }
@@ -360,7 +358,7 @@ class GeneratorNodeDefinition {
       this._ancestors[_parent.name] = _parent;
       _.assign(this._ancestors, _parent.ancestors);
     }
-    this.GeneratorNodeClass = this.requireSheetObject(sheet.name);
+    this.GeneratorNodeClass = this.requireCode(sheet.name);
     this.GeneratorNodeClass.definition = this;
   }
 
@@ -408,20 +406,21 @@ class GeneratorNodeDefinition {
     if (this.parent) this.parent.addDescendants(nodeDefinition);
   }
 
-  private requireSheetObject(sheetName: string): typeof GeneratorNode {
+  private requireCode(sheetName: string): typeof GeneratorNode {
     const codeDir: string = path.join(this.process.saveBaseDir, "./code/");
     const sheetCodePath: string = path.join(codeDir, `./${sheetName}.js`);
     if (originalRequire.cache[sheetCodePath])
       delete originalRequire.cache[sheetCodePath];
-    let sheetCode: any = originalRequire(sheetCodePath);
+    let SheetClass: any = originalRequire(sheetCodePath);
     // eslint-disable-next-line no-prototype-builtins
-    if (sheetCode.hasOwnProperty("default")) sheetCode = sheetCode.default;
+    if (SheetClass.hasOwnProperty("default")) SheetClass = SheetClass.default;
     // eslint-disable-next-line no-prototype-builtins
-    if (!GeneratorNode.isPrototypeOf(sheetCode)) {
-      throw new TypeError(`Sheet code "${sheetName}.js" exports type="${typeof sheetCode}" data.
-Sheet code expects export Class that extends GeneratorNode.`);
+    if (!GeneratorNode.isPrototypeOf(SheetClass)) {
+      // eslint-disable-next-line no-proto
+      SheetClass.prototype.__proto__ = GeneratorNode.prototype;
+      SheetClass.constructor = GeneratorNode.constructor;
     }
-    return sheetCode;
+    return SheetClass;
   }
 }
 
@@ -471,7 +470,7 @@ export class GeneratorService extends BaseService {
     if (result !== -1) alert(`Generate finished, write ${result} files.`);
   }
 
-  public developerToolQuestion(): void {
+  developerToolQuestion(): void {
     if (!this.errorQuestionFlag) {
       if (!electron.remote.getCurrentWebContents().isDevToolsOpened()) {
         if (confirm(`Generate error occurred. show developer tool?`)) {

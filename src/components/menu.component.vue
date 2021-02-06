@@ -23,7 +23,7 @@ import { BaseComponent } from "./base.component";
 @Component
 export default class MenuComponent extends BaseComponent {
   generate() {
-    // this.generatorService.generate();
+    this.$myService.generator.generate();
   }
 }
 </script>

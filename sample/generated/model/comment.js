@@ -72,7 +72,7 @@ export class Comment {
       }
     }
   }
-  
+
   initializeAssociation() {
     this.setAssociation("article", {
       type: "belongsTo",
@@ -85,5 +85,5 @@ export class Comment {
       foreignKey: "author_id",
     });
   }
-  
+
 }

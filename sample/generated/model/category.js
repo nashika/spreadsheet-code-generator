@@ -51,7 +51,7 @@ export class Category {
       }
     }
   }
-  
+
   initializeAssociation() {
     this.setAssociation("articles", {
       type: "hasMany",
@@ -59,5 +59,5 @@ export class Category {
       foreignKey: "category_id",
     });
   }
-  
+
 }

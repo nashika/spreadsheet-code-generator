@@ -1,4 +1,4 @@
-module.exports = class RootGeneratorNode extends scg.GeneratorNode {
+module.exports = class RootGeneratorNode {
 
   main() {
     this.setIndent(2);

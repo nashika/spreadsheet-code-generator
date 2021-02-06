@@ -79,7 +79,7 @@ export class Author {
       }
     }
   }
-  
+
   initializeAssociation() {
     this.setAssociation("articles", {
       type: "hasMany",
@@ -92,5 +92,5 @@ export class Author {
       foreignKey: "author_id",
     });
   }
-  
+
 }

@@ -1,4 +1,4 @@
-module.exports = class FieldGeneratorNode extends scg.GeneratorNode {
+module.exports = class FieldGeneratorNode {
 
   definition() {
     return this.source(`

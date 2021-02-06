@@ -156,7 +156,7 @@ export default class MenuStore extends BaseStore {
             label: "&Generate",
             accelerator: "Ctrl+G",
             click: () => {
-              // this.generatorService.generate(); TODO: fix
+              this.$myService.generator.generate();
             },
           },
         ],

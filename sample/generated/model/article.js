@@ -116,7 +116,7 @@ export class Article {
       }
     }
   }
-  
+
   initializeAssociation() {
     this.setAssociation("author", {
       type: "belongsTo",
@@ -139,5 +139,5 @@ export class Article {
       foreignKey: "article_id",
     });
   }
-  
+
 }
