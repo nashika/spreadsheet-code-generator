@@ -69,7 +69,7 @@ import { eventNames } from "~/src/util/event-names";
 
 @Component
 export default class ColumnComponent extends BaseComponent {
-  columnIndex: number = 0;
+  columnIndex: number = -1;
   column: IColumn | null = null;
   optionsText: string = "";
 
@@ -110,9 +110,15 @@ export default class ColumnComponent extends BaseComponent {
   }
 
   selectColumn(index: number): void {
-    this.columnIndex = index;
-    this.column = _.clone(this.$myStore.sheet.currentSheet.columns[index]);
-    this.optionsText = _.join(this.column.options, "\n");
+    if (index < 0) {
+      this.columnIndex = -1;
+      this.column = null;
+      this.optionsText = "";
+    } else {
+      this.columnIndex = index;
+      this.column = _.clone(this.$myStore.sheet.currentSheet.columns[index]);
+      this.optionsText = _.join(this.column.options, "\n");
+    }
   }
 }
 </script>

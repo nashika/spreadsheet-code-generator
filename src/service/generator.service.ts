@@ -169,7 +169,6 @@ export class GeneratorNode {
   };
 
   __initialize(dataRecord: { [columnName: string]: any }) {
-    debugger;
     this.data = _.cloneDeep(dataRecord);
     this.parent = null;
     this.__children = {};
