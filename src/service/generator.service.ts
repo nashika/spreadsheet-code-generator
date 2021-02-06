@@ -15,56 +15,6 @@ declare module originalRequire {
   const cache: { [path: string]: any };
 }
 
-class SourceUtils {
-  static get deleteLine(): string {
-    return "###DeleteLine###";
-  }
-
-  static get noNewLine(): string {
-    return "###NoNewLine###";
-  }
-
-  static source(argSource: any): string {
-    let result: string = "";
-    const source: string = _.isString(argSource)
-      ? argSource
-      : _.toString(argSource);
-    const lines: Array<string> = source.toString().split(/\n/g);
-    if (lines[0] === "") lines.shift();
-    if (lines[lines.length - 1] === "") lines.pop();
-    lines.forEach((line: string) => {
-      if (line.match(/###DeleteLine###/)) return;
-      if (line.match(/###NoNewLine###/)) {
-        line = line.replace(/###NoNewLine###/, "");
-        result = result.replace(/\n$/m, "");
-      }
-      result += line + "\n";
-    });
-    return result;
-  }
-
-  static indent(
-    unitIndent: number,
-    numIndent: number,
-    argSource: any,
-    noIndentFirstLine: boolean = false
-  ): string {
-    let result: string = "";
-    const source: string = _.isString(argSource)
-      ? argSource
-      : _.toString(argSource);
-    const lines: string[] = source.split(/\n/g);
-    if (lines[lines.length - 1] === "") lines.pop();
-    lines.forEach((line: string, index: number) => {
-      const newLine: string = index < lines.length - 1 ? "\n" : "";
-      if (line && (index > 0 || !noIndentFirstLine))
-        result += _.repeat(" ", unitIndent * numIndent) + line + newLine;
-      else result += line + newLine;
-    });
-    return result;
-  }
-}
-
 class GeneratorProcess {
   unitIndent = 4;
   writeCount = 0;
@@ -208,11 +158,11 @@ export class GeneratorNode {
   }
 
   get deleteLine(): string {
-    return SourceUtils.deleteLine;
+    return "###DeleteLine###";
   }
 
   get noNewLine(): string {
-    return SourceUtils.noNewLine;
+    return "###NoNewLine###";
   }
 
   main() {}
@@ -255,7 +205,22 @@ export class GeneratorNode {
   }
 
   source(argSource: any): string {
-    return SourceUtils.source(argSource);
+    let result: string = "";
+    const source: string = _.isString(argSource)
+      ? argSource
+      : _.toString(argSource);
+    const lines: Array<string> = source.toString().split(/\n/g);
+    if (lines[0] === "") lines.shift();
+    if (lines[lines.length - 1] === "") lines.pop();
+    lines.forEach((line: string) => {
+      if (line.match(/###DeleteLine###/)) return;
+      if (line.match(/###NoNewLine###/)) {
+        line = line.replace(/###NoNewLine###/, "");
+        result = result.replace(/\n$/m, "");
+      }
+      result += line + "\n";
+    });
+    return result;
   }
 
   indent(
@@ -263,12 +228,22 @@ export class GeneratorNode {
     argSource: any,
     noIndentFirstLine: boolean = false
   ): string {
-    return SourceUtils.indent(
-      this.Class.definition.process.unitIndent,
-      numIndent,
-      argSource,
-      noIndentFirstLine
-    );
+    let result: string = "";
+    const source: string = _.isString(argSource)
+      ? argSource
+      : _.toString(argSource);
+    const lines: string[] = source.split(/\n/g);
+    if (lines[lines.length - 1] === "") lines.pop();
+    lines.forEach((line: string, index: number) => {
+      const newLine: string = index < lines.length - 1 ? "\n" : "";
+      if (line && (index > 0 || !noIndentFirstLine))
+        result +=
+          _.repeat(" ", this.Class.definition.process.unitIndent * numIndent) +
+          line +
+          newLine;
+      else result += line + newLine;
+    });
+    return result;
   }
 
   setIndent(arg: number): void {
