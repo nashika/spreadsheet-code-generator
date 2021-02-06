@@ -399,6 +399,7 @@ export default class SheetStore extends BaseStore {
     for (const name in this.sheets) this.m_removeSheet(name);
     this.m_setSheet({ name: "root", value: _rootSheetTemplate() });
     this.m_setCurrentSheet("root");
+    this.$root.$emit(eventNames.sheet.reload);
   }
 
   @Action
@@ -433,8 +434,9 @@ export default class SheetStore extends BaseStore {
     return true;
   }
 
+  // eslint-disable-next-line require-await
   @Action
-  a_add(payload: { name: string; parentName: string }): boolean {
+  async a_add(payload: { name: string; parentName: string }): Promise<boolean> {
     if (this.sheets[payload.name]) {
       alert(`Sheet "${payload.name}" already exists.`);
       return false;

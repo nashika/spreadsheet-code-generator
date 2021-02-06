@@ -22,19 +22,21 @@ section.sheets
         b-list-group-item(@click="select(treeSheet.sheet)", :active="treeSheet.sheet === $myStore.sheet.currentSheet",
           :style="{'padding-left': treeSheet.level * 10 + 10 + 'px'}") {{treeSheet.sheet.name}}
           b-badge.float-right(v-if="$myStore.sheet.sheets[treeSheet.sheet.name].meta && $myStore.sheet.sheets[treeSheet.sheet.name].meta.modified", variant="danger") !
-  b-modal#add-modal(title="Add Sheet", @show="showAddModal", @ok="okAddModal")
-    b-form
+  b-modal#add-modal(title="Add Sheet", @show="showAddModal", hide-footer)
+    b-form(@submit="submitAddModal", ref="addModal")
       b-form-group(label="Parent Sheet")
         b-form-input(type="text", v-model="newSheetParent", :readonly="true")
       b-form-group(label="New Sheet Name")
         b-form-input(type="text", v-model="newSheetName", required)
-  b-modal#edit-modal(title="Edit Sheet", @show="showEditModal", @ok="okEditModal")
-    b-form
+      b-button(type="submit", variant="primary") Submit
+  b-modal#edit-modal(title="Edit Sheet", @show="showEditModal", hide-footer)
+    b-form(@submit="submitEditModal", ref="editModal")
       b-form-group(label="Parent Sheet")
         b-form-select(v-model="newSheetParent", required)
           option(v-for="treeSheet in notSelfOrChildTreeSheets(treeSheets)", :value="treeSheet.sheet.name") {{treeSheet.sheet.name}}
       b-form-group(label="Sheet Name")
         b-form-input(type="text", v-model="newSheetName", required)
+      b-button(type="submit", variant="primary") Submit
 </template>
 
 <script lang="ts">
@@ -75,16 +77,18 @@ export default class SheetsComponent extends BaseComponent {
     this.newSheetName = "";
   }
 
-  okAddModal(e: Event): void {
+  async submitAddModal(e: Event): Promise<void> {
     if (
-      !this.$myStore.sheet.a_add({
+      await this.$myStore.sheet.a_add({
         name: this.newSheetName,
         parentName: this.$myStore.sheet.currentSheet?.name ?? "",
       })
     ) {
+      this.$bvModal.hide("add-modal");
+      this.rebuildTreeSheets();
+    } else {
       e.preventDefault();
     }
-    this.rebuildTreeSheets();
   }
 
   showEditModal(): void {
@@ -92,17 +96,19 @@ export default class SheetsComponent extends BaseComponent {
     this.newSheetName = this.$myStore.sheet.currentSheet?.name ?? "";
   }
 
-  okEditModal(e: Event): void {
+  async submitEditModal(e: Event): Promise<void> {
     if (
-      !this.$myStore.sheet.a_edit({
+      await this.$myStore.sheet.a_edit({
         oldName: this.$myStore.sheet.currentSheet?.name ?? "",
         newName: this.newSheetName,
         parentName: this.newSheetParent,
       })
     ) {
+      this.$bvModal.hide("edit-modal");
+      this.rebuildTreeSheets();
+    } else {
       e.preventDefault();
     }
-    this.rebuildTreeSheets();
   }
 
   remove(): void {
