@@ -189,6 +189,7 @@ export default class DataComponent extends BaseComponent {
           columnSetting.validator = this.makeValidator(c);
           columnSetting.invalidCellClassName = "invalid-cell";
           columnSetting.allowInvalid = true;
+          columnSetting.renderer = this.customRenderer;
         }
         columnSetting.data = c.data;
         return columnSetting;
@@ -212,13 +213,6 @@ export default class DataComponent extends BaseComponent {
       autoRowSize: false,
       autoColumnSize: false,
       licenseKey: "non-commercial-and-evaluation",
-      /* TODO: recover
-      cells: (_row: number, _col: number, _prop: any) => {
-        let cellProperties: Handsontable.DefaultSettings = {};
-        cellProperties.renderer = <any>this.customRenderer;
-        return cellProperties;
-      },
-       */
     });
     this.hot.scrollViewportTo(
       currentSheet.meta.rowOffset ?? 0,
@@ -226,14 +220,29 @@ export default class DataComponent extends BaseComponent {
     );
   }
 
-  /* TODO: recover
-  private customRenderer(instance: IMyHandsontable, td: HTMLTableDataCellElement, row: number, col: number, prop: string, value: any, cellProperties: any) {
+  private customRenderer(
+    instance: Handsontable,
+    td: HTMLTableCellElement,
+    row: number,
+    col: number,
+    prop: string | number,
+    value: Handsontable.CellValue,
+    cellProperties: Handsontable.CellProperties
+  ): HTMLTableCellElement | void {
+    if (typeof prop !== "string")
+      throw new TypeError("typeof prop is not string.");
     if (_.isNull(value) || value === "") {
       assertIsDefined(this.recordExtender);
-      let parentPathStr: string = instance.getDataAtRowProp(row, "extends");
+      const parentPathStr: string = instance.getDataAtRowProp(row, "extends");
       if (parentPathStr) {
         let data: any = this.recordExtender.get(parentPathStr, prop);
-        if (data === false) data = this.recordExtender.get(parentPathStr + "." + instance.getDataAtRowProp(row, this.recordExtender.lastPathField), prop);
+        if (data === false)
+          data = this.recordExtender.get(
+            parentPathStr +
+              "." +
+              instance.getDataAtRowProp(row, this.recordExtender.lastPathField),
+            prop
+          );
         if (data === false) {
           td.style.backgroundColor = "#fbb";
         } else if (!_.isUndefined(data)) {
@@ -242,10 +251,10 @@ export default class DataComponent extends BaseComponent {
         }
       }
     }
-    let column = this.$myStore.sheet.currentSheet.columns[col];
+    const column = this.$myStore.sheet.currentSheet.columns[col];
     if (column.required) {
       if (_.isNull(value) || value === "") {
-        let firstCellData = instance.getDataAtCell(row, 0);
+        const firstCellData = instance.getDataAtCell(row, 0);
         if (firstCellData && !_.startsWith(firstCellData, "*"))
           td.style.backgroundColor = "#f88";
       }
@@ -253,16 +262,31 @@ export default class DataComponent extends BaseComponent {
     switch (cellProperties.type) {
       case "text":
       case "select":
-        Handsontable.renderers.TextRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+        Handsontable.renderers.TextRenderer.apply(this, [
+          instance,
+          td,
+          row,
+          col,
+          prop,
+          value,
+          cellProperties,
+        ]);
         break;
       case "numeric":
-        Handsontable.renderers.NumericRenderer.apply(this, [instance, td, row, col, prop, value, cellProperties]);
+        Handsontable.renderers.NumericRenderer.apply(this, [
+          instance,
+          td,
+          row,
+          col,
+          prop,
+          value,
+          cellProperties,
+        ]);
         break;
       default:
-        throw new Error();
+        throw new Error("Unknown type.");
     }
   }
-   */
 }
 </script>
 
