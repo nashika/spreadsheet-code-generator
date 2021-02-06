@@ -78,7 +78,6 @@ export default class ColumnComponent extends BaseComponent {
       this.selectColumn(index)
     );
     this.$root.$on(eventNames.sheet.change, () => (this.column = null));
-    await Promise.resolve();
   }
 
   add(): void {

@@ -16,6 +16,7 @@ module.exports = {
   rules: {
     "no-unused-vars": "off",
     "no-use-before-define": "off",
+    "require-await": "off",
   },
   overrides: [
     {

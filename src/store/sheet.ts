@@ -345,7 +345,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_setModified(payload: { name?: string; value: boolean }) {
+  a_setModified(payload: { name?: string; value: boolean }): void {
     const name = payload.name ?? this.currentSheet.name;
     this.m_mergeSheet({
       name,
@@ -358,7 +358,7 @@ export default class SheetStore extends BaseStore {
     name?: string;
     colOffset?: number;
     rowOffset?: number;
-  }) {
+  }): void {
     const name = payload.name ?? this.currentSheet.name;
     this.m_mergeSheet({
       name,
@@ -369,7 +369,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_setData(payload: { name?: string; data: TSheetData }) {
+  a_setData(payload: { name?: string; data: TSheetData }): void {
     const name = payload.name ?? this.currentSheet.name;
     this.m_mergeSheet({
       name,
@@ -379,7 +379,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_setCode(payload: { name?: string; code: string }) {
+  a_setCode(payload: { name?: string; code: string }): void {
     const name = payload.name ?? this.currentSheet.name;
     this.m_mergeSheet({
       name,
@@ -389,7 +389,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_selectCurrentSheet(name: string) {
+  a_selectCurrentSheet(name: string): void {
     this.m_setCurrentSheet(name);
     this.$root.$emit(eventNames.sheet.change);
   }
@@ -403,7 +403,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_loadAll(): boolean {
+  async a_loadAll(): Promise<boolean> {
     for (const io of _.toArray(ioManagers)) {
       if (!io.checkDir()) return false;
     }
@@ -418,7 +418,7 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_saveAll(): boolean {
+  async a_saveAll(): Promise<boolean> {
     for (const io of _.toArray(ioManagers)) {
       if (!io.checkAndCreateDir()) return false;
     }
@@ -459,11 +459,11 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_edit(payload: {
+  async a_edit(payload: {
     oldName: string;
     newName: string;
     parentName: string;
-  }): boolean {
+  }): Promise<boolean> {
     if (payload.oldName !== payload.newName && this.sheets[payload.newName]) {
       alert(`Sheet "${payload.newName}" already exists.`);
       return false;

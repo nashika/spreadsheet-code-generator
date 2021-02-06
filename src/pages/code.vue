@@ -70,7 +70,6 @@ export default class CodeComponent extends BaseComponent {
   async created() {
     this.$root.$on(eventNames.search, this.onSearch);
     this.$root.$on(eventNames.sheet.change, this.onChangeCurrentSheet);
-    await Promise.resolve();
   }
 
   async mounted() {
@@ -92,7 +91,6 @@ export default class CodeComponent extends BaseComponent {
     // this.editor.$blockScrolling = Infinity;
     this.editor.on("change", this.change);
     this.changeSheet();
-    await Promise.resolve();
   }
 
   async beforeDestroy() {
@@ -100,7 +98,6 @@ export default class CodeComponent extends BaseComponent {
     this.$root.$off(eventNames.search, this.onSearch);
     this.$root.$off(eventNames.sheet.change, this.onChangeCurrentSheet);
     this.editor.destroy();
-    await Promise.resolve();
   }
 
   search(query: string): void {

@@ -65,7 +65,6 @@ export default class SheetsComponent extends BaseComponent {
   async created(): Promise<void> {
     this.$root.$on(eventNames.sheet.reload, () => this.rebuildTreeSheets());
     this.rebuildTreeSheets();
-    await Promise.resolve();
   }
 
   select(sheet: ISheet): void {

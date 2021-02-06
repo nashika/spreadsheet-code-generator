@@ -85,7 +85,7 @@ export default class MenuStore extends BaseStore {
   }
 
   @Action
-  a_initialize(): void {
+  async a_initialize(): Promise<void> {
     _menu = electron.remote.Menu.buildFromTemplate([
       {
         label: "&File",
@@ -190,7 +190,7 @@ export default class MenuStore extends BaseStore {
     ]);
     electron.remote.getCurrentWindow().setMenu(_menu);
     this.a_loadConfig();
-    this.a_openRecent();
+    await this.a_openRecent();
   }
 
   @Action
@@ -207,13 +207,13 @@ export default class MenuStore extends BaseStore {
   }
 
   @Action
-  a_open(): void {
+  async a_open(): Promise<void> {
     if (!this.a_openDir()) return;
-    if (this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
+    if (await this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
   }
 
   @Action
-  a_openRecent(dir: string = ""): void {
+  async a_openRecent(dir: string = ""): Promise<void> {
     if (dir) {
       this.a_setSaveBaseDir(dir);
     } else if (this.config.recentSaveBaseDirs.length > 0) {
@@ -223,13 +223,13 @@ export default class MenuStore extends BaseStore {
         path.join(electron.remote.app.getAppPath(), "sample")
       );
     }
-    if (this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
+    if (await this.$myStore.sheet.a_loadAll()) this.a_saveDirInfo();
   }
 
   @Action
-  a_save(as: boolean = false): void {
+  async a_save(as: boolean = false): Promise<void> {
     if (as || !this.config.saveBaseDir) if (!this.a_openDir()) return;
-    if (this.$myStore.sheet.a_saveAll()) this.a_saveDirInfo();
+    if (await this.$myStore.sheet.a_saveAll()) this.a_saveDirInfo();
   }
 
   @Action
