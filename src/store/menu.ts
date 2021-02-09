@@ -132,25 +132,12 @@ export default class MenuStore extends BaseStore {
         ],
       },
       {
-        label: "&View",
+        label: "&Application",
         submenu: [
           {
             label: "Toggle Side &Menu",
             accelerator: "Ctrl+E",
             click: () => this.a_toggleShowMenu(),
-          },
-        ],
-      },
-      {
-        label: "&Application",
-        submenu: [
-          {
-            label: "&Data Edit Mode",
-            click: () => this.$root.$router.push("/data"),
-          },
-          {
-            label: "&Code Edit Mode",
-            click: () => this.$root.$router.push("/code"),
           },
           {
             label: "&Generate",

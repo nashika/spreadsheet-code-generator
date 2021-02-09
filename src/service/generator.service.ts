@@ -8,6 +8,7 @@ import { IColumn, ISheet, TSheetData } from "~/src/store/sheet";
 import { BaseService } from "~/src/service/base.service";
 import { logger } from "~/src/logger";
 import { RecordExtender } from "~/src/util/record-extender";
+import { sourceUtils } from "~/src/util/source-utils";
 
 declare function originalRequire(path: string): any;
 // eslint-disable-next-line no-redeclare
@@ -158,11 +159,11 @@ export class GeneratorNode {
   }
 
   get deleteLine(): string {
-    return "###DeleteLine###";
+    return sourceUtils.deleteLine;
   }
 
   get noNewLine(): string {
-    return "###NoNewLine###";
+    return sourceUtils.noNewLine;
   }
 
   main() {}
@@ -204,23 +205,8 @@ export class GeneratorNode {
     this.Class.definition.process.writeCount++;
   }
 
-  source(argSource: any): string {
-    let result: string = "";
-    const source: string = _.isString(argSource)
-      ? argSource
-      : _.toString(argSource);
-    const lines: Array<string> = source.toString().split(/\n/g);
-    if (lines[0] === "") lines.shift();
-    if (lines[lines.length - 1] === "") lines.pop();
-    lines.forEach((line: string) => {
-      if (line.match(/###DeleteLine###/)) return;
-      if (line.match(/###NoNewLine###/)) {
-        line = line.replace(/###NoNewLine###/, "");
-        result = result.replace(/\n$/m, "");
-      }
-      result += line + "\n";
-    });
-    return result;
+  source(argSource: string): string {
+    return sourceUtils.source(argSource);
   }
 
   indent(
@@ -228,22 +214,12 @@ export class GeneratorNode {
     argSource: any,
     noIndentFirstLine: boolean = false
   ): string {
-    let result: string = "";
-    const source: string = _.isString(argSource)
-      ? argSource
-      : _.toString(argSource);
-    const lines: string[] = source.split(/\n/g);
-    if (lines[lines.length - 1] === "") lines.pop();
-    lines.forEach((line: string, index: number) => {
-      const newLine: string = index < lines.length - 1 ? "\n" : "";
-      if (line && (index > 0 || !noIndentFirstLine))
-        result +=
-          _.repeat(" ", this.Class.definition.process.unitIndent * numIndent) +
-          line +
-          newLine;
-      else result += line + newLine;
-    });
-    return result;
+    return sourceUtils.indent(
+      this.Class.definition.process.unitIndent,
+      numIndent,
+      argSource,
+      noIndentFirstLine
+    );
   }
 
   setIndent(arg: number): void {

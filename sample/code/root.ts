@@ -1,6 +1,9 @@
-module.exports = class RootGeneratorNode {
+import _ from "lodash";
 
-  main() {
+import { RootNodeBase } from "../base/root";
+
+export class RootNode extends RootNodeBase {
+  main(): void {
     this.setIndent(2);
     _(this.children.model).each(model => model.main());
     this.write("./generated/test.txt", "test");
@@ -10,5 +13,4 @@ module.exports = class RootGeneratorNode {
   test() {
     return "TEST";
   }
-
-}
+};

@@ -1,6 +1,7 @@
-module.exports = class AssociationGeneratorNode {
+import { AssociationNodeBase } from "../base/association";
 
-  main() {
+export class AssociationNode extends AssociationNodeBase {
+  main(): string {
     return this.source(`
 this.setAssociation("${this.data.association}", {
   type: "${this.data.type}",
@@ -9,5 +10,4 @@ this.setAssociation("${this.data.association}", {
 });
 `);
   }
-
 }

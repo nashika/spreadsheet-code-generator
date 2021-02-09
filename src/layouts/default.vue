@@ -5,7 +5,7 @@ section.app(v-if="initialized")
       menu-component
       sheets-component
       search-component
-      column-component(v-if="$route.path === '/data' && $myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name !== 'root'")
+      column-component(v-if="$myStore.sheet.currentSheet && $myStore.sheet.currentSheet.name !== 'root'")
     #main-area
       nuxt
 section.initialize(v-else)
@@ -41,8 +41,6 @@ export default class DefaultLayoutComponent extends BaseComponent {
     setBaseStoreRootComponent(this.$root);
     setBaseServiceRootComponent(this.$root);
     await this.$myStore.menu.a_initialize();
-    // this.$myStore.config.a_load();
-    // this.$myStore.sheet.a_loadAll();
     this.initialized = true;
     await Promise.resolve();
   }

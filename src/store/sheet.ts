@@ -9,6 +9,7 @@ import { logger } from "~/src/logger";
 import { myStore } from "~/src/store/index";
 import { BaseStore } from "~/src/store/base";
 import { eventNames } from "~/src/util/event-names";
+import { templates } from "~/src/util/templates";
 
 export interface ISheet {
   name: string;
@@ -17,7 +18,6 @@ export interface ISheet {
   columns: IColumn[];
   meta: ISheetMeta;
   data: TSheetData;
-  code: string;
 }
 
 export interface IColumn {
@@ -29,7 +29,7 @@ export interface IColumn {
   width: number;
   required: boolean;
   export: boolean;
-  // tsType: string;
+  tsType?: string;
 }
 
 export interface ISheetMeta {
@@ -44,7 +44,7 @@ class IoManager {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     protected dirName: string,
-    protected ext: "json" | "js" = "json"
+    protected ext: "json" | "ts" | "ts" = "json"
   ) {}
 
   get saveDir(): string {
@@ -89,7 +89,7 @@ class IoManager {
 
   load(sheetName: string): any {
     const filePath: string = this.filePath(sheetName);
-    logger.debug(`Loadig ${filePath}.`);
+    logger.debug(`Loading ${filePath}.`);
     if (fs.existsSync(filePath)) {
       const data: string = fs.readFileSync(filePath).toString();
       if (this.ext === "json") return JSON.parse(data);
@@ -108,6 +108,10 @@ class IoManager {
     fs.writeFileSync(filePath, writeData);
   }
 
+  exist(sheetName: string): boolean {
+    return fs.existsSync(this.filePath(sheetName));
+  }
+
   unlink(sheetName: string): void {
     const filePath: string = this.filePath(sheetName);
     logger.info(`Removing ${filePath}.`);
@@ -118,43 +122,34 @@ class IoManager {
 const ioManagers = {
   sheet: new IoManager("sheet"),
   data: new IoManager("data"),
-  code: new IoManager("code", "js"),
+  code: new IoManager("code", "ts"),
+  base: new IoManager("base", "ts"),
 };
 
-function _sheetTemplate(): ISheet {
-  return {
-    name: "",
-    parent: "",
-    freezeColumn: 0,
-    columns: [],
-    meta: _sheetMetaTemplate(),
-    data: [],
-    code: "",
-  };
-}
-
 function _rootSheetTemplate(): ISheet {
-  return Object.assign(_sheetTemplate(), { name: "root" });
+  return Object.assign(templates.sheet(), { name: "root" });
 }
 
 function _load(sheetName: string): ISheet {
   let sheet: ISheet;
   if (sheetName === "root") sheet = _rootSheetTemplate();
   else
-    sheet = Object.assign(_sheetTemplate(), ioManagers.sheet.load(sheetName));
-  sheet.meta = _sheetMetaTemplate();
+    sheet = Object.assign(templates.sheet(), ioManagers.sheet.load(sheetName));
+  sheet.meta = templates.sheetMeta();
   sheet.columns = _initializeColumns(sheet.columns);
   sheet.data = ioManagers.data.load(sheetName) ?? [];
-  sheet.code = ioManagers.code.load(sheetName) ?? "";
   return sheet;
 }
 
-function _save(sheetName: string, sheet: ISheet) {
-  if (sheetName !== "root") {
-    ioManagers.sheet.save(sheetName, _.omit(sheet, ["data", "code", "meta"]));
-    ioManagers.data.save(sheetName, _parseData(sheet));
+function _save(sheet: ISheet, sheets: { [name: string]: ISheet }) {
+  if (sheet.name !== "root") {
+    ioManagers.sheet.save(sheet.name, _.omit(sheet, ["data", "code", "meta"]));
+    ioManagers.data.save(sheet.name, _parseData(sheet));
   }
-  ioManagers.code.save(sheetName, sheet.code);
+  if (!ioManagers.code.exist(sheet.name)) {
+    ioManagers.code.save(sheet.name, templates.code(sheet));
+  }
+  ioManagers.base.save(sheet.name, templates.baseCode(sheet, sheets));
 }
 
 function _countSheetDepth(
@@ -168,7 +163,7 @@ function _countSheetDepth(
 
 function _initializeColumns(columns: IColumn[]): IColumn[] {
   return columns.map((column) => {
-    return Object.assign(_columnTemplate(99), column);
+    return Object.assign(templates.column(99), column);
   });
 }
 
@@ -193,7 +188,7 @@ function _generateInitialColumns(
       // tsType: "",
     },
   ];
-  const emptyColumns: IColumn[] = _.times(5, _columnTemplate);
+  const emptyColumns: IColumn[] = _.times(5, templates.column);
   return _.concat(treeColumns, extendsColumns, emptyColumns);
 }
 
@@ -240,39 +235,6 @@ function _parseData(sheet: ISheet): TSheetData {
     }
     return result;
   });
-}
-
-function _sheetMetaTemplate(): ISheetMeta {
-  return {
-    modified: false,
-    rowOffset: 0,
-    colOffset: 0,
-  };
-}
-
-function _columnTemplate(no: number): IColumn {
-  return {
-    header: `Col${no}`,
-    data: `data${no}`,
-    type: "text",
-    json: undefined,
-    options: undefined,
-    width: 80,
-    required: false,
-    export: true,
-    // tsType: "",
-  };
-}
-
-function _codeTemplate(): string {
-  return `module.exports = {
-
-  main: function() {
-
-  },
-
-};
-`;
 }
 
 @Module({
@@ -379,16 +341,6 @@ export default class SheetStore extends BaseStore {
   }
 
   @Action
-  a_setCode(payload: { name?: string; code: string }): void {
-    const name = payload.name ?? this.currentSheet.name;
-    this.m_mergeSheet({
-      name,
-      value: { code: payload.code },
-    });
-    this.a_setModified({ name, value: true });
-  }
-
-  @Action
   a_selectCurrentSheet(name: string): void {
     this.m_setCurrentSheet(name);
     this.$root.$emit(eventNames.sheet.change);
@@ -423,7 +375,7 @@ export default class SheetStore extends BaseStore {
       if (!io.checkAndCreateDir()) return false;
     }
     for (const name in this.sheets) {
-      _save(name, this.sheets[name]);
+      _save(this.sheets[name], this.sheets);
       this.a_setModified({ name, value: false });
     }
     _.difference(ioManagers.sheet.list(), Object.keys(this.sheets)).forEach(
@@ -431,6 +383,7 @@ export default class SheetStore extends BaseStore {
         ioManagers.sheet.unlink(name);
       }
     );
+    ioManagers.base.save("base", templates.baseCodeStub());
     return true;
   }
 
@@ -452,7 +405,6 @@ export default class SheetStore extends BaseStore {
       freezeColumn: _countSheetDepth(payload.parentName, this.sheets) + 1,
       meta: { modified: true },
       data: _.times(10, () => ({})),
-      code: _codeTemplate(),
     };
     this.m_setSheet({ name: payload.name, value: emptySheet });
     return true;
@@ -522,7 +474,7 @@ export default class SheetStore extends BaseStore {
     this.m_setColumns(
       _.concat(
         _.slice(columns, 0, index),
-        [_columnTemplate(columns.length)],
+        [templates.column(columns.length)],
         _.slice(columns, index)
       )
     );

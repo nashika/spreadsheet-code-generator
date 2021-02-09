@@ -1,6 +1,9 @@
-module.exports = class ModelGeneratorNode {
+import _ from "lodash";
 
-  main() {
+import { ModelNodeBase } from "../base/model";
+
+export class ModelNode extends ModelNodeBase {
+  main(): void {
     let source = this.source(`
 export class ${this.data.model} {
 
@@ -16,5 +19,4 @@ ${this.indent(2, _(this.children.association).map(association => association.mai
 `);
     this.write(`./generated/model/${this.data.model.toLowerCase()}.js`, source);
   }
-
 }
