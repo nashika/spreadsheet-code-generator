@@ -1,14 +1,13 @@
 export class Article {
-
-  id;
-  title;
-  type;
-  content;
-  category_id;
-  author_id;
-  public;
-  created;
-  modified;
+  id!: number;
+  title!: string;
+  type!: number;
+  content!: string;
+  categoryId!: Object;
+  authorId!: Object;
+  public!: boolean;
+  created!: Date;
+  modified!: Date;
 
   params = {
     "id": {

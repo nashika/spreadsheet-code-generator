@@ -1,12 +1,11 @@
 export class Comment {
-
-  id;
-  order_no;
-  article_id;
-  author_id;
-  content;
-  created;
-  modified;
+  id!: number;
+  orderNo!: number;
+  articleId!: Object;
+  authorId!: Object;
+  content!: string;
+  created!: Date;
+  modified!: Date;
 
   params = {
     "id": {

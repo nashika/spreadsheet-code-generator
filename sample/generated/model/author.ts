@@ -1,13 +1,12 @@
 export class Author {
-
-  id;
-  username;
-  password;
-  name;
-  nickname;
-  admin;
-  created;
-  modified;
+  id!: number;
+  username!: string;
+  password!: string;
+  name!: string;
+  nickname!: string;
+  admin!: boolean;
+  created!: Date;
+  modified!: Date;
 
   params = {
     "id": {

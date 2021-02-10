@@ -6,7 +6,6 @@ export default class ModelNode extends ModelNodeBase {
   main(): void {
     const source = this.source(`
 export class ${this.data.model} {
-
 ${this.indent(
   1,
   _(this.children.field)

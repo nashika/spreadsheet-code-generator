@@ -38,5 +38,5 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: [],
+  ignorePatterns: ["sample/generated/**/*"],
 };

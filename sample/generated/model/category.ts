@@ -1,9 +1,8 @@
 export class Category {
-
-  id;
-  name;
-  created;
-  modified;
+  id!: number;
+  name!: string;
+  created!: Date;
+  modified!: Date;
 
   params = {
     "id": {
