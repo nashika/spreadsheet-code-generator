@@ -41,9 +41,9 @@ export const templates = {
   code(sheet: ISheet): string {
     /* eslint-disable prettier/prettier */
     return sourceUtils.source(`
-import { ${_.upperFirst(_.camelCase(sheet.name))}NodeBase } from "../base/${sheet.name}";
+import ${_.upperFirst(_.camelCase(sheet.name))}NodeBase from "../base/${sheet.name}";
 
-export class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.upperFirst(_.camelCase(sheet.name))}NodeBase {
+export default class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.upperFirst(_.camelCase(sheet.name))}NodeBase {
   main(): void {
   }
 }
@@ -59,20 +59,20 @@ export class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.upperFirst
     const any = "<any>";
     /* eslint-disable prettier/prettier */
     return sourceUtils.source(`
-import { NodeBase } from "./base";
-import { ${_.upperFirst(_.camelCase(sheet.name))}Node } from "../code/${sheet.name}";
-${parentSheet ? `import { ${_.upperFirst(_.camelCase(parentSheet.name))}Node } from "../code/${parentSheet.name}";` : sourceUtils.deleteLine}
-${childSheets.length > 0 ? _(childSheets).map(childSheet => `import { ${_.upperFirst(_.camelCase(childSheet.name))}Node } from "../code/${childSheet.name}";`).join("\n") : sourceUtils.deleteLine}
+import NodeBase from "./base";
+import ${_.upperFirst(_.camelCase(sheet.name))}Node from "../code/${sheet.name}";
+${parentSheet ? `import ${_.upperFirst(_.camelCase(parentSheet.name))}Node from "../code/${parentSheet.name}";` : sourceUtils.deleteLine}
+${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFirst(_.camelCase(childSheet.name))}Node from "../code/${childSheet.name}";`).join("\n") : sourceUtils.deleteLine}
 
 type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {
-  ${childSheets.length > 0 ? _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node };`).join("\n") : sourceUtils.deleteLine}
-}
+${childSheets.length > 0 ? sourceUtils.indent(2, 1, _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node };`).join("\n")) : sourceUtils.deleteLine}
+};
 
 export interface I${_.upperFirst(_.camelCase(sheet.name))}NodeData ${this.columnDataTypes(sheet.columns)}
 
 export interface I${_.upperFirst(_.camelCase(sheet.name))}NodeExport ${this.columnDataTypes(sheet.columns, true)}
 
-export class ${_.upperFirst(_.camelCase(sheet.name))}NodeBase extends NodeBase {
+export default class ${_.upperFirst(_.camelCase(sheet.name))}NodeBase extends NodeBase {
   readonly data!: I${_.upperFirst(_.camelCase(sheet.name))}NodeData;
   readonly parent!: ${parentSheet ? `${_.upperFirst(_.camelCase(parentSheet.name))}Node` : "null"};
   readonly siblings!: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}Node };
@@ -138,7 +138,7 @@ export class ${_.upperFirst(_.camelCase(sheet.name))}NodeBase extends NodeBase {
   baseCodeStub(): string {
     const errMsg = '"Unexpected call."';
     return sourceUtils.source(`
-export class NodeBase {
+export default class NodeBase {
   readonly data!: Object;
   readonly parent!: Object | null;
   readonly siblings!: { [nodeName: string]: Object };

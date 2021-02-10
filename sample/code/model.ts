@@ -1,8 +1,8 @@
 import _ from "lodash";
 
-import { ModelNodeBase } from "../base/model";
+import ModelNodeBase from "../base/model";
 
-export class ModelNode extends ModelNodeBase {
+export default class ModelNode extends ModelNodeBase {
   main(): void {
     let source = this.source(`
 export class ${this.data.model} {

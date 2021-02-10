@@ -1,8 +1,8 @@
 import _ from "lodash";
 
-import { RootNodeBase } from "../base/root";
+import RootNodeBase from "../base/root";
 
-export class RootNode extends RootNodeBase {
+export default class RootNode extends RootNodeBase {
   main(): void {
     this.setIndent(2);
     _(this.children.model).each(model => model.main());

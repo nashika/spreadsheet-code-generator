@@ -16,6 +16,10 @@ declare module originalRequire {
   const cache: { [path: string]: any };
 }
 
+originalRequire("ts-node").register({
+  compilerOptions: { module: "commonjs" },
+});
+
 class GeneratorProcess {
   unitIndent = 4;
   writeCount = 0;
@@ -358,19 +362,17 @@ class GeneratorNodeDefinition {
 
   private requireCode(sheetName: string): typeof GeneratorNode {
     const codeDir: string = path.join(this.process.saveBaseDir, "./code/");
-    const sheetCodePath: string = path.join(codeDir, `./${sheetName}.js`);
+    const sheetCodePath: string = path.join(codeDir, `./${sheetName}.ts`);
     if (originalRequire.cache[sheetCodePath])
       delete originalRequire.cache[sheetCodePath];
-    let SheetClass: any = originalRequire(sheetCodePath);
-    // eslint-disable-next-line no-prototype-builtins
-    if (SheetClass.hasOwnProperty("default")) SheetClass = SheetClass.default;
-    // eslint-disable-next-line no-prototype-builtins
-    if (!GeneratorNode.isPrototypeOf(SheetClass)) {
-      // eslint-disable-next-line no-proto
-      SheetClass.prototype.__proto__ = GeneratorNode.prototype;
-      SheetClass.constructor = GeneratorNode.constructor;
-    }
-    return SheetClass;
+    let SheetNodeClass: any = originalRequire(sheetCodePath);
+    if (_.has(SheetNodeClass, "default"))
+      SheetNodeClass = SheetNodeClass.default;
+    const SheetNodeBaseClass: any = Object.getPrototypeOf(
+      SheetNodeClass.prototype
+    );
+    Object.setPrototypeOf(SheetNodeBaseClass, GeneratorNode.prototype);
+    return SheetNodeClass;
   }
 }
 

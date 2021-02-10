@@ -1,13 +1,13 @@
-import { NodeBase } from "./base";
-import { ModelNode } from "../code/model";
-import { RootNode } from "../code/root";
-import { AssociationNode } from "../code/association";
-import { FieldNode } from "../code/field";
+import NodeBase from "./base";
+import ModelNode from "../code/model";
+import RootNode from "../code/root";
+import AssociationNode from "../code/association";
+import FieldNode from "../code/field";
 
 type TModelNodeChildren = {
   association: { [nodeName: string]: AssociationNode };
-field: { [nodeName: string]: FieldNode };
-}
+  field: { [nodeName: string]: FieldNode };
+};
 
 export interface IModelNodeData {
   model: string;
@@ -21,7 +21,7 @@ export interface IModelNodeExport {
   view?: string;
 }
 
-export class ModelNodeBase extends NodeBase {
+export default class ModelNodeBase extends NodeBase {
   readonly data!: IModelNodeData;
   readonly parent!: RootNode;
   readonly siblings!: { [nodeName: string]: ModelNode };

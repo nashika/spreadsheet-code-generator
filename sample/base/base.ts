@@ -1,4 +1,4 @@
-export class NodeBase {
+export default class NodeBase {
   readonly data!: Object;
   readonly parent!: Object | null;
   readonly siblings!: { [nodeName: string]: Object };

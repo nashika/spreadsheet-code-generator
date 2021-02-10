@@ -1,6 +1,6 @@
-import { AssociationNodeBase } from "../base/association";
+import AssociationNodeBase from "../base/association";
 
-export class AssociationNode extends AssociationNodeBase {
+export default class AssociationNode extends AssociationNodeBase {
   main(): string {
     return this.source(`
 this.setAssociation("${this.data.association}", {

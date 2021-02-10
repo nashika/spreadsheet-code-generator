@@ -1,9 +1,9 @@
-import { NodeBase } from "./base";
-import { FieldNode } from "../code/field";
-import { ModelNode } from "../code/model";
+import NodeBase from "./base";
+import FieldNode from "../code/field";
+import ModelNode from "../code/model";
 
 type TFieldNodeChildren = {
-}
+};
 
 export interface IFieldNodeData {
   model: string;
@@ -36,7 +36,7 @@ export interface IFieldNodeExport {
   };
 }
 
-export class FieldNodeBase extends NodeBase {
+export default class FieldNodeBase extends NodeBase {
   readonly data!: IFieldNodeData;
   readonly parent!: ModelNode;
   readonly siblings!: { [nodeName: string]: FieldNode };
