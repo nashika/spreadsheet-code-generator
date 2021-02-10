@@ -13,14 +13,14 @@ export const sourceUtils = {
     let result: string = "";
     const lines: string[] = argSource.toString().split(/\n/g);
     if (lines[0] === "") lines.shift();
-    if (lines[lines.length - 1] === "") lines.pop();
-    lines.forEach((line: string) => {
+    lines.forEach((line, index) => {
       if (line.match(/###DeleteLine###/)) return;
       if (line.match(/###NoNewLine###/)) {
         line = line.replace(/###NoNewLine###/, "");
-        result = result.replace(/\n$/m, "");
+        result += line;
+        return;
       }
-      result += line + "\n";
+      result += line + (index !== lines.length - 1 ? "\n" : "");
     });
     return result;
   },

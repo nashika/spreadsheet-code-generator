@@ -1,8 +1,8 @@
-import NodeBase from "./base";
 import ModelNode from "../code/model";
 import RootNode from "../code/root";
 import AssociationNode from "../code/association";
 import FieldNode from "../code/field";
+import NodeBase from "./base";
 
 type TModelNodeChildren = {
   association: { [nodeName: string]: AssociationNode };

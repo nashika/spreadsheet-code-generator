@@ -1,18 +1,14 @@
-import NodeBase from "./base";
 import RootNode from "../code/root";
 import ModelNode from "../code/model";
+import NodeBase from "./base";
 
 type TRootNodeChildren = {
   model: { [nodeName: string]: ModelNode };
 };
 
-export interface IRootNodeData {
+export interface IRootNodeData {}
 
-}
-
-export interface IRootNodeExport {
-
-}
+export interface IRootNodeExport {}
 
 export default class RootNodeBase extends NodeBase {
   readonly data!: IRootNodeData;

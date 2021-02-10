@@ -1,9 +1,8 @@
-import NodeBase from "./base";
 import AssociationNode from "../code/association";
 import ModelNode from "../code/model";
+import NodeBase from "./base";
 
-type TAssociationNodeChildren = {
-};
+type TAssociationNodeChildren = {};
 
 export interface IAssociationNodeData {
   model: string;

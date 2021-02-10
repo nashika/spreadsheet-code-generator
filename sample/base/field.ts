@@ -1,9 +1,8 @@
-import NodeBase from "./base";
 import FieldNode from "../code/field";
 import ModelNode from "../code/model";
+import NodeBase from "./base";
 
-type TFieldNodeChildren = {
-};
+type TFieldNodeChildren = {};
 
 export interface IFieldNodeData {
   model: string;

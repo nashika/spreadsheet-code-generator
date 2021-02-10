@@ -6,4 +6,4 @@ export default class FieldNode extends FieldNodeBase {
 ${this.data.field};
 `);
   }
-};
+}

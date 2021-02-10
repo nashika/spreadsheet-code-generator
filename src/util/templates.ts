@@ -59,12 +59,12 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.up
     const any = "<any>";
     /* eslint-disable prettier/prettier */
     return sourceUtils.source(`
-import NodeBase from "./base";
 import ${_.upperFirst(_.camelCase(sheet.name))}Node from "../code/${sheet.name}";
 ${parentSheet ? `import ${_.upperFirst(_.camelCase(parentSheet.name))}Node from "../code/${parentSheet.name}";` : sourceUtils.deleteLine}
 ${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFirst(_.camelCase(childSheet.name))}Node from "../code/${childSheet.name}";`).join("\n") : sourceUtils.deleteLine}
+import NodeBase from "./base";
 
-type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {
+type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {${childSheets.length === 0 ? sourceUtils.noNewLine : ""}
 ${childSheets.length > 0 ? sourceUtils.indent(2, 1, _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node };`).join("\n")) : sourceUtils.deleteLine}
 };
 
@@ -110,21 +110,25 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}NodeBase extends No
       return _.some(elm, (culElm: TDefElement) => isRequired(culElm));
     };
     const recursive = (tree: TDefTree): string => {
-      return (
-        "{\n" +
-        _(tree)
-          .map((elm: TDefElement, key: string) =>
-            sourceUtils.indent(
-              2,
-              1,
-              `${key}${isRequired(elm) ? "" : "?"}: ${
-                _.isArray(elm) ? elm[0] : recursive(elm)
-              };`
-            )
+      if (_.size(tree) === 0) return "{}";
+      return sourceUtils.source(`
+{
+${
+  _.size(tree) === 0
+    ? sourceUtils.deleteLine
+    : _(tree)
+        .map((elm: TDefElement, key: string) =>
+          sourceUtils.indent(
+            2,
+            1,
+            `${key}${isRequired(elm) ? "" : "?"}: ${
+              _.isArray(elm) ? elm[0] : recursive(elm)
+            };`
           )
-          .join("\n") +
-        "\n}"
-      );
+        )
+        .join("\n")
+}
+}`);
     };
     const tree: TDefTree = {};
     for (const column of columns) {
@@ -150,23 +154,19 @@ export default class NodeBase {
   readonly deleteLine!: string;
   readonly noNewLine!: string;
 
-  write(argPath: string, data: string, option: { override?: boolean } = {}): void {
+  write(_argPath: string, _data: string, _option: { override?: boolean } = {}): void {
     throw new Error(${errMsg});
   }
 
-  source(argSource: string): string {
+  source(_argSource: string): string {
     throw new Error(${errMsg});
   }
 
-  indent(
-    numIndent: number,
-    argSource: any,
-    noIndentFirstLine: boolean = false
-  ): string {
+  indent(_numIndent: number, _argSource: any, _noIndentFirstLine: boolean = false): string {
     throw new Error(${errMsg});
   }
 
-  setIndent(arg: number): void {
+  setIndent(_arg: number): void {
     throw new Error(${errMsg});
   }
 

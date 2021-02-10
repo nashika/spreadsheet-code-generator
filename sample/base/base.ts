@@ -10,23 +10,19 @@ export default class NodeBase {
   readonly deleteLine!: string;
   readonly noNewLine!: string;
 
-  write(argPath: string, data: string, option: { override?: boolean } = {}): void {
+  write(_argPath: string, _data: string, _option: { override?: boolean } = {}): void {
     throw new Error("Unexpected call.");
   }
 
-  source(argSource: string): string {
+  source(_argSource: string): string {
     throw new Error("Unexpected call.");
   }
 
-  indent(
-    numIndent: number,
-    argSource: any,
-    noIndentFirstLine: boolean = false
-  ): string {
+  indent(_numIndent: number, _argSource: any, _noIndentFirstLine: boolean = false): string {
     throw new Error("Unexpected call.");
   }
 
-  setIndent(arg: number): void {
+  setIndent(_arg: number): void {
     throw new Error("Unexpected call.");
   }
 

@@ -1,3 +1,14 @@
 {
-  "trailingComma": "es5"
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": "sample/**/*.ts",
+      "options": {
+        "printWidth": 500
+      }
+    }
+  ],
+  "ignorePath": [
+    "sample/generated/"
+  ]
 }
