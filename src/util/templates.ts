@@ -47,7 +47,7 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.up
   main(): void {
   }
 }
-  `);
+`);
     /* eslint-enable prettier/prettier */
   },
 
