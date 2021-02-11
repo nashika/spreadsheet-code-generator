@@ -44,8 +44,7 @@ export const templates = {
 import ${_.upperFirst(_.camelCase(sheet.name))}NodeBase from "../base/${sheet.name}";
 
 export default class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.upperFirst(_.camelCase(sheet.name))}NodeBase {
-  main(): void {
-  }
+  main(): void {}
 }
 `);
     /* eslint-enable prettier/prettier */
