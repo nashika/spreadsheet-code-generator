@@ -13,25 +13,29 @@ ${this.indent(
     .join("")
 )}
 
-  params = ${this.indent(
-    1,
-    JSON.stringify(
-      _(this.children.field).mapValues((field) => field.toObject()),
-      null,
-      2
-    ),
-    true
-  )}
-
-  initializeAssociation() {
-${this.indent(
-  2,
-  _(this.children.association)
-    .map((association) => association.main())
-    .join("")
-)}
-  }
-
+  params = {
+    name: "${this.data.model}",
+    label: "${this.data.label}",
+    view: "${this.data.view ?? this.deleteLine}",
+    fields: ${this.indent(
+      2,
+      JSON.stringify(
+        _(this.children.field).mapValues((field) => field.toObject()),
+        null,
+        2
+      ),
+      true
+    )},
+    association: ${this.indent(
+      2,
+      JSON.stringify(
+        _(this.children.association).mapValues((association) => association.toObject()),
+        null,
+        2
+      ),
+      true
+    )},
+  };
 }
 `);
     this.write(`./generated/model/${this.data.model.toLowerCase()}.ts`, source);
