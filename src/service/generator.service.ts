@@ -141,25 +141,25 @@ export class GeneratorNode {
     return this.data[this.Class.definition.name];
   }
 
-  get siblings(): { [nodeName: string]: GeneratorNode } {
-    if (!this.parent) return {};
-    return _(this.parent.__getChildren(this.Class.definition.name))
-      .omit(["*", this.name])
-      .value();
+  get columns(): string[] {
+    return _.map(this.Class.definition.columns, (column) => column.data);
   }
 
   get root(): GeneratorNode {
     return this.parent ? this.parent.root : this;
   }
 
-  get columns(): string[] {
-    return _.map(this.Class.definition.columns, (column) => column.data);
-  }
-
   get children(): {
     [sheetName: string]: { [nodeName: string]: GeneratorNode };
   } {
     return this.__children;
+  }
+
+  get siblings(): { [nodeName: string]: GeneratorNode } {
+    if (!this.parent) return {};
+    return _(this.parent.__getChildren(this.Class.definition.name))
+      .omit(["*", this.name])
+      .value();
   }
 
   get deleteLine(): string {

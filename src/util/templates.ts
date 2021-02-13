@@ -61,7 +61,10 @@ export default class ${_.upperFirst(_.camelCase(sheet.name))}Node extends ${_.up
 import ${_.upperFirst(_.camelCase(sheet.name))}Node from "../code/${sheet.name}";
 ${parentSheet ? `import ${_.upperFirst(_.camelCase(parentSheet.name))}Node from "../code/${parentSheet.name}";` : sourceUtils.deleteLine}
 ${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFirst(_.camelCase(childSheet.name))}Node from "../code/${childSheet.name}";`).join("\n") : sourceUtils.deleteLine}
+import RootNode from "../code/root";${parentSheet?.name === "root" || sheet?.name === "root" ? sourceUtils.deleteLine : ""}
 import NodeBase from "./base";
+
+type T${_.upperFirst(_.camelCase(sheet.name))}NodeColumnName = ${sheet.columns.map((column) => '"' + column.data + '"').join(" | ")};
 
 type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {${childSheets.length === 0 ? sourceUtils.noNewLine : ""}
 ${childSheets.length > 0 ? sourceUtils.indent(2, 1, _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node };`).join("\n")) : sourceUtils.deleteLine}
@@ -74,8 +77,22 @@ export interface I${_.upperFirst(_.camelCase(sheet.name))}NodeExport ${this.colu
 export default class ${_.upperFirst(_.camelCase(sheet.name))}NodeBase extends NodeBase {
   readonly data!: I${_.upperFirst(_.camelCase(sheet.name))}NodeData;
   readonly parent!: ${parentSheet ? `${_.upperFirst(_.camelCase(parentSheet.name))}Node` : "null"};
-  readonly siblings!: { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}Node };
-  readonly children!: T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren;
+
+  get columns(): T${_.upperFirst(_.camelCase(sheet.name))}NodeColumnName[] {
+    return ${any}super.columns;
+  }
+
+  get root(): RootNode {
+    return ${any}super.root;
+  }
+
+  get children(): T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren {
+    return ${any}super.children;
+  }
+
+  get siblings(): { [nodeName: string]: ${_.upperFirst(_.camelCase(sheet.name))}Node } {
+    return ${any}super.siblings;
+  }
 
   toObject(): I${_.upperFirst(_.camelCase(sheet.name))}NodeExport {
     return ${any}super.toObject();
@@ -144,14 +161,34 @@ ${
 export default class NodeBase {
   readonly data!: Object;
   readonly parent!: Object | null;
-  readonly siblings!: { [nodeName: string]: Object };
-  readonly children!: { [nodeName: string]: Object };
-  readonly root!: Object;
 
-  readonly name!: string;
-  readonly columns!: string[];
-  readonly deleteLine!: string;
-  readonly noNewLine!: string;
+  get name(): string {
+    throw new Error(${errMsg});
+  }
+
+  get columns(): string[] {
+    throw new Error(${errMsg});
+  }
+
+  get siblings(): { [nodeName: string]: Object } {
+    throw new Error(${errMsg});
+  }
+
+  get root(): NodeBase {
+    throw new Error(${errMsg});
+  }
+
+  get children(): { [nodeName: string]: Object } {
+    throw new Error(${errMsg});
+  }
+
+  get deleteLine(): string {
+    throw new Error(${errMsg});
+  }
+
+  get noNewLine(): string {
+    throw new Error(${errMsg});
+  }
 
   write(_argPath: string, _data: string, _option: { override?: boolean } = {}): void {
     throw new Error(${errMsg});
