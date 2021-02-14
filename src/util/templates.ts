@@ -64,7 +64,10 @@ ${childSheets.length > 0 ? _(childSheets).map(childSheet => `import ${_.upperFir
 import RootNode from "../code/root";${parentSheet?.name === "root" || sheet?.name === "root" ? sourceUtils.deleteLine : ""}
 import NodeBase from "./base";
 
-type T${_.upperFirst(_.camelCase(sheet.name))}NodeColumnName = ${sheet.columns.map((column) => '"' + column.data + '"').join(" | ")};
+type T${_.upperFirst(_.camelCase(sheet.name))}NodeColumnName = ${_(sheet.columns)
+      .filter((column) => column.data !== "extends")
+      .map((column) => '"' + column.data + '"')
+      .join(" | ")};
 
 type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {${childSheets.length === 0 ? sourceUtils.noNewLine : ""}
 ${childSheets.length > 0 ? sourceUtils.indent(2, 1, _(childSheets).map(childSheet => `${_.camelCase(childSheet.name)}: { [nodeName: string]: ${_.upperFirst(_.camelCase(childSheet.name))}Node };`).join("\n")) : sourceUtils.deleteLine}
@@ -149,9 +152,9 @@ ${
     const tree: TDefTree = {};
     for (const column of columns) {
       if (isExport && !column.export) continue;
+      if (column.data === "extends") continue;
       _.set(tree, column.data, [columnDataType(column), column.required]);
     }
-    delete tree.extends;
     return recursive(tree);
   },
 
