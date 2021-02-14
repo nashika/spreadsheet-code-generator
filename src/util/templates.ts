@@ -67,6 +67,7 @@ import NodeBase from "./base";
 type T${_.upperFirst(_.camelCase(sheet.name))}NodeColumnName = ${_(sheet.columns)
       .filter((column) => column.data !== "extends")
       .map((column) => '"' + column.data + '"')
+      .thru((columns) => columns.length === 0 ? ['""'] : columns)
       .join(" | ")};
 
 type T${_.upperFirst(_.camelCase(sheet.name))}NodeChildren = {${childSheets.length === 0 ? sourceUtils.noNewLine : ""}
