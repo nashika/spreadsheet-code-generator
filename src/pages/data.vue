@@ -291,6 +291,8 @@ export default class DataComponent extends BaseComponent {
 </script>
 
 <style lang="scss">
+@import "../../node_modules/handsontable/dist/handsontable.full.css";
+
 section.data {
   width: 100%;
   height: 100%;
