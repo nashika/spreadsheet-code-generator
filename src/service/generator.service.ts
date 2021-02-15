@@ -55,6 +55,15 @@ class GeneratorProcess {
       }
     }
     logger.debug(`Parse sheet data was finished.`);
+    logger.debug(`Erase code cache was started.`);
+    const codeDir: string = path.join(this.saveBaseDir, "./code/");
+    for (const path in originalRequire.cache) {
+      if (path.startsWith(codeDir)) {
+        logger.debug(`Erase ${path}`);
+        delete originalRequire.cache[path];
+      }
+    }
+    logger.debug(`Erase code cache was finished.`);
     logger.debug(`Create node definition tree was started.`);
     const rootNodeDefinition: GeneratorNodeDefinition = new GeneratorNodeDefinition(
       this,
@@ -363,8 +372,6 @@ class GeneratorNodeDefinition {
   private requireCode(sheetName: string): typeof GeneratorNode {
     const codeDir: string = path.join(this.process.saveBaseDir, "./code/");
     const sheetCodePath: string = path.join(codeDir, `./${sheetName}.ts`);
-    if (originalRequire.cache[sheetCodePath])
-      delete originalRequire.cache[sheetCodePath];
     let SheetNodeClass: any = originalRequire(sheetCodePath);
     if (_.has(SheetNodeClass, "default"))
       SheetNodeClass = SheetNodeClass.default;
