@@ -221,12 +221,12 @@ export default class MenuStore extends BaseStore {
 
   @Action
   a_openDir(): boolean {
-    const dirs:
-      | string[]
-      | undefined = electron.remote.dialog.showOpenDialogSync({
-      defaultPath: this.config.saveBaseDir || this.config.recentSaveBaseDirs[0],
-      properties: ["openDirectory"],
-    });
+    const dirs: string[] | undefined =
+      electron.remote.dialog.showOpenDialogSync({
+        defaultPath:
+          this.config.saveBaseDir || this.config.recentSaveBaseDirs[0],
+        properties: ["openDirectory"],
+      });
     if (!dirs || dirs.length === 0) return false;
     this.a_setSaveBaseDir(dirs[0]);
     return true;

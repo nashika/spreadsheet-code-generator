@@ -65,11 +65,8 @@ class GeneratorProcess {
     }
     logger.debug(`Erase code cache was finished.`);
     logger.debug(`Create node definition tree was started.`);
-    const rootNodeDefinition: GeneratorNodeDefinition = new GeneratorNodeDefinition(
-      this,
-      this.sheets.root,
-      null
-    );
+    const rootNodeDefinition: GeneratorNodeDefinition =
+      new GeneratorNodeDefinition(this, this.sheets.root, null);
     const createNodeDefinitionRecursive = (
       currentNodeDefinition: GeneratorNodeDefinition
     ) => {
@@ -100,7 +97,8 @@ class GeneratorProcess {
       );
       const currentData: TSheetData = recordExtender.getRecords() || [];
       _.forEach(currentData, (record: { [columnName: string]: any }) => {
-        const childNodeElement: GeneratorNode = new currentNodeDefinition.GeneratorNodeClass();
+        const childNodeElement: GeneratorNode =
+          new currentNodeDefinition.GeneratorNodeClass();
         childNodeElement.__initialize(record);
         rootNode.add(childNodeElement);
       });
@@ -282,9 +280,9 @@ export class GeneratorNode {
     return this.__children[sheetName] && this.__children[sheetName][nodeName];
   }
 
-  private __getChildren(
-    sheetName: string
-  ): { [nodeName: string]: GeneratorNode } {
+  private __getChildren(sheetName: string): {
+    [nodeName: string]: GeneratorNode;
+  } {
     sheetName = _.camelCase(sheetName);
     if (!_.has(this.__children, sheetName))
       throw new Error(`Can not find child node. sheetName="${sheetName}".`);

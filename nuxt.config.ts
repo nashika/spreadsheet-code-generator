@@ -8,6 +8,7 @@ const config: NuxtConfig = {
   port: 18191,
   router: {
     mode: "hash",
+    base: "./",
   },
   dir: {
     assets: "src/assets",
