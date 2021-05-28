@@ -107,12 +107,12 @@ export default class MenuStore extends BaseStore {
           {
             label: "&Save",
             accelerator: "Ctrl+S",
-            click: () => this.a_save(false),
+            click: () => this.$root.$emit(eventNames.menu.save),
           },
           {
             label: "Save &As",
             accelerator: "Ctrl+Shift+S",
-            click: () => this.a_save(true),
+            click: () => this.$root.$emit(eventNames.menu.save, true),
           },
           {
             label: "&Exit",

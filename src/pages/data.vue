@@ -31,6 +31,7 @@ export default class DataComponent extends BaseComponent {
     this.$root.$on(eventNames.search, this.search);
     this.$root.$on(eventNames.data.insert, this.insert);
     this.$root.$on(eventNames.sheet.change, this.rebuildSpreadsheet);
+    this.$root.$on(eventNames.menu.save, this.save);
     this.$root.$on(eventNames.menu.toggle, this.resize);
     window.addEventListener("resize", this.resize);
     this.rebuildSpreadsheet();
@@ -41,6 +42,7 @@ export default class DataComponent extends BaseComponent {
     this.$root.$off(eventNames.search, this.search);
     this.$root.$off(eventNames.data.insert, this.insert);
     this.$root.$off(eventNames.sheet.change, this.rebuildSpreadsheet);
+    this.$root.$off(eventNames.menu.save, this.save);
     this.$root.$off(eventNames.menu.toggle, this.resize);
     window.removeEventListener("resize", this.resize);
     this.storeEditingData();
@@ -68,6 +70,11 @@ export default class DataComponent extends BaseComponent {
 
   insert() {
     this.hot?.alter("insert_row", this.currentRow);
+  }
+
+  save(as: boolean = false) {
+    this.storeEditingData();
+    this.$myStore.menu.a_save(as);
   }
 
   resize() {

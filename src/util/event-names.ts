@@ -8,6 +8,7 @@ export const eventNames = {
     selectColumn: "data::select-column",
   },
   menu: {
+    save: "menu::save",
     toggle: "menu::toggle",
   },
   search: "search",
