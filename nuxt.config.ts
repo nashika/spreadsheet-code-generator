@@ -8,7 +8,7 @@ const config: NuxtConfig = {
   port: 18191,
   router: {
     mode: "hash",
-    base: "./",
+    base: process.env.NODE_ENV === "production" ? "./" : undefined,
   },
   dir: {
     assets: "src/assets",
@@ -76,7 +76,7 @@ const config: NuxtConfig = {
     // change url to relative path
     extend(config, ctx) {
       if (!ctx.isDev) {
-        if (config.output) config.output.publicPath = "./_nuxt/";
+        if (config.output) config.output.publicPath = "_nuxt/";
       }
       config.target = "electron-renderer";
     },
