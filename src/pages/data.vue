@@ -189,8 +189,8 @@ export default class DataComponent extends BaseComponent {
           columnSetting.validator = this.makeValidator(c);
           columnSetting.invalidCellClassName = "invalid-cell";
           columnSetting.allowInvalid = true;
-          columnSetting.renderer = this.customRenderer;
         }
+        columnSetting.renderer = this.customRenderer;
         columnSetting.data = c.data;
         return columnSetting;
       }),
