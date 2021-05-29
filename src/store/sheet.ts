@@ -282,6 +282,12 @@ export default class SheetStore extends BaseStore {
   }
 
   @Mutation
+  private m_setData(payload: { name?: string; value: TSheetData }) {
+    const name = payload.name ?? this.currentSheet.name;
+    this.sheets[name].data = payload.value;
+  }
+
+  @Mutation
   private m_setCurrentSheet(name: string) {
     this.currentSheet = this.sheets[name];
   }
@@ -333,9 +339,9 @@ export default class SheetStore extends BaseStore {
   @Action
   a_setData(payload: { name?: string; data: TSheetData }): void {
     const name = payload.name ?? this.currentSheet.name;
-    this.m_mergeSheet({
+    this.m_setData({
       name,
-      value: { data: payload.data },
+      value: payload.data,
     });
     this.a_setModified({ name, value: true });
   }
