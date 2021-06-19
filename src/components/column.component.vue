@@ -32,7 +32,7 @@
             b-form-checkbox(v-model="column.required")
           b-form-group(label="Export")
             b-form-checkbox(v-model="column.export")
-          // b-form-group(label="Typescript Type")
+          b-form-group(label="Typescript Type")
             b-form-input(type="text", v-model="column.tsType")
           b-button(type="submit", variant="primary", block)
             fa(icon="save")
