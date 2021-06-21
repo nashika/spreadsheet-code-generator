@@ -28,6 +28,7 @@ export default class DataComponent extends BaseComponent {
   private recordExtender?: RecordExtender;
 
   async mounted() {
+    this.$myService.register.dataComponent = this;
     this.$root.$on(eventNames.search, this.search);
     this.$root.$on(eventNames.data.insert, this.insert);
     this.$root.$on(eventNames.sheet.change, this.rebuildSpreadsheet);
@@ -39,6 +40,7 @@ export default class DataComponent extends BaseComponent {
   }
 
   async beforeDestroy() {
+    this.$myService.register.dataComponent = undefined;
     this.$root.$off(eventNames.search, this.search);
     this.$root.$off(eventNames.data.insert, this.insert);
     this.$root.$off(eventNames.sheet.change, this.rebuildSpreadsheet);

@@ -499,7 +499,7 @@ export default class SheetStore extends BaseStore {
     }
     const oldColumn = this.currentSheet.columns[payload.index];
     if (payload.column.data !== oldColumn.data) {
-      const data = _.cloneDeep(this.currentSheet.data);
+      const data = this.$myService.register.dataComponent?.$data.editingData;
       for (const record of data) {
         const cellData = _.get(record, oldColumn.data);
         if (cellData !== undefined)
