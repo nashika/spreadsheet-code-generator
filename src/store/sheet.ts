@@ -384,11 +384,16 @@ export default class SheetStore extends BaseStore {
       _save(this.sheets[name], this.sheets);
       this.a_setModified({ name, value: false });
     }
-    _.difference(ioManagers.sheet.list(), Object.keys(this.sheets)).forEach(
-      (name) => {
-        ioManagers.sheet.unlink(name);
-      }
-    );
+    const removeDeleted = (targetIoManager: IoManager) => {
+      const sheetNames = [...Object.keys(this.sheets), "base"];
+      _.difference(targetIoManager.list(), sheetNames).forEach((name) =>
+        targetIoManager.unlink(name)
+      );
+    };
+    removeDeleted(ioManagers.sheet);
+    removeDeleted(ioManagers.data);
+    removeDeleted(ioManagers.base);
+    // removeDeleted(ioManagers.code);
     ioManagers.base.save("base", templates.baseCodeStub());
     return true;
   }
@@ -427,6 +432,7 @@ export default class SheetStore extends BaseStore {
       return false;
     }
     assertIsDefined(this.sheets[payload.oldName]);
+    this.$myService.register.dataComponent?.flush();
     const oldSheet = this.sheets[payload.oldName];
     if (payload.newName !== payload.oldName) {
       _.forIn(this.sheets, (s: ISheet, n: string) => {
@@ -469,8 +475,9 @@ export default class SheetStore extends BaseStore {
       return;
     }
     const name: string = this.currentSheet.name;
+    this.$myService.register.dataComponent?.flush();
     this.m_removeSheet(name);
-    this.a_setModified({ name, value: true });
+    this.a_setModified({ name: "root", value: true });
     this.m_setCurrentSheet("root");
   }
 

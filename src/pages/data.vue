@@ -86,6 +86,14 @@ export default class DataComponent extends BaseComponent {
     }, 200);
   }
 
+  flush() {
+    if (this.hot) {
+      this.storeEditingData();
+      this.hot.destroy();
+      this.hot = undefined;
+    }
+  }
+
   private makeValidator(
     column: IColumn
   ): (value: string, callback: (result: boolean) => void) => void {
@@ -162,11 +170,7 @@ export default class DataComponent extends BaseComponent {
   }
 
   private rebuildSpreadsheet(): void {
-    if (this.hot) {
-      this.storeEditingData();
-      this.hot.destroy();
-      this.hot = undefined;
-    }
+    this.flush();
     if (this.$myStore.sheet.currentSheet.name === "root") return;
     const currentSheet = this.$myStore.sheet.currentSheet;
     this.recordExtender = new RecordExtender(currentSheet);
